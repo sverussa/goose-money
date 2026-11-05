@@ -893,13 +893,15 @@ O `Makefile` na raiz é o ponto de entrada dos comandos. Regras:
 | `db-validate` | Confere nomes e checksums das migrações |
 | `db-reset` | Recria o banco local do zero (`supabase db reset` + `db-migrate`); pede confirmação |
 | `db-migrate-prod` | Aplica as migrações em produção com `.env.producao`; pede confirmação |
+| `db-types` | Gera os tipos do banco local em `apps/app/src/data/database.types.ts` (`supabase gen types typescript --local`) |
 | `deploy-web` | Gera o build de produção e envia para a VPS (D53); pede confirmação |
 | `db-eliminar-usuario` | Apaga fisicamente os dados e a conta de um usuário que pediu (LGPD, D54); pede confirmação |
 | `test` | Testes Vitest (os de dados exigem `db-start` e `db-migrate`) |
 | `test-e2e` | Testes Playwright + axe-core |
 | `lint` | ESLint |
 | `format` | Prettier |
+| `format-check` | Confere a formatação sem alterar arquivos |
 | `typecheck` | Checagem de tipos em todos os pacotes |
-| `check` | `lint` + `typecheck` + `test` + `db-validate`; rodar antes de abrir PR |
+| `check` | `format-check` + `lint` + `typecheck` + `test` + `db-validate`; rodar antes de abrir PR |
 | `build` | Build do app web |
 | `build-desktop` | Build e empacotamento do Tauri |
