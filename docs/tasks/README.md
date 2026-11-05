@@ -39,7 +39,7 @@ Base do projeto: monorepo, app, desktop, Supabase local, Flyway, Makefile, CI. N
 | ✅ [T00-03 · App web com Vite e React](00-codebase/T00-03-app-vite-react.md) | App | T00-02 | — |
 | ✅ [T00-04 · Tailwind 4, shadcn/ui e fonte Roboto Flex](00-codebase/T00-04-tailwind-shadcn-fonte.md) | App · Design system | T00-03 | — |
 | ✅ [T00-05 · ESLint, Prettier e regras de fronteira](00-codebase/T00-05-lint-formatacao.md) | Qualidade | T00-04 | tomada |
-| [T00-06 · Testes: Vitest e Playwright com axe](00-codebase/T00-06-testes-vitest-playwright.md) | Qualidade | T00-05 | tomada |
+| ✅ [T00-06 · Testes: Vitest e Playwright com axe](00-codebase/T00-06-testes-vitest-playwright.md) | Qualidade | T00-05 | tomada |
 | [T00-07 · App desktop com Tauri 2](00-codebase/T00-07-tauri.md) | Desktop | T00-03 | tomada |
 | [T00-08 · Supabase local em Docker](00-codebase/T00-08-supabase-local.md) | Back end | T00-01 | tomada |
 | [T00-09 · Flyway em Docker e migração base](00-codebase/T00-09-flyway-docker.md) | Back end | T00-08 | — |
