@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Editores / IDEs
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# Ambiente
+.env
+.env.*
+!.env.example
+
+# Dependências e builds
+node_modules/
+dist/
+build/
+target/
+coverage/
+
+# Logs
+*.log
+logs/

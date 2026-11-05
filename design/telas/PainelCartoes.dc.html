@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Painel · Cartões</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;display=swap">
+<style>
+body{margin:0;background:#F5FBF7}
+button{font:inherit}
+:focus-visible{outline:3px solid #1B6B5A;outline-offset:2px}
+a{color:#1B6B5A}a:hover{color:#0F4F42}
+</style>
+</helmet>
+<div style="font-family: 'Roboto Flex', Roboto, system-ui, sans-serif; color: #171D1B; background: #F5FBF7; min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch; font-variant-numeric: tabular-nums">
+  <div style="flex: 1 1 260px; min-width: 0; background: #EFF5F1">
+    <dc-import name="Nav" active="painel" hint-size="100%,920px"></dc-import>
+  </div>
+  <main style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column">
+    <header style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; min-height: 64px; box-sizing: border-box">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 500; flex: 1 1 auto">Painel</h1>
+      <button type="button" aria-label="Buscar (Ctrl+K)" style="width: 48px; height: 48px; border-radius: 24px; border: 0; background: transparent; color: #3F4945; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4"></path></svg></button>
+      <button type="button" aria-label="Menu do usuário" style="width: 40px; height: 40px; border-radius: 20px; border: 0; background: #CDE8DF; color: #072019; font-weight: 600; cursor: pointer">A</button>
+    </header>
+    <div style="position: sticky; top: 0; z-index: 5"><dc-import name="TotalsBar" hint-size="100%,72px"></dc-import></div>
+    <nav aria-label="Abas do Painel" style="display: flex; padding: 0 24px; border-bottom: 1px solid #DEE4E0; overflow-x: auto">
+      <a href="Main.dc.html" style="height: 48px; padding: 0 20px; display: flex; align-items: center; text-decoration: none; color: #3F4945; font-weight: 500; font-size: 14px; white-space: nowrap">Visão geral</a>
+      <a href="PainelSaldos.dc.html" style="height: 48px; padding: 0 20px; display: flex; align-items: center; text-decoration: none; color: #3F4945; font-weight: 500; font-size: 14px; white-space: nowrap">Saldos</a>
+      <a href="PainelCartoes.dc.html" aria-current="page" style="height: 48px; padding: 0 20px; display: flex; align-items: center; text-decoration: none; color: #1B6B5A; font-weight: 600; font-size: 14px; border-bottom: 3px solid #1B6B5A; box-sizing: border-box; white-space: nowrap">Cartões</a>
+      <a href="PainelProjecoes.dc.html" style="height: 48px; padding: 0 20px; display: flex; align-items: center; text-decoration: none; color: #3F4945; font-weight: 500; font-size: 14px; white-space: nowrap">Projeções</a>
+    </nav>
+
+    <div style="padding: 24px 24px 120px; display: flex; flex-direction: column; gap: 20px; max-width: 1280px; box-sizing: border-box; width: 100%">
+
+      <section aria-label="Cartões" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr)); gap: 16px">
+        <sc-for list="{{cartoes}}" as="c" hint-placeholder-count="2">
+          <article style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column">
+            <a href="CartaoFatura.dc.html" style="{{c.face}}">
+              <span style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 18px; font-weight: 600">{{c.nome}}</span><span style="font-size: 13px; opacity: 0.9">fecha dia {{c.fecha}} · vence dia {{c.vence}}</span></span>
+              <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; opacity: 0.9">Fatura aberta · vence {{c.abertaVence}}</span><span style="font-size: 28px; font-weight: 500">{{c.aberta}}</span></span>
+            </a>
+            <div style="padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 14px">
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+                <span style="flex: 1 1 auto; display: flex; flex-direction: column"><span style="font-size: 13px; color: #3F4945">Próxima a vencer · {{c.proxVence}}</span><span style="font-size: 18px; font-weight: 600">{{c.prox}}</span></span>
+                <span style="{{c.chipStyle}}">{{c.chip}}</span>
+                <a href="CartaoFatura.dc.html" style="height: 40px; padding: 0 16px; border-radius: 20px; background: #1B6B5A; color: #FFFFFF; font-weight: 600; font-size: 14px; display: flex; align-items: center; text-decoration: none">Pagar fatura</a>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <span style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #3F4945">Limite disponível</span><span style="font-weight: 600">{{c.disp}} de {{c.limite}}</span></span>
+                <span role="progressbar" aria-label="Limite usado" aria-valuenow="{{c.usoNum}}" aria-valuemin="0" aria-valuemax="100" style="height: 8px; border-radius: 4px; background: #E3EAE6; display: flex"><span style="{{c.uso}}"></span></span>
+              </div>
+              <span style="display: flex; justify-content: space-between; font-size: 13px; border-top: 1px solid #E9EFEB; padding-top: 12px"><span style="color: #3F4945">Obrigações do cartão (com parcelas futuras)</span><span style="font-weight: 600">{{c.obrig}}</span></span>
+            </div>
+          </article>
+        </sc-for>
+      </section>
+
+      <section style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <h2 style="margin: 0; font-size: 16px; font-weight: 600">Compras parceladas ativas</h2>
+          <span style="font-size: 13px; color: #3F4945">Parcelas restantes = as que caem depois da última fatura fechada</span>
+        </div>
+        <div style="overflow-x: auto">
+          <table style="width: 100%; min-width: 760px; border-collapse: collapse; font-size: 14px">
+            <thead>
+              <tr style="text-align: left; color: #3F4945; font-size: 13px">
+                <th scope="col" style="padding: 10px 8px; font-weight: 500; border-bottom: 1px solid #DEE4E0">Descrição</th>
+                <th scope="col" style="padding: 10px 8px; font-weight: 500; border-bottom: 1px solid #DEE4E0">Cartão</th>
+                <th scope="col" style="padding: 10px 8px; font-weight: 500; border-bottom: 1px solid #DEE4E0">Parcela atual</th>
+                <th scope="col" style="padding: 10px 8px; font-weight: 500; border-bottom: 1px solid #DEE4E0; text-align: right">Valor da parcela</th>
+                <th scope="col" style="padding: 10px 8px; font-weight: 500; border-bottom: 1px solid #DEE4E0; text-align: right">Restantes</th>
+                <th scope="col" style="padding: 10px 8px; font-weight: 500; border-bottom: 1px solid #DEE4E0; text-align: right">Valor restante</th>
+                <th scope="col" style="padding: 10px 8px; font-weight: 500; border-bottom: 1px solid #DEE4E0; text-align: right">Última parcela</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{parc}}" as="p" hint-placeholder-count="3">
+                <tr>
+                  <td style="padding: 14px 8px; border-bottom: 1px solid #E9EFEB"><span style="display: flex; flex-direction: column"><span style="font-weight: 500">{{p.desc}}</span><span style="font-size: 12px; color: #3F4945">comprado em {{p.data}} · {{p.total}}</span></span></td>
+                  <td style="padding: 14px 8px; border-bottom: 1px solid #E9EFEB">{{p.cartao}}</td>
+                  <td style="padding: 14px 8px; border-bottom: 1px solid #E9EFEB"><span style="display: flex; align-items: center; gap: 8px">{{p.atual}}<span style="width: 60px; height: 6px; border-radius: 3px; background: #E3EAE6; display: flex"><span style="{{p.prog}}"></span></span></span></td>
+                  <td style="padding: 14px 8px; border-bottom: 1px solid #E9EFEB; text-align: right">{{p.valor}}</td>
+                  <td style="padding: 14px 8px; border-bottom: 1px solid #E9EFEB; text-align: right">{{p.rest}}</td>
+                  <td style="padding: 14px 8px; border-bottom: 1px solid #E9EFEB; text-align: right; font-weight: 500">{{p.vrest}}</td>
+                  <td style="padding: 14px 8px; border-bottom: 1px solid #E9EFEB; text-align: right">{{p.ultima}}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+            <tfoot>
+              <tr style="font-weight: 600">
+                <td colspan="3" style="padding: 14px 8px">Total</td>
+                <td style="padding: 14px 8px; text-align: right">R$ 1.153,34</td>
+                <td style="padding: 14px 8px; text-align: right">16</td>
+                <td style="padding: 14px 8px; text-align: right">R$ 6.360,00</td>
+                <td style="padding: 14px 8px; text-align: right">jul/2027</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(460px, 100%), 1fr)); gap: 16px">
+        <section style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <h2 style="margin: 0; font-size: 16px; font-weight: 600">Parcelas caem pela metade a partir de março</h2>
+            <span style="font-size: 13px; color: #3F4945">Parcelas comprometidas por cartão · próximos 12 meses</span>
+          </div>
+          <svg viewBox="0 0 520 220" role="img" aria-label="Parcelas comprometidas: dezembro a fevereiro cerca de R$ 1.153 por mês; março e abril R$ 820; maio a julho R$ 420; de agosto em diante zero." style="width: 100%; height: auto">
+            <g font-size="11" fill="#3F4945" font-family="Roboto Flex, Roboto, sans-serif">
+              <line x1="48" y1="30" x2="510" y2="30" stroke="#E3EAE6"></line><text x="42" y="34" text-anchor="end">1,2 mil</text>
+              <line x1="48" y1="110" x2="510" y2="110" stroke="#E3EAE6"></line><text x="42" y="114" text-anchor="end">600</text>
+              <line x1="48" y1="190" x2="510" y2="190" stroke="#6F7975"></line><text x="42" y="194" text-anchor="end">0</text>
+              <text x="72" y="208" text-anchor="middle">dez</text><text x="110" y="208" text-anchor="middle">jan</text><text x="148" y="208" text-anchor="middle">fev</text><text x="186" y="208" text-anchor="middle">mar</text><text x="224" y="208" text-anchor="middle">abr</text><text x="262" y="208" text-anchor="middle">mai</text><text x="300" y="208" text-anchor="middle">jun</text><text x="338" y="208" text-anchor="middle">jul</text><text x="376" y="208" text-anchor="middle">ago</text><text x="414" y="208" text-anchor="middle">set</text><text x="452" y="208" text-anchor="middle">out</text><text x="490" y="208" text-anchor="middle">nov</text>
+            </g>
+            <g fill="#24364D">
+              <rect x="60" y="89.6" width="24" height="100.4"></rect><rect x="98" y="89.6" width="24" height="100.4"></rect><rect x="136" y="89.6" width="24" height="100.4"></rect>
+              <rect x="174" y="134" width="24" height="56"></rect><rect x="212" y="134" width="24" height="56"></rect><rect x="250" y="134" width="24" height="56"></rect><rect x="288" y="134" width="24" height="56"></rect><rect x="326" y="134" width="24" height="56"></rect>
+            </g>
+            <g fill="#B0628C">
+              <rect x="60" y="36.3" width="24" height="51.3"></rect><rect x="98" y="36.3" width="24" height="51.3"></rect><rect x="136" y="36.3" width="24" height="51.3"></rect>
+              <rect x="174" y="80.7" width="24" height="51.3"></rect><rect x="212" y="80.7" width="24" height="51.3"></rect>
+            </g>
+          </svg>
+          <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px; color: #3F4945">
+            <span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #24364D"></span>Cartão A</span>
+            <span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #B0628C"></span>Cartão B</span>
+          </div>
+        </section>
+
+        <section style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 16px">
+          <div style="display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap">
+            <div style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px">
+              <h2 style="margin: 0; font-size: 16px; font-weight: 600">Cartão A concentra 59% do gasto</h2>
+              <span style="font-size: 13px; color: #3F4945">Gasto por cartão · ago–out 2026 · competência</span>
+            </div>
+            <button type="button" style="height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px; font-weight: 500">Últimos 3 meses</button>
+          </div>
+          <a href="Lancamentos.dc.html" style="display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: #171D1B">
+            <span style="display: flex; justify-content: space-between; font-size: 14px"><span>Cartão A</span><span style="font-weight: 600">R$ 4.812,60</span></span>
+            <span style="height: 28px; background: #EFF5F1; border-radius: 6px; display: flex"><span style="width: 100%; background: #24364D; border-radius: 6px"></span></span>
+          </a>
+          <a href="Lancamentos.dc.html" style="display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: #171D1B">
+            <span style="display: flex; justify-content: space-between; font-size: 14px"><span>Cartão B</span><span style="font-weight: 600">R$ 3.296,40</span></span>
+            <span style="height: 28px; background: #EFF5F1; border-radius: 6px; display: flex"><span style="width: 68.5%; background: #B0628C; border-radius: 6px"></span></span>
+          </a>
+          <span style="font-size: 13px; color: #3F4945">Clique numa barra para ver os itens em Lançamentos, filtrados pelo cartão.</span>
+        </section>
+      </div>
+    </div>
+
+    <div style="position: sticky; bottom: 24px; display: flex; justify-content: flex-end; padding: 0 24px; margin-top: -96px; pointer-events: none">
+      <a href="LancarDialog.dc.html" aria-keyshortcuts="N" style="pointer-events: auto; height: 56px; padding: 0 20px 0 16px; border-radius: 16px; background: #A6F2DA; color: #00201A; display: flex; align-items: center; gap: 12px; text-decoration: none; font-size: 15px; font-weight: 600; box-shadow: 0 3px 8px rgba(0,0,0,0.18)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Lançar</a>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const face = (c) => 'display: flex; flex-direction: column; gap: 24px; padding: 20px; min-height: 140px; box-sizing: border-box; justify-content: space-between; text-decoration: none; color: #FFFFFF; background: ' + c + ';';
+    const chip = (warn) => 'font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 8px; ' + (warn ? 'background: #FFDDB0; color: #5C3B00;' : 'background: #E3EAE6; color: #3F4945;');
+    const cartoes = [
+      { nome: 'Cartão A', fecha: '3', vence: '10', aberta: 'R$ 1.012,57', abertaVence: '10/12', prox: 'R$ 1.684,20', proxVence: '10/11', chip: 'Fechada', chipStyle: chip(false), disp: 'R$ 1.696,57', limite: 'R$ 8.000,00', usoNum: '79', uso: 'width: 78.8%; background: #24364D; border-radius: 4px;', obrig: 'R$ 6.303,43', face: face('#24364D') },
+      { nome: 'Cartão B', fecha: '25', vence: '5', aberta: 'R$ 526,80', abertaVence: '05/12', prox: 'R$ 1.152,30', proxVence: '05/11', chip: 'Vence amanhã', chipStyle: chip(true), disp: 'R$ 720,90', limite: 'R$ 4.000,00', usoNum: '82', uso: 'width: 82.0%; background: #8A3B66; border-radius: 4px;', obrig: 'R$ 3.279,10', face: face('#6B2E4F') }
+    ];
+    const prog = (k, n) => 'width: ' + Math.round(k / n * 100) + '%; background: #1B6B5A; border-radius: 3px;';
+    const parc = [
+      { desc: 'Notebook', data: '12/09/2026', total: 'R$ 4.200,00 em 10x', cartao: 'Cartão A', atual: '3/10', prog: prog(3, 10), valor: 'R$ 420,00', rest: '8', vrest: 'R$ 3.360,00', ultima: 'jul/2027' },
+      { desc: 'Geladeira', data: '14/10/2026', total: 'R$ 2.400,00 em 6x', cartao: 'Cartão B', atual: '2/6', prog: prog(2, 6), valor: 'R$ 400,00', rest: '5', vrest: 'R$ 2.000,00', ultima: 'abr/2027' },
+      { desc: 'Fone', data: '04/11/2026', total: 'R$ 1.000,00 em 3x', cartao: 'Cartão A', atual: '1/3', prog: prog(1, 3), valor: 'R$ 333,34', rest: '3', vrest: 'R$ 1.000,00', ultima: 'fev/2027' }
+    ];
+    return { cartoes, parc };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Lançamentos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;display=swap">
+<style>
+body{margin:0;background:#F5FBF7}
+button,input{font:inherit}
+:focus-visible{outline:3px solid #1B6B5A;outline-offset:2px}
+a{color:#1B6B5A}a:hover{color:#0F4F42}
+</style>
+</helmet>
+<div style="font-family: 'Roboto Flex', Roboto, system-ui, sans-serif; color: #171D1B; background: #F5FBF7; min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch; font-variant-numeric: tabular-nums">
+  <div style="flex: 1 1 260px; min-width: 0; background: #EFF5F1">
+    <dc-import name="Nav" active="lancamentos" hint-size="100%,920px"></dc-import>
+  </div>
+  <main style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column">
+    <header style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; min-height: 64px; box-sizing: border-box; flex-wrap: wrap">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 500; flex: 1 1 auto">Lançamentos</h1>
+      <div style="display: flex; align-items: center; gap: 4px">
+        <button type="button" aria-label="Mês anterior" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: transparent; color: #3F4945; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button>
+        <span style="font-size: 16px; font-weight: 500; min-width: 130px; text-align: center">Outubro 2026</span>
+        <button type="button" aria-label="Próximo mês" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: transparent; color: #3F4945; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button>
+      </div>
+      <button type="button" aria-label="Menu do usuário" style="width: 40px; height: 40px; border-radius: 20px; border: 0; background: #CDE8DF; color: #072019; font-weight: 600; cursor: pointer">A</button>
+    </header>
+    <div style="position: sticky; top: 0; z-index: 5; display: flex; flex-direction: column">
+      <dc-import name="TotalsBar" hint-size="100%,72px"></dc-import>
+      <div style="background: #F5FBF7; border-bottom: 1px solid #DEE4E0; padding: 12px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px">
+        <div role="group" aria-label="Visão" style="display: flex; border: 1px solid #6F7975; border-radius: 20px; overflow: hidden">
+          <button type="button" aria-pressed="{{rdPressed}}" onClick="{{showRD}}" style="{{rdStyle}}">Receitas e despesas</button>
+          <button type="button" aria-pressed="{{mvPressed}}" onClick="{{showMV}}" style="{{mvStyle}}">Movimentações</button>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 24px; flex: 1 1 auto; justify-content: flex-end">
+          <sc-for list="{{header}}" as="h" hint-placeholder-count="3">
+            <span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 12px; color: #3F4945">{{h.label}}</span><span style="{{h.st}}">{{h.v}}</span></span>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 16px 24px 120px; display: flex; flex-direction: column; gap: 16px; max-width: 1180px; box-sizing: border-box; width: 100%">
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+        <label for="busca" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Buscar por descrição</label>
+        <div style="flex: 1 1 260px; display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 16px; border-radius: 24px; background: #E9EFEB">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3F4945" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4"></path></svg>
+          <input id="busca" placeholder="Buscar por descrição" style="flex: 1 1 auto; border: 0; background: transparent; font-size: 15px; color: #171D1B; outline: none; min-width: 0">
+        </div>
+        <sc-for list="{{filters}}" as="f" hint-placeholder-count="6">
+          <button type="button" style="height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; cursor: pointer">{{f}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+        </sc-for>
+      </div>
+      <span style="font-size: 13px; color: #3F4945">{{explica}}</span>
+
+      <sc-for list="{{dias}}" as="d" hint-placeholder-count="6">
+        <section style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; overflow: hidden">
+          <div style="display: flex; justify-content: space-between; padding: 10px 20px; background: #EFF5F1; font-size: 13px; font-weight: 600; color: #3F4945"><span>{{d.dia}}</span><span>{{d.total}}</span></div>
+          <ul style="list-style: none; margin: 0; padding: 0">
+            <sc-for list="{{d.itens}}" as="i" hint-placeholder-count="2">
+              <li style="display: flex; align-items: center; gap: 16px; padding: 10px 20px; min-height: 60px; box-sizing: border-box; border-top: 1px solid #EFF5F1; flex-wrap: wrap">
+                <span style="{{i.iconBox}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{i.icon}}"></path></svg></span>
+                <span style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 500">{{i.desc}}</span><span style="font-size: 13px; color: #3F4945">{{i.sub}}</span></span>
+                <sc-if value="{{i.chip}}" hint-placeholder-val="{{false}}"><span style="{{i.chipStyle}}">{{i.chip}}</span></sc-if>
+                <sc-if value="{{i.acao}}" hint-placeholder-val="{{false}}"><button type="button" style="height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #6F7975; background: transparent; color: #1B6B5A; font-size: 14px; font-weight: 600; cursor: pointer">{{i.acao}}</button></sc-if>
+                <span style="{{i.vst}}">{{i.v}}</span>
+              </li>
+            </sc-for>
+          </ul>
+        </section>
+      </sc-for>
+    </div>
+
+    <div style="position: sticky; bottom: 24px; display: flex; justify-content: flex-end; padding: 0 24px; margin-top: -96px; pointer-events: none">
+      <a href="LancarDialog.dc.html" aria-keyshortcuts="N" style="pointer-events: auto; height: 56px; padding: 0 20px 0 16px; border-radius: 16px; background: #A6F2DA; color: #00201A; display: flex; align-items: center; gap: 12px; text-decoration: none; font-size: 15px; font-weight: 600; box-shadow: 0 3px 8px rgba(0,0,0,0.18)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Lançar</a>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"visao":{"editor":"enum","options":["Receitas e despesas","Movimentações"],"default":"Receitas e despesas"},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { v: null }; }
+  renderVals() {
+    const v = this.state.v ?? (this.props.visao ?? 'Receitas e despesas');
+    const rd = v === 'Receitas e despesas';
+    const seg = (on, last) => 'height: 40px; padding: 0 18px; border: 0; ' + (last ? '' : 'border-right: 1px solid #6F7975; ') + 'font-size: 14px; cursor: pointer; ' + (on ? 'background: #CDE8DF; color: #072019; font-weight: 600;' : 'background: #FFFFFF; color: #171D1B; font-weight: 500;');
+    const big = 'font-size: 18px; font-weight: 600; ';
+    const header = rd
+      ? [{ label: 'Receitas', v: '+R$ 7.700,00', st: big + 'color: #14713A;' }, { label: 'Despesas', v: '−R$ 6.890,35', st: big + 'color: #B3261E;' }, { label: 'Resultado', v: 'R$ 809,65', st: big + 'color: #171D1B;' }]
+      : [{ label: 'Entradas de caixa', v: '+R$ 7.700,00', st: big + 'color: #14713A;' }, { label: 'Saídas de caixa', v: '−R$ 7.281,59', st: big + 'color: #B3261E;' }, { label: 'Itens', v: '38', st: big + 'color: #171D1B;' }];
+    const I = {
+      in: 'M12 19V5M6 11l6-6 6 6', out: 'M12 5v14M6 13l6 6 6-6', card: 'M2 6h20v12H2zM2 10h20M6 15h4',
+      swap: 'M7 4l-4 4 4 4M3 8h14M17 20l4-4-4-4M21 16H7', rep: 'M3 6h18v15H3zM3 10h18M8 3v4M16 3v4', doc: 'M6 2h9l5 5v15H6zM15 2v5h5M10 12h6M10 16h6'
+    };
+    const box = (bg, fg) => 'width: 40px; height: 40px; border-radius: 20px; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; background: ' + bg + '; color: ' + fg + ';';
+    const inc = box('#C8F0D2', '#14713A'), exp = box('#FFDAD6', '#B3261E'), neu = box('#D3E4F5', '#48617A');
+    const vIn = 'font-size: 15px; font-weight: 600; color: #14713A; min-width: 120px; text-align: right;';
+    const vOut = 'font-size: 15px; font-weight: 600; color: #B3261E; min-width: 120px; text-align: right;';
+    const vNeu = 'font-size: 15px; font-weight: 600; color: #48617A; min-width: 120px; text-align: right;';
+    const chipWarn = 'font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 8px; background: #FFDDB0; color: #5C3B00;';
+    const chipNeu = 'font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 8px; background: #E9EFEB; color: #3F4945;';
+    const it = (o) => ({ chip: false, chipStyle: chipNeu, acao: false, ...o });
+    const diasRD = [
+      { dia: 'Sex, 31/10', total: '−R$ 212,40', itens: [it({ icon: I.rep, iconBox: exp, desc: 'Energia', sub: 'Moradia · Conta corrente · gasto fixo (previsto R$ 180,00)', v: '−R$ 212,40', vst: vOut })] },
+      { dia: 'Ter, 28/10', total: '−R$ 86,30', itens: [it({ icon: I.out, iconBox: exp, desc: 'A classificar', sub: 'Conta corrente · sem descrição', chip: 'A classificar', chipStyle: chipWarn, acao: 'Classificar', v: '−R$ 86,30', vst: vOut })] },
+      { dia: 'Qua, 22/10', total: '−R$ 412,70', itens: [it({ icon: I.out, iconBox: exp, desc: 'Mercado Pão de Açúcar', sub: 'Alimentação · Conta corrente', v: '−R$ 412,70', vst: vOut })] },
+      { dia: 'Seg, 20/10', total: '+R$ 1.138,31', itens: [
+        it({ icon: I.in, iconBox: inc, desc: 'Freelance', sub: 'Renda fixa · Conta corrente · versão de R$ 1.200,00', v: '+R$ 1.200,00', vst: vIn }),
+        it({ icon: I.doc, iconBox: exp, desc: 'Empréstimo pessoal · juros da parcela 5/12', sub: 'Juros e encargos · só os juros contam como despesa', v: '−R$ 61,69', vst: vOut })] },
+      { dia: 'Qua, 15/10', total: '−R$ 1.292,39', itens: [
+        it({ icon: I.doc, iconBox: exp, desc: 'Financiamento do veículo · 14/48', sub: 'Transporte · pago a terceiro: parcela inteira é despesa', v: '−R$ 1.172,49', vst: vOut }),
+        it({ icon: I.rep, iconBox: exp, desc: 'Internet', sub: 'Moradia · Conta corrente · gasto fixo', v: '−R$ 119,90', vst: vOut })] },
+      { dia: 'Sex, 10/10 · vencimento da fatura Cartão A', total: '−R$ 3.322,60', itens: [
+        it({ icon: I.rep, iconBox: exp, desc: 'Aluguel', sub: 'Moradia · Conta corrente · gasto fixo', v: '−R$ 1.800,00', vst: vOut }),
+        it({ icon: I.card, iconBox: exp, desc: 'Notebook · 1/10', sub: 'Compras · Cartão A · comprado em 12/09', v: '−R$ 420,00', vst: vOut }),
+        it({ icon: I.card, iconBox: exp, desc: 'Posto Shell', sub: 'Transporte · Cartão A · comprado em 15/09', v: '−R$ 210,00', vst: vOut }),
+        it({ icon: I.card, iconBox: exp, desc: '+ 9 compras à vista no Cartão A', sub: 'Toque para expandir', v: '−R$ 892,60', vst: vOut })] },
+      { dia: 'Seg, 05/10 · vencimento da fatura Cartão B', total: '+R$ 4.952,40', itens: [
+        it({ icon: I.in, iconBox: inc, desc: 'Salário', sub: 'Renda fixa · Conta corrente · confirmado automaticamente', v: '+R$ 6.500,00', vst: vIn }),
+        it({ icon: I.card, iconBox: exp, desc: 'Mercado Extra', sub: 'Alimentação · Cartão B · comprado em 19/09', v: '−R$ 612,30', vst: vOut }),
+        it({ icon: I.rep, iconBox: exp, desc: 'Academia', sub: 'Saúde e bem-estar · Conta corrente · gasto fixo', v: '−R$ 99,00', vst: vOut }),
+        it({ icon: I.card, iconBox: exp, desc: '+ 11 compras à vista no Cartão B', sub: 'Toque para expandir', v: '−R$ 836,30', vst: vOut })] }
+    ];
+    const diasMV = [
+      { dia: 'Sex, 31/10', total: '−R$ 212,40', itens: [it({ icon: I.rep, iconBox: exp, desc: 'Energia', sub: 'Conta corrente', v: '−R$ 212,40', vst: vOut })] },
+      { dia: 'Seg, 20/10', total: '+R$ 750,00', itens: [
+        it({ icon: I.in, iconBox: inc, desc: 'Freelance', sub: 'Conta corrente', v: '+R$ 1.200,00', vst: vIn }),
+        it({ icon: I.doc, iconBox: neu, desc: 'Pagamento · Empréstimo pessoal 5/12', sub: 'Conta corrente · liquida dívida, não é despesa', v: '−R$ 450,00', vst: vNeu })] },
+      { dia: 'Sáb, 18/10', total: 'R$ 0,00 no total', itens: [it({ icon: I.swap, iconBox: neu, desc: 'Transferência para Investimentos', sub: 'Conta corrente → Investimentos (fora do total)', v: '−R$ 500,00', vst: vNeu })] },
+      { dia: 'Ter, 14/10', total: 'no cartão', itens: [it({ icon: I.card, iconBox: exp, desc: 'Geladeira · 6x de R$ 400,00', sub: 'Compras · Cartão B · 1ª parcela na fatura de nov', v: '−R$ 2.400,00', vst: vOut })] },
+      { dia: 'Sex, 10/10', total: '−R$ 3.340,80', itens: [
+        it({ icon: I.rep, iconBox: exp, desc: 'Aluguel', sub: 'Conta corrente', v: '−R$ 1.800,00', vst: vOut }),
+        it({ icon: I.card, iconBox: neu, desc: 'Pagamento de fatura · Cartão A', sub: 'Conta corrente · fatura de outubro', v: '−R$ 1.540,80', vst: vNeu })] },
+      { dia: 'Seg, 05/10', total: '+R$ 5.513,00', itens: [
+        it({ icon: I.in, iconBox: inc, desc: 'Salário', sub: 'Conta corrente', v: '+R$ 6.500,00', vst: vIn }),
+        it({ icon: I.card, iconBox: neu, desc: 'Pagamento de fatura · Cartão B', sub: 'Conta corrente · 60% da fatura', chip: 'Parcial', chipStyle: chipWarn, v: '−R$ 888,00', vst: vNeu }),
+        it({ icon: I.rep, iconBox: exp, desc: 'Academia', sub: 'Conta corrente', v: '−R$ 99,00', vst: vOut })] }
+    ];
+    return {
+      header,
+      rdPressed: rd ? 'true' : 'false', mvPressed: rd ? 'false' : 'true',
+      rdStyle: seg(rd, false), mvStyle: seg(!rd, true),
+      showRD: () => this.setState({ v: 'Receitas e despesas' }),
+      showMV: () => this.setState({ v: 'Movimentações' }),
+      filters: ['Tipo', 'Conta', 'Cartão', 'Categoria', 'Estado: realizados', 'Origem'],
+      explica: rd ? 'Por competência: parcelas de cartão aparecem no vencimento da fatura em que caem. Pagamentos de fatura, transferências e pagamentos de dívida não entram aqui.' : 'Pela data do evento: tudo o que mexeu nas contas, mais compras no cartão pela data da compra.',
+      dias: rd ? diasRD : diasMV
+    };
+  }
+}
+</script>
+</body>
+</html>

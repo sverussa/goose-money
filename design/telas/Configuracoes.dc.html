@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Configurações</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;display=swap">
+<style>
+body{margin:0;background:#F5FBF7}
+button,input,select{font:inherit}
+:focus-visible{outline:3px solid #1B6B5A;outline-offset:2px}
+a{color:#1B6B5A}a:hover{color:#0F4F42}
+</style>
+</helmet>
+<div style="font-family: 'Roboto Flex', Roboto, system-ui, sans-serif; color: #171D1B; background: #F5FBF7; min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch; font-variant-numeric: tabular-nums">
+  <div style="flex: 1 1 260px; min-width: 0; background: #EFF5F1">
+    <dc-import name="Nav" active="configuracoes" hint-size="100%,920px"></dc-import>
+  </div>
+  <main style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column">
+    <header style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; min-height: 64px; box-sizing: border-box">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 500; flex: 1 1 auto">Configurações</h1>
+    </header>
+    <div style="position: sticky; top: 0; z-index: 5"><dc-import name="TotalsBar" hint-size="100%,72px"></dc-import></div>
+
+    <div style="padding: 24px 24px 80px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(480px, 100%), 1fr)); gap: 16px; max-width: 1280px; box-sizing: border-box; width: 100%; align-items: start">
+
+      <section aria-labelledby="cat" style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 8px"><h2 id="cat" style="margin: 0; font-size: 16px; font-weight: 600; flex: 1 1 auto">Categorias</h2><button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #6F7975; background: transparent; color: #1B6B5A; font-size: 14px; font-weight: 600; cursor: pointer">Nova categoria</button></div>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+          <sc-for list="{{cats}}" as="c" hint-placeholder-count="10">
+            <li style="display: flex; align-items: center; gap: 12px; min-height: 48px; border-bottom: 1px solid #EFF5F1; font-size: 14px">
+              <span style="{{c.dot}}"></span>
+              <span style="flex: 1 1 auto; display: flex; flex-direction: column"><span style="font-weight: 500">{{c.nome}}</span><span style="font-size: 12px; color: #3F4945">{{c.sub}}</span></span>
+              <sc-if value="{{c.sys}}" hint-placeholder-val="{{false}}">
+                <span title="Categoria de sistema: não pode ser editada nem excluída" style="display: flex; align-items: center; gap: 4px; font-size: 12px; color: #3F4945"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 10h12v11H6zM8 10V7a4 4 0 0 1 8 0v3"></path></svg>Sistema</span>
+              </sc-if>
+              <sc-if value="{{c.edit}}" hint-placeholder-val="{{true}}">
+                <button type="button" aria-label="Editar categoria" style="width: 40px; height: 40px; border-radius: 20px; border: 0; background: transparent; color: #3F4945; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"></path></svg></button>
+              </sc-if>
+            </li>
+          </sc-for>
+        </ul>
+      </section>
+
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <section aria-labelledby="ap" style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+          <h2 id="ap" style="margin: 0; font-size: 16px; font-weight: 600">Aparência</h2>
+          <div role="radiogroup" aria-label="Tema" style="display: flex; border: 1px solid #6F7975; border-radius: 20px; overflow: hidden; align-self: flex-start">
+            <button type="button" role="radio" aria-checked="false" style="height: 40px; padding: 0 18px; border: 0; border-right: 1px solid #6F7975; background: #FFFFFF; color: #171D1B; font-size: 14px; font-weight: 500">Claro</button>
+            <button type="button" role="radio" aria-checked="false" style="height: 40px; padding: 0 18px; border: 0; border-right: 1px solid #6F7975; background: #FFFFFF; color: #171D1B; font-size: 14px; font-weight: 500">Escuro</button>
+            <button type="button" role="radio" aria-checked="true" style="height: 40px; padding: 0 18px; border: 0; background: #CDE8DF; color: #072019; font-size: 14px; font-weight: 600">✓ Seguir o sistema</button>
+          </div>
+          <label style="display: flex; align-items: center; gap: 16px; min-height: 48px; font-size: 15px; cursor: pointer"><span style="flex: 1 1 auto; display: flex; flex-direction: column"><span>Ocultar valores ao abrir</span><span style="font-size: 13px; color: #3F4945">Útil para abrir o app em público</span></span><input type="checkbox" role="switch" style="width: 44px; height: 24px; accent-color: #1B6B5A"></label>
+        </section>
+
+        <section aria-labelledby="pr" style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+          <h2 id="pr" style="margin: 0; font-size: 16px; font-weight: 600">Preferências</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px">
+            <label style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 500; color: #3F4945">Alerta do Previsto abaixo de<input value="R$ 500,00" inputmode="numeric" style="height: 48px; border-radius: 4px; border: 1px solid #6F7975; padding: 0 12px; font-size: 15px; background: #FFFFFF; box-sizing: border-box"></label>
+            <label style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 500; color: #3F4945">Horizonte padrão da projeção<select style="height: 48px; border-radius: 4px; border: 1px solid #6F7975; padding: 0 12px; font-size: 15px; background: #FFFFFF; color: #171D1B"><option>6 meses</option></select></label>
+          </div>
+          <span style="font-size: 13px; font-weight: 600; color: #3F4945; padding-top: 4px">Confirmação automática</span>
+          <label style="display: flex; align-items: center; gap: 16px; min-height: 44px; font-size: 15px"><span style="flex: 1 1 auto">Salário · dia 5</span><input type="checkbox" role="switch" checked style="width: 44px; height: 24px; accent-color: #1B6B5A"></label>
+          <label style="display: flex; align-items: center; gap: 16px; min-height: 44px; font-size: 15px"><span style="flex: 1 1 auto">Freelance · dia 20</span><input type="checkbox" role="switch" style="width: 44px; height: 24px; accent-color: #1B6B5A"></label>
+          <a href="GastosFixos.dc.html" style="font-size: 14px; font-weight: 600; min-height: 44px; display: flex; align-items: center">Ver gastos fixos (5)</a>
+        </section>
+
+        <section aria-labelledby="ac" style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+          <h2 id="ac" style="margin: 0; font-size: 16px; font-weight: 600">Acesso</h2>
+          <span style="font-size: 14px; color: #3F4945">Usuário admin. A senha é uma trava local deste dispositivo, não uma proteção contra quem tem acesso ao computador.</span>
+          <button type="button" style="align-self: flex-start; height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #6F7975; background: transparent; color: #1B6B5A; font-size: 14px; font-weight: 600; cursor: pointer">Alterar senha</button>
+        </section>
+
+        <section aria-labelledby="da" style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+          <h2 id="da" style="margin: 0; font-size: 16px; font-weight: 600">Dados</h2>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 0; background: #1B6B5A; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Exportar backup</button>
+            <button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #6F7975; background: transparent; color: #1B6B5A; font-size: 14px; font-weight: 600; cursor: pointer">Importar backup</button>
+            <button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #6F7975; background: transparent; color: #1B6B5A; font-size: 14px; font-weight: 600; cursor: pointer">Carregar dados de exemplo</button>
+          </div>
+          <div style="background: #EFF5F1; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; font-size: 14px">
+            <span style="font-weight: 600">Relatório antes de importar · meucaixa-2026-11-01.json</span>
+            <span style="color: #3F4945">Modo Mesclar · 1.284 registros · 1.279 sem mudança · 3 novos · 2 conflitos mantidos (mesma recorrência e competência)</span>
+            <span style="color: #3F4945">Integridade: todas as referências encontradas. Invariantes: ok.</span>
+            <div style="display: flex; gap: 8px; padding-top: 4px; flex-wrap: wrap">
+              <button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 0; background: #1B6B5A; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Importar</button>
+              <button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 0; background: transparent; color: #1B6B5A; font-size: 14px; font-weight: 600; cursor: pointer">Cancelar</button>
+            </div>
+          </div>
+          <div style="border-top: 1px solid #EFF5F1; padding-top: 12px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+            <span style="flex: 1 1 220px; font-size: 14px; color: #3F4945">Apagar tudo remove todos os dados deste dispositivo. Você vai precisar digitar APAGAR.</span>
+            <button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #BA1A1A; background: transparent; color: #BA1A1A; font-size: 14px; font-weight: 600; cursor: pointer">Apagar tudo</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1400}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dot = (c) => 'width: 14px; height: 14px; border-radius: 7px; flex: 0 0 auto; background: ' + c + ';';
+    const C = (nome, sub, cor, sys) => ({ nome, sub, dot: dot(cor), sys: !!sys, edit: !sys });
+    const cats = [
+      C('Moradia', 'Despesa · Aluguel, Energia, Internet', '#1B6B5A'),
+      C('Transporte', 'Despesa · Combustível, Financiamento', '#3B6FB6'),
+      C('Alimentação', 'Despesa · Mercado, Restaurantes, Delivery', '#C26A12'),
+      C('Compras', 'Despesa', '#8E5BC4'),
+      C('Saúde e bem-estar', 'Despesa · Farmácia, Academia', '#C2457A'),
+      C('Assinaturas', 'Despesa', '#6F8A1E'),
+      C('Lazer', 'Despesa', '#8D6E63'),
+      C('Salário e renda', 'Receita', '#14713A'),
+      C('A classificar', 'Padrão quando nenhuma é escolhida', '#8A9490', true),
+      C('Juros e encargos', 'Rotativo, juros de empréstimo', '#5C6B7A', true),
+      C('Tarifas', 'Anuidade, tarifas bancárias', '#5C6B7A', true),
+      C('Ajuste de saldo', 'Só aparece no extrato', '#5C6B7A', true)
+    ];
+    return { cats };
+  }
+}
+</script>
+</body>
+</html>

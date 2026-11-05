@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Celular · Painel</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;display=swap">
+<style>
+body{margin:0}
+button{font:inherit}
+:focus-visible{outline:3px solid #1B6B5A;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; font-family: 'Roboto Flex', Roboto, system-ui, sans-serif; color: #171D1B; background: #F5FBF7; display: flex; flex-direction: column; font-variant-numeric: tabular-nums">
+  <header style="display: flex; align-items: center; gap: 4px; padding: 8px 8px 8px 16px; height: 64px; box-sizing: border-box; flex: 0 0 auto">
+    <h1 style="margin: 0; font-size: 22px; font-weight: 500; flex: 1 1 auto">Painel</h1>
+    <button type="button" aria-label="Buscar" style="width: 48px; height: 48px; border-radius: 24px; border: 0; background: transparent; color: #3F4945; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4"></path></svg></button>
+    <button type="button" aria-label="Ocultar valores" style="width: 48px; height: 48px; border-radius: 24px; border: 0; background: transparent; color: #3F4945; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg></button>
+  </header>
+
+  <section aria-label="Barra de Totais" style="flex: 0 0 auto; background: #FFFFFF; border-bottom: 1px solid #DEE4E0; padding: 8px 16px 6px; display: flex; flex-direction: column; gap: 4px">
+    <div style="display: flex; gap: 12px">
+      <a href="ContaExtrato.dc.html" style="flex: 1 1 0; display: flex; flex-direction: column; text-decoration: none; color: #171D1B; min-height: 48px; justify-content: center"><span style="font-size: 12px; color: #3F4945">Saldo em contas</span><span style="font-size: 20px; font-weight: 500">R$ 11.255,51</span></a>
+      <a href="PainelProjecoes.dc.html" style="flex: 1 1 0; display: flex; flex-direction: column; text-decoration: none; color: #171D1B; min-height: 48px; justify-content: center"><span style="font-size: 12px; color: #3F4945">Previsto até o fim do mês</span><span style="font-size: 20px; font-weight: 500">R$ 12.297,62</span></a>
+    </div>
+    <sc-if value="{{temp}}" hint-placeholder-val="{{false}}">
+      <a href="CartaoFatura.dc.html" role="status" style="display: flex; align-items: center; gap: 8px; min-height: 40px; text-decoration: none; color: #171D1B; background: #EFF5F1; border-radius: 8px; padding: 0 10px"><span style="font-size: 12px; color: #3F4945; flex: 1 1 auto">A pagar nos cartões</span><span style="font-size: 16px; font-weight: 500">R$ 4.455,10</span><span style="font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 8px; background: #FFDAD6; color: #8C1D18">+R$ 79,23</span></a>
+    </sc-if>
+    <sc-if value="{{open}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; border-top: 1px solid #EFF5F1">
+        <a href="CartaoFatura.dc.html" style="display: flex; justify-content: space-between; align-items: center; min-height: 44px; text-decoration: none; color: #171D1B; font-size: 14px"><span style="color: #3F4945">A pagar nos cartões</span><span style="font-size: 16px; font-weight: 500">R$ 4.375,87</span></a>
+        <a href="Main.dc.html" style="display: flex; justify-content: space-between; align-items: center; min-height: 44px; text-decoration: none; color: #171D1B; font-size: 14px"><span style="color: #3F4945">Resultado do mês</span><span style="font-size: 16px; font-weight: 500; color: #B3261E">−R$ 4.337,36</span></a>
+        <a href="PainelSaldos.dc.html" style="display: flex; justify-content: space-between; align-items: center; min-height: 44px; text-decoration: none; color: #171D1B; font-size: 14px"><span style="color: #3F4945">Patrimônio líquido</span><span style="font-size: 16px; font-weight: 500; color: #B3261E">−R$ 16.854,03</span></a>
+      </div>
+    </sc-if>
+    <button type="button" aria-expanded="{{openAttr}}" onClick="{{toggle}}" style="align-self: center; height: 32px; padding: 0 12px; border: 0; background: transparent; color: #1B6B5A; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 4px">{{toggleLabel}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="{{chev}}"></path></svg></button>
+  </section>
+
+  <nav aria-label="Abas do Painel" style="flex: 0 0 auto; display: flex; overflow-x: auto; border-bottom: 1px solid #DEE4E0; padding: 0 4px">
+    <a href="MobilePainel.dc.html" aria-current="page" style="height: 48px; padding: 0 16px; display: flex; align-items: center; text-decoration: none; color: #1B6B5A; font-weight: 600; font-size: 14px; border-bottom: 3px solid #1B6B5A; box-sizing: border-box; white-space: nowrap">Visão geral</a>
+    <a href="PainelSaldos.dc.html" style="height: 48px; padding: 0 16px; display: flex; align-items: center; text-decoration: none; color: #3F4945; font-weight: 500; font-size: 14px; white-space: nowrap">Saldos</a>
+    <a href="PainelCartoes.dc.html" style="height: 48px; padding: 0 16px; display: flex; align-items: center; text-decoration: none; color: #3F4945; font-weight: 500; font-size: 14px; white-space: nowrap">Cartões</a>
+    <a href="PainelProjecoes.dc.html" style="height: 48px; padding: 0 16px; display: flex; align-items: center; text-decoration: none; color: #3F4945; font-weight: 500; font-size: 14px; white-space: nowrap">Projeções</a>
+  </nav>
+
+  <div style="flex: 1 1 auto; overflow: auto; padding: 12px 16px 96px; display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; gap: 8px; overflow-x: auto; flex: 0 0 auto">
+      <button type="button" style="flex: 0 0 auto; height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px">Este mês</button>
+      <button type="button" aria-pressed="true" style="flex: 0 0 auto; height: 36px; padding: 0 12px; border-radius: 8px; border: 0; background: #CDE8DF; color: #072019; font-size: 14px; font-weight: 600">✓ Últimos 3 meses</button>
+      <button type="button" style="flex: 0 0 auto; height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px">Mês passado</button>
+      <button type="button" style="flex: 0 0 auto; height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px">Este ano</button>
+    </div>
+    <section aria-label="Pendências" style="flex: 0 0 auto; background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; padding: 12px 16px; display: flex; flex-direction: column">
+      <span style="font-size: 14px; font-weight: 600; padding-bottom: 4px">Pendências · 4</span>
+      <div style="display: flex; align-items: center; gap: 10px; min-height: 56px; border-top: 1px solid #EFF5F1">
+        <span style="flex: 1 1 auto; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 500">Fatura Cartão B</span><span style="font-size: 12px; color: #5C3B00">Vence amanhã · R$ 1.152,30</span></span>
+        <a href="CartaoFatura.dc.html" style="height: 40px; padding: 0 14px; border-radius: 20px; background: #1B6B5A; color: #FFFFFF; font-size: 13px; font-weight: 600; display: flex; align-items: center; text-decoration: none">Pagar fatura</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; min-height: 56px; border-top: 1px solid #EFF5F1">
+        <span style="flex: 1 1 auto; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 500">Academia</span><span style="font-size: 12px; color: #5C3B00">Vence amanhã · R$ 99,00</span></span>
+        <a href="GastosFixos.dc.html" style="height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #6F7975; color: #1B6B5A; font-size: 13px; font-weight: 600; display: flex; align-items: center; text-decoration: none">Pagar</a>
+      </div>
+      <a href="Main.dc.html" style="min-height: 44px; display: flex; align-items: center; font-size: 13px; font-weight: 600; color: #1B6B5A; text-decoration: none; border-top: 1px solid #EFF5F1">Ver as 4 pendências</a>
+    </section>
+    <section aria-label="Indicadores" style="flex: 0 0 auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <div style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #3F4945">Receitas</span><span style="font-size: 18px; font-weight: 500; color: #14713A">+R$ 22.700,00</span><span style="font-size: 11px; font-weight: 600; color: #072019">Novo</span></div>
+      <div style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #3F4945">Despesas</span><span style="font-size: 18px; font-weight: 500; color: #B3261E">−R$ 19.643,25</span><span style="font-size: 11px; font-weight: 600; color: #072019">Novo</span></div>
+      <div style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #3F4945">Resultado</span><span style="font-size: 18px; font-weight: 500">R$ 3.056,75</span><span style="font-size: 11px; font-weight: 600; color: #072019">Novo</span></div>
+      <div style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #3F4945">Taxa de poupança</span><span style="font-size: 18px; font-weight: 500">13,5%</span><span style="font-size: 11px; font-weight: 600; color: #3F4945">— vs. anterior</span></div>
+    </section>
+  </div>
+
+  <a href="MobileLancar.dc.html" style="position: absolute; right: 16px; bottom: 96px; height: 56px; padding: 0 20px 0 16px; border-radius: 16px; background: #A6F2DA; color: #00201A; display: flex; align-items: center; gap: 10px; text-decoration: none; font-size: 15px; font-weight: 600; box-shadow: 0 3px 8px rgba(0,0,0,0.18)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Lançar</a>
+
+  <nav aria-label="Navegação principal" style="position: absolute; left: 0; right: 0; bottom: 0; height: 80px; background: #E9EFEB; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center">
+    <sc-for list="{{nav}}" as="n" hint-placeholder-count="5">
+      <a href="{{n.href}}" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #3F4945; font-size: 12px; font-weight: 500; min-height: 56px; justify-content: center; position: relative">
+        <span style="{{n.pill}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"></path></svg></span>
+        <sc-if value="{{n.badge}}" hint-placeholder-val="{{false}}"><span style="position: absolute; top: 4px; left: 50%; margin-left: 6px; min-width: 16px; height: 16px; border-radius: 8px; background: #BA1A1A; color: #FFFFFF; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; padding: 0 4px; box-sizing: border-box">{{n.badge}}</span></sc-if>
+        <span style="{{n.lbl}}">{{n.label}}</span>
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"expandida":{"editor":"boolean","default":false},"aposCompraNoCartao":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { open: null }; }
+  renderVals() {
+    const open = this.state.open ?? (this.props.expandida ?? false);
+    const items = [
+      ['Painel', 'MobilePainel.dc.html', 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z', true, false],
+      ['Lançamentos', 'Lancamentos.dc.html', 'M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2zM9 8h6M9 12h6M9 16h4', false, '2'],
+      ['Contas', 'ContaExtrato.dc.html', 'M3 10h18M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18M12 3l9 5H3z', false, false],
+      ['Cartões', 'CartaoFatura.dc.html', 'M2 6h20v12H2zM2 10h20M6 15h4', false, false],
+      ['Mais', 'DividaDetalhe.dc.html', 'M4 6h16M4 12h16M4 18h16', false, '1']
+    ];
+    const nav = items.map((n) => ({ label: n[0], href: n[1], d: n[2], badge: n[4],
+      pill: 'width: 64px; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: center; ' + (n[3] ? 'background: #CDE8DF; color: #072019;' : 'background: transparent;'),
+      lbl: n[3] ? 'color: #171D1B; font-weight: 600;' : '' }));
+    return {
+      nav, open, openAttr: open ? 'true' : 'false',
+      temp: (this.props.aposCompraNoCartao ?? false) && !open,
+      toggleLabel: open ? 'Menos' : 'Mais 3 indicadores',
+      chev: open ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6',
+      toggle: () => this.setState({ open: !open })
+    };
+  }
+}
+</script>
+</body>
+</html>

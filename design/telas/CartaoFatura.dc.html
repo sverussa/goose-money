@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Cartão A · Fatura</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;display=swap">
+<style>
+body{margin:0;background:#F5FBF7}
+button,select,input{font:inherit}
+:focus-visible{outline:3px solid #1B6B5A;outline-offset:2px}
+a{color:#1B6B5A}a:hover{color:#0F4F42}
+</style>
+</helmet>
+<div style="font-family: 'Roboto Flex', Roboto, system-ui, sans-serif; color: #171D1B; background: #F5FBF7; min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch; font-variant-numeric: tabular-nums">
+  <div style="flex: 1 1 260px; min-width: 0; background: #EFF5F1">
+    <dc-import name="Nav" active="cartoes" hint-size="100%,920px"></dc-import>
+  </div>
+  <main style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column">
+    <header style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; min-height: 64px; box-sizing: border-box; flex-wrap: wrap">
+      <a href="PainelCartoes.dc.html" aria-label="Voltar para Cartões" style="width: 44px; height: 44px; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #3F4945"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg></a>
+      <h1 style="margin: 0; font-size: 22px; font-weight: 500; flex: 1 1 auto">Cartão A</h1>
+      <a href="NovaCompra.dc.html" style="height: 40px; padding: 0 16px; border-radius: 20px; background: #1B6B5A; color: #FFFFFF; font-size: 14px; font-weight: 600; display: flex; align-items: center; text-decoration: none">Nova compra</a>
+      <button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #6F7975; background: transparent; color: #1B6B5A; font-size: 14px; font-weight: 600; cursor: pointer">Lançar encargo ou estorno</button>
+      <button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #6F7975; background: transparent; color: #1B6B5A; font-size: 14px; font-weight: 600; cursor: pointer">Configurar ciclo</button>
+    </header>
+    <div style="position: sticky; top: 0; z-index: 5; display: flex; flex-direction: column">
+      <dc-import name="TotalsBar" hint-size="100%,72px"></dc-import>
+      <nav aria-label="Faturas" style="display: flex; padding: 0 16px; border-bottom: 1px solid #DEE4E0; background: #F5FBF7; overflow-x: auto">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="6">
+          <button type="button" aria-pressed="{{t.pressed}}" onClick="{{t.pick}}" style="{{t.style}}"><span>{{t.mes}}</span><span style="font-size: 11px; font-weight: 500">{{t.status}}</span></button>
+        </sc-for>
+      </nav>
+      <div style="background: #F5FBF7; border-bottom: 1px solid #DEE4E0; padding: 14px 24px; display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center">
+        <span style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #3F4945">Saldo da fatura</span><span style="font-size: 24px; font-weight: 600">{{f.saldo}}</span></span>
+        <span style="{{f.chipStyle}}">{{f.status}}</span>
+        <span style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #3F4945">Fechamento</span><span style="font-size: 15px; font-weight: 500">{{f.fecha}}</span></span>
+        <span style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #3F4945">Vencimento</span><span style="font-size: 15px; font-weight: 500">{{f.vence}}</span></span>
+        <span style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #3F4945">Pagamentos feitos</span><span style="font-size: 15px; font-weight: 500">R$ 0,00</span></span>
+        <span style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #3F4945">Limite disponível</span><span style="font-size: 15px; font-weight: 500">R$ 1.696,57 de R$ 8.000,00</span></span>
+        <span style="flex: 1 1 auto"></span>
+        <button type="button" style="height: 44px; padding: 0 20px; border-radius: 22px; border: 0; background: #1B6B5A; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Pagar fatura</button>
+      </div>
+    </div>
+
+    <div style="padding: 16px 24px 120px; display: flex; flex-wrap: wrap; gap: 16px; box-sizing: border-box; width: 100%; max-width: 1280px; align-items: flex-start">
+      <section style="flex: 999 1 560px; min-width: 0; background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; overflow: hidden">
+        <ul style="list-style: none; margin: 0; padding: 0">
+          <sc-for list="{{f.itens}}" as="i" hint-placeholder-count="5">
+            <li style="border-top: 1px solid #EFF5F1">
+              <div style="display: flex; align-items: center; gap: 16px; padding: 10px 12px 10px 20px; min-height: 64px; box-sizing: border-box; flex-wrap: wrap">
+                <span style="width: 44px; font-size: 13px; color: #3F4945">{{i.d}}</span>
+                <span style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 500">{{i.desc}}</span><span style="font-size: 13px; color: #3F4945">{{i.sub}}</span></span>
+                <sc-if value="{{i.chip}}" hint-placeholder-val="{{false}}"><span style="{{i.chipStyle}}">{{i.chip}}</span></sc-if>
+                <span style="{{i.vst}}">{{i.v}}</span>
+                <button type="button" aria-label="Operações da compra" aria-expanded="{{i.open}}" onClick="{{i.toggle}}" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: transparent; color: #3F4945; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5h.01M12 12h.01M12 19h.01"></path></svg></button>
+              </div>
+              <sc-if value="{{i.showMenu}}" hint-placeholder-val="{{false}}">
+                <div role="menu" aria-label="Operações da compra Notebook" style="margin: 0 12px 12px auto; width: 100%; max-width: 420px; background: #E9EFEB; border-radius: 12px; padding: 6px 0; display: flex; flex-direction: column; box-sizing: border-box">
+                  <sc-for list="{{ops}}" as="o" hint-placeholder-count="6">
+                    <button type="button" role="menuitem" aria-disabled="{{o.dis}}" title="{{o.motivo}}" style="{{o.style}}"><span>{{o.nome}}</span><span style="font-size: 12px; font-weight: 400">{{o.motivo}}</span></button>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </li>
+          </sc-for>
+        </ul>
+        <sc-if value="{{f.previsto}}" hint-placeholder-val="{{true}}">
+          <div style="border-top: 1px dashed #BFC9C4; background: #F5FBF7; padding: 12px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B5778" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2"></path></svg>
+            <span style="flex: 1 1 240px; display: flex; flex-direction: column; color: #3F4945"><span style="font-size: 15px; font-weight: 500">Streaming · gasto fixo</span><span style="font-size: 13px">Dia 12/11 · entra nesta fatura quando confirmado; não soma no saldo</span></span>
+            <span style="font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 8px; background: #F2DAFF; color: #25132F">Previsto</span>
+            <span style="font-size: 15px; color: #3F4945; min-width: 110px; text-align: right">R$ 55,90</span>
+          </div>
+        </sc-if>
+      </section>
+
+      <aside style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+        <section aria-labelledby="pg" style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+          <h2 id="pg" style="margin: 0; font-size: 16px; font-weight: 600">Pagar fatura</h2>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 500; color: #3F4945">Conta<select style="height: 48px; border-radius: 4px; border: 1px solid #6F7975; padding: 0 12px; font-size: 15px; background: #FFFFFF; color: #171D1B"><option>Conta corrente · padrão do cartão</option></select></label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 500; color: #3F4945">Fatura de destino<select style="height: 48px; border-radius: 4px; border: 1px solid #6F7975; padding: 0 12px; font-size: 15px; background: #FFFFFF; color: #171D1B"><option>nov/2026 · fechada · R$ 1.684,20</option><option>dez/2026 · aberta (antecipar)</option></select></label>
+          <div role="radiogroup" aria-label="Valor" style="display: flex; gap: 8px; flex-wrap: wrap">
+            <button type="button" role="radio" aria-checked="true" style="height: 36px; padding: 0 14px; border-radius: 8px; border: 0; background: #CDE8DF; color: #072019; font-size: 14px; font-weight: 600">✓ Saldo total</button>
+            <button type="button" role="radio" aria-checked="false" style="height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px; font-weight: 500">Outro valor</button>
+          </div>
+          <div role="note" style="background: #E9EFEB; border-radius: 12px; padding: 12px 14px; font-size: 14px; display: flex; flex-direction: column; gap: 4px">
+            <span>Sai R$ 1.684,20 da Conta corrente. A fatura de novembro fica <strong>Paga</strong>.</span>
+            <span style="color: #3F4945; font-size: 13px">Pagamento de fatura não é despesa: o Resultado não muda.</span>
+          </div>
+          <button type="button" style="height: 44px; border-radius: 22px; border: 0; background: #1B6B5A; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Registrar pagamento</button>
+        </section>
+        <section style="background: #E9EFEB; border-radius: 16px; padding: 16px 20px; font-size: 13px; color: #3F4945; display: flex; flex-direction: column; gap: 6px">
+          <span style="font-weight: 600; color: #171D1B">Ciclo atual</span>
+          <span>Fecha dia 3, vence dia 10. Compra feita no dia do fechamento vai para a fatura seguinte.</span>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { fat: 'dez', menu: true }; }
+  renderVals() {
+    const fat = this.state.fat;
+    const tabsData = [['out', 'out/26', 'Paga'], ['nov', 'nov/26', 'Fechada'], ['dez', 'dez/26', 'Aberta'], ['jan', 'jan/27', 'Futura'], ['fev', 'fev/27', 'Futura'], ['mar', 'mar/27', 'Futura']];
+    const tabs = tabsData.map((t) => {
+      const on = t[0] === fat;
+      return { mes: t[1], status: t[2], pressed: on ? 'true' : 'false', pick: () => this.setState({ fat: t[0] }),
+        style: 'min-width: 96px; height: 56px; padding: 0 16px; border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 14px; cursor: pointer; ' + (on ? 'color: #1B6B5A; font-weight: 600; border-bottom: 3px solid #1B6B5A;' : 'color: #3F4945; font-weight: 500; border-bottom: 3px solid transparent;') };
+    });
+    const v = 'font-size: 15px; font-weight: 600; min-width: 110px; text-align: right; color: #171D1B;';
+    const vNeg = 'font-size: 15px; font-weight: 600; min-width: 110px; text-align: right; color: #14713A;';
+    const cInfo = 'font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 8px; background: #E9EFEB; color: #3F4945;';
+    const menuOpen = this.state.menu;
+    const I = (o) => ({ chip: false, chipStyle: cInfo, vst: v, showMenu: false, open: 'false', toggle: () => {}, ...o });
+    const notebook = (n) => I({ d: '12/09', desc: 'Notebook · ' + n + '/10', sub: 'Compras · R$ 4.200,00 em 10x', v: 'R$ 420,00', showMenu: menuOpen, open: menuOpen ? 'true' : 'false', toggle: () => this.setState({ menu: !menuOpen }) });
+    const F = {
+      dez: { saldo: 'R$ 1.012,57', status: 'Aberta', fecha: '03/12/2026', vence: '10/12/2026', previsto: true, itens: [
+        I({ d: '04/11', desc: 'Fone · 1/3', sub: 'Compras · R$ 1.000,00 em 3x', v: 'R$ 333,34' }),
+        I({ d: '04/11', desc: 'iFood', sub: 'Alimentação · à vista', v: 'R$ 79,23' }),
+        I({ d: '03/11', desc: 'Posto Shell', sub: 'Transporte · à vista', chip: 'Comprada no dia do fechamento', v: 'R$ 180,00' }),
+        notebook(3)
+      ] },
+      nov: { saldo: 'R$ 1.684,20', status: 'Fechada', fecha: '03/11/2026', vence: '10/11/2026', previsto: false, itens: [
+        notebook(2),
+        I({ d: '08/10', desc: 'Mercado Carrefour', sub: 'Alimentação · à vista', v: 'R$ 386,20' }),
+        I({ d: '14/10', desc: 'Posto Shell', sub: 'Transporte · à vista', v: 'R$ 210,00' }),
+        I({ d: '19/10', desc: 'Restaurante Mangai', sub: 'Alimentação · à vista', v: 'R$ 148,50' }),
+        I({ d: '22/10', desc: 'Estorno · Loja Esportes', sub: 'Vinculado à compra de 02/10', chip: 'Estorno', v: '−R$ 89,90', vst: vNeg }),
+        I({ d: '25/10', desc: 'Farmácia', sub: 'Saúde e bem-estar · à vista', v: 'R$ 64,90' }),
+        I({ d: '—', desc: '+ 11 compras à vista', sub: 'Toque para expandir', v: 'R$ 544,50' })
+      ] }
+    };
+    const fut = fat === 'mar' ? 'R$ 420,00' : 'R$ 753,33';
+    const f = F[fat] || { saldo: fat === 'out' ? 'R$ 0,00' : fut, status: fat === 'out' ? 'Paga' : 'Futura', fecha: '—', vence: '—', previsto: false, itens: [I({ d: '—', desc: fat === 'out' ? 'Fatura paga em 10/10 com R$ 1.540,80' : 'Parcelas já lançadas', sub: fat === 'out' ? 'Inclui crédito de pagamento de −R$ 50,00 da fatura anterior' : (fat === 'mar' ? 'Notebook' : 'Notebook e Fone'), v: fat === 'out' ? 'R$ 1.540,80' : fut })] };
+    const chips = { Aberta: 'background: #CDE8DF; color: #072019;', Fechada: 'background: #E3EAE6; color: #3F4945;', Paga: 'background: #C8F0D2; color: #0B3D1F;', Futura: 'background: #E9EFEB; color: #3F4945;' };
+    f.chipStyle = 'font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 8px; ' + chips[f.status];
+    const op = (nome, dis, motivo) => ({ nome, motivo: motivo || '', dis: dis ? 'true' : 'false',
+      style: 'min-height: 48px; padding: 6px 16px; border: 0; background: transparent; text-align: left; display: flex; flex-direction: column; justify-content: center; font-size: 14px; font-weight: 500; ' + (dis ? 'color: #6F7975; cursor: not-allowed;' : 'color: #171D1B; cursor: pointer;') });
+    const ops = [
+      op('Editar descrição, categoria ou observação', false, 'Vale para todas as parcelas'),
+      op('Editar valor, parcelas, data ou cartão', true, 'Indisponível: a parcela 2/10 está numa fatura fechada'),
+      op('Lançar ajuste', false, 'Cria encargo ou estorno na fatura aberta'),
+      op('Antecipar parcelas', false, '7 parcelas em faturas futuras'),
+      op('Cancelar compra', false, 'Pergunta se o banco estornou as já faturadas'),
+      op('Excluir compra', true, 'Indisponível: há parcela em fatura fechada')
+    ];
+    return { tabs, f, ops };
+  }
+}
+</script>
+</body>
+</html>

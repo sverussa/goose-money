@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Celular · Lançar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;display=swap">
+<style>
+body{margin:0}
+button,input,select{font:inherit}
+:focus-visible{outline:3px solid #1B6B5A;outline-offset:2px}
+</style>
+</helmet>
+<div role="dialog" aria-modal="true" aria-labelledby="mlt" style="width: 390px; height: 844px; overflow: hidden; font-family: 'Roboto Flex', Roboto, system-ui, sans-serif; color: #171D1B; background: #F5FBF7; display: flex; flex-direction: column; font-variant-numeric: tabular-nums">
+  <header style="display: flex; align-items: center; gap: 4px; padding: 8px 8px; height: 64px; box-sizing: border-box">
+    <a href="MobilePainel.dc.html" aria-label="Fechar" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: #3F4945"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+    <h1 id="mlt" style="margin: 0; font-size: 20px; font-weight: 500; flex: 1 1 auto">Novo lançamento</h1>
+    <a href="MobilePainel.dc.html" style="height: 40px; padding: 0 16px; border-radius: 20px; background: #1B6B5A; color: #FFFFFF; font-size: 14px; font-weight: 600; display: flex; align-items: center; text-decoration: none">Salvar</a>
+  </header>
+
+  <div style="flex: 1 1 auto; overflow: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 18px">
+    <div role="radiogroup" aria-label="Tipo de lançamento" style="display: flex; gap: 8px; overflow-x: auto; flex: 0 0 auto; margin: 0 -16px; padding: 0 16px">
+      <button type="button" role="radio" aria-checked="true" style="flex: 0 0 auto; height: 36px; padding: 0 12px; border-radius: 8px; border: 0; background: #CDE8DF; color: #072019; font-size: 14px; font-weight: 600">✓ Despesa</button>
+      <button type="button" role="radio" aria-checked="false" style="flex: 0 0 auto; height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px">Receita</button>
+      <button type="button" role="radio" aria-checked="false" style="flex: 0 0 auto; height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px">Compra no cartão</button>
+      <button type="button" role="radio" aria-checked="false" style="flex: 0 0 auto; height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px">Transferência</button>
+      <button type="button" role="radio" aria-checked="false" style="flex: 0 0 auto; height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px">Pagamento de fatura</button>
+    </div>
+
+    <label style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 0; font-size: 13px; font-weight: 500; color: #1B6B5A">Valor
+      <input inputmode="numeric" value="R$ 15,90" autofocus style="width: 100%; height: 72px; border: 0; border-bottom: 2px solid #1B6B5A; background: transparent; text-align: center; font-size: 44px; font-weight: 500; color: #B3261E; box-sizing: border-box">
+    </label>
+
+    <label style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 500; color: #3F4945">Descrição (opcional)
+      <input placeholder="Ex.: Padaria" style="height: 52px; border-radius: 4px; border: 1px solid #6F7975; padding: 0 14px; font-size: 16px; background: #FFFFFF; box-sizing: border-box">
+    </label>
+
+    <fieldset style="border: 0; margin: 0; padding: 0">
+      <legend style="font-size: 13px; font-weight: 500; color: #3F4945; padding-bottom: 8px">Categoria</legend>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+        <button type="button" aria-pressed="true" style="min-height: 48px; border-radius: 8px; border: 2px solid #1B6B5A; background: #CDE8DF; color: #072019; font-size: 13px; font-weight: 600">A classificar</button>
+        <button type="button" style="min-height: 48px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; font-size: 13px">Alimentação</button>
+        <button type="button" style="min-height: 48px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; font-size: 13px">Transporte</button>
+        <button type="button" style="min-height: 48px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; font-size: 13px">Moradia</button>
+        <button type="button" style="min-height: 48px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; font-size: 13px">Compras</button>
+        <button type="button" style="min-height: 48px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; font-size: 13px">Saúde</button>
+        <button type="button" style="min-height: 48px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; font-size: 13px">Lazer</button>
+        <button type="button" style="min-height: 48px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; font-size: 13px">Assinaturas</button>
+        <button type="button" style="min-height: 48px; border-radius: 8px; border: 1px dashed #6F7975; background: transparent; color: #1B6B5A; font-size: 13px; font-weight: 600">Ver todas</button>
+      </div>
+    </fieldset>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 13px; font-weight: 500; color: #3F4945">Data</span>
+      <div style="display: flex; gap: 8px">
+        <button type="button" aria-pressed="true" style="height: 40px; padding: 0 14px; border-radius: 8px; border: 0; background: #CDE8DF; color: #072019; font-size: 14px; font-weight: 600">✓ Hoje</button>
+        <button type="button" style="height: 40px; padding: 0 14px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px">Ontem</button>
+        <button type="button" aria-label="Escolher data" style="height: 40px; padding: 0 12px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px">Outra data</button>
+      </div>
+    </div>
+
+    <label style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 500; color: #3F4945">Conta
+      <select style="height: 52px; border-radius: 4px; border: 1px solid #6F7975; padding: 0 12px; font-size: 16px; background: #FFFFFF; color: #171D1B"><option>Conta corrente · última usada</option></select>
+    </label>
+
+    <button type="button" style="align-self: flex-start; height: 44px; padding: 0; border: 0; background: transparent; color: #1B6B5A; font-size: 14px; font-weight: 600">Mais opções</button>
+  </div>
+
+  <div style="padding: 12px 16px 24px; border-top: 1px solid #DEE4E0; background: #F5FBF7">
+    <button type="button" style="width: 100%; height: 48px; border-radius: 24px; border: 1px solid #6F7975; background: transparent; color: #1B6B5A; font-size: 15px; font-weight: 600">Salvar e lançar outro</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

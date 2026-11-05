@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Barra de Totais</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<section aria-label="Barra de Totais" style="font-family: 'Roboto Flex', Roboto, system-ui, sans-serif; color: #171D1B; background: #FFFFFF; border-bottom: 1px solid #DEE4E0; box-sizing: border-box; width: 100%; padding: 10px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-variant-numeric: tabular-nums">
+  <div style="flex: 1 1 640px; min-width: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(176px, 100%), 1fr)); gap: 4px">
+    <sc-for list="{{items}}" as="item" hint-placeholder-count="5">
+      <a href="{{item.href}}" title="{{item.tip}}" style="display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; border-radius: 12px; text-decoration: none; color: #171D1B; min-height: 48px; justify-content: center">
+        <span style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: #3F4945; letter-spacing: 0.2px">
+          {{item.label}}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18zM12 11v6M12 7h.01"></path></svg>
+        </span>
+        <span style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+          <span style="{{item.valueStyle}}">{{item.value}}</span>
+          <sc-if value="{{item.change}}" hint-placeholder-val="{{false}}">
+            <span style="font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 8px; background: #FFDAD6; color: #8C1D18">{{item.change}}</span>
+          </sc-if>
+        </span>
+      </a>
+    </sc-for>
+  </div>
+  <button type="button" aria-label="Ocultar valores" aria-pressed="{{hiddenPressed}}" style="width: 48px; height: 48px; border-radius: 24px; border: 0; background: #E9EFEB; color: #3F4945; display: flex; align-items: center; justify-content: center; cursor: pointer; flex: 0 0 auto" onClick="{{toggle}}">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{eye}}"></path></svg>
+  </button>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"privacidade":{"editor":"boolean","default":false},"mostrarVariacao":{"editor":"boolean","default":false},"$preview":{"width":1160,"height":120}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { hide: null }; }
+  renderVals() {
+    const hide = this.state.hide ?? (this.props.privacidade ?? false);
+    const showChange = this.props.mostrarVariacao ?? false;
+    const big = 'font-size: 22px; line-height: 28px; font-weight: 500; letter-spacing: 0; ';
+    const neg = big + 'color: #B3261E;';
+    const pos = big + 'color: #171D1B;';
+    const raw = [
+      { label: 'Saldo em contas', value: 'R$ 11.255,51', href: 'ContaExtrato.dc.html', tip: 'Soma do saldo de hoje das contas incluídas no total.', valueStyle: pos, change: showChange ? '−R$ 89,90' : false },
+      { label: 'Previsto até o fim do mês', value: 'R$ 12.297,62', href: 'PainelProjecoes.dc.html', tip: 'Saldo em contas + o que ainda vai entrar − o que ainda vai sair até 30/11.', valueStyle: pos, change: false },
+      { label: 'A pagar nos cartões', value: 'R$ 4.375,87', href: 'CartaoFatura.dc.html', tip: 'Faturas vencidas, fechadas e abertas de todos os cartões.', valueStyle: pos, change: false },
+      { label: 'Resultado do mês', value: '−R$ 4.337,36', href: 'Main.dc.html', tip: 'Receitas − despesas reconhecidas em novembro, por competência.', valueStyle: neg, change: false },
+      { label: 'Patrimônio líquido', value: '−R$ 16.854,03', href: 'PainelSaldos.dc.html', tip: 'Saldo em todas as contas − obrigações de cartão − saldo devedor de dívidas.', valueStyle: neg, change: false }
+    ];
+    const items = raw.map((it) => hide ? { ...it, value: 'R$ ••••••', valueStyle: pos, change: false } : it);
+    return {
+      items,
+      hiddenPressed: hide ? 'true' : 'false',
+      eye: hide ? 'M3 3l18 18M10.6 6.1A10 10 0 0 1 12 6c6 0 10 6 10 6a17 17 0 0 1-3.2 3.7M6.6 6.6C3.9 8.4 2 12 2 12s4 6 10 6c1.4 0 2.7-.3 3.9-.8M9.9 9.9a3 3 0 0 0 4.2 4.2' : 'M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+      toggle: () => this.setState({ hide: !hide })
+    };
+  }
+}
+</script>
+</body>
+</html>

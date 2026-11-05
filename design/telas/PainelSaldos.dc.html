@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Painel · Saldos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;display=swap">
+<style>
+body{margin:0;background:#F5FBF7}
+button{font:inherit}
+:focus-visible{outline:3px solid #1B6B5A;outline-offset:2px}
+a{color:#1B6B5A}a:hover{color:#0F4F42}
+</style>
+</helmet>
+<div style="font-family: 'Roboto Flex', Roboto, system-ui, sans-serif; color: #171D1B; background: #F5FBF7; min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch; font-variant-numeric: tabular-nums">
+  <div style="flex: 1 1 260px; min-width: 0; background: #EFF5F1">
+    <dc-import name="Nav" active="painel" hint-size="100%,920px"></dc-import>
+  </div>
+  <main style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column">
+    <header style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; min-height: 64px; box-sizing: border-box">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 500; flex: 1 1 auto">Painel</h1>
+      <button type="button" aria-label="Buscar (Ctrl+K)" style="width: 48px; height: 48px; border-radius: 24px; border: 0; background: transparent; color: #3F4945; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4"></path></svg></button>
+      <button type="button" aria-label="Menu do usuário" style="width: 40px; height: 40px; border-radius: 20px; border: 0; background: #CDE8DF; color: #072019; font-weight: 600; cursor: pointer">A</button>
+    </header>
+    <div style="position: sticky; top: 0; z-index: 5"><dc-import name="TotalsBar" hint-size="100%,72px"></dc-import></div>
+    <nav aria-label="Abas do Painel" style="display: flex; padding: 0 24px; border-bottom: 1px solid #DEE4E0; overflow-x: auto">
+      <a href="Main.dc.html" style="height: 48px; padding: 0 20px; display: flex; align-items: center; text-decoration: none; color: #3F4945; font-weight: 500; font-size: 14px; white-space: nowrap">Visão geral</a>
+      <a href="PainelSaldos.dc.html" aria-current="page" style="height: 48px; padding: 0 20px; display: flex; align-items: center; text-decoration: none; color: #1B6B5A; font-weight: 600; font-size: 14px; border-bottom: 3px solid #1B6B5A; box-sizing: border-box; white-space: nowrap">Saldos</a>
+      <a href="PainelCartoes.dc.html" style="height: 48px; padding: 0 20px; display: flex; align-items: center; text-decoration: none; color: #3F4945; font-weight: 500; font-size: 14px; white-space: nowrap">Cartões</a>
+      <a href="PainelProjecoes.dc.html" style="height: 48px; padding: 0 20px; display: flex; align-items: center; text-decoration: none; color: #3F4945; font-weight: 500; font-size: 14px; white-space: nowrap">Projeções</a>
+    </nav>
+
+    <div style="padding: 20px 24px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+      <span style="font-size: 13px; color: #3F4945">Período dos gráficos de evolução:</span>
+      <button type="button" style="height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px; font-weight: 500">Mês passado</button>
+      <button type="button" aria-pressed="true" style="height: 36px; padding: 0 14px; border-radius: 8px; border: 0; background: #CDE8DF; color: #072019; font-size: 14px; font-weight: 500">✓ Últimos 3 meses</button>
+      <button type="button" style="height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px; font-weight: 500">Últimos 12 meses</button>
+      <button type="button" style="height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px; font-weight: 500">Personalizado</button>
+    </div>
+    <div style="padding: 20px 24px 120px; display: flex; flex-direction: column; gap: 20px; max-width: 1280px; box-sizing: border-box; width: 100%">
+
+      <section aria-labelledby="pl" style="background: #E3EAE6; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <h2 id="pl" style="margin: 0; font-size: 14px; font-weight: 500; color: #3F4945">Patrimônio líquido · hoje, 04/11/2026</h2>
+          <span style="font-size: 36px; line-height: 44px; font-weight: 500; color: #B3261E">−R$ 16.854,03</span>
+          <span style="font-size: 13px; color: #3F4945">Negativo porque o saldo devedor do financiamento é maior que o dinheiro em contas.</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: stretch; gap: 12px">
+          <a href="ContaExtrato.dc.html" style="flex: 1 1 200px; background: #FFFFFF; border-radius: 12px; padding: 16px; text-decoration: none; color: #171D1B; display: flex; flex-direction: column; gap: 4px">
+            <span style="font-size: 13px; color: #3F4945">Saldo em todas as contas</span>
+            <span style="font-size: 22px; font-weight: 500">R$ 26.755,51</span>
+            <span style="font-size: 12px; color: #3F4945">4 contas, incluindo Investimentos</span>
+          </a>
+          <span aria-hidden="true" style="font-size: 28px; color: #3F4945; display: flex; align-items: center">−</span>
+          <a href="PainelCartoes.dc.html" style="flex: 1 1 200px; background: #FFFFFF; border-radius: 12px; padding: 16px; text-decoration: none; color: #171D1B; display: flex; flex-direction: column; gap: 4px">
+            <span style="font-size: 13px; color: #3F4945">Obrigações de cartão</span>
+            <span style="font-size: 22px; font-weight: 500">R$ 9.582,53</span>
+            <span style="font-size: 12px; color: #3F4945">Inclui R$ 5.206,66 em parcelas futuras</span>
+          </a>
+          <span aria-hidden="true" style="font-size: 28px; color: #3F4945; display: flex; align-items: center">−</span>
+          <a href="DividaDetalhe.dc.html" style="flex: 1 1 200px; background: #FFFFFF; border-radius: 12px; padding: 16px; text-decoration: none; color: #171D1B; display: flex; flex-direction: column; gap: 4px">
+            <span style="font-size: 13px; color: #3F4945">Saldo devedor de dívidas</span>
+            <span style="font-size: 22px; font-weight: 500">R$ 34.027,01</span>
+            <span style="font-size: 12px; color: #3F4945">Financiamento + empréstimo pessoal</span>
+          </a>
+        </div>
+      </section>
+
+      <section aria-label="Contas" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 16px">
+        <sc-for list="{{contas}}" as="c" hint-placeholder-count="4">
+          <a href="ContaExtrato.dc.html" style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; padding: 20px; text-decoration: none; color: #171D1B; display: flex; flex-direction: column; gap: 10px">
+            <div style="display: flex; align-items: center; gap: 10px">
+              <span style="{{c.dot}}"></span>
+              <span style="font-size: 15px; font-weight: 500; flex: 1 1 auto">{{c.nome}}</span>
+              <sc-if value="{{c.fora}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 8px; background: #E9EFEB; color: #3F4945">Fora do total</span></sc-if>
+            </div>
+            <span style="font-size: 24px; font-weight: 500">{{c.saldo}}</span>
+            <svg viewBox="0 0 200 40" aria-hidden="true" style="width: 100%; height: 40px"><polyline points="{{c.spark}}" fill="none" stroke="{{c.cor}}" stroke-width="2"></polyline></svg>
+            <span style="font-size: 13px; color: #3F4945">{{c.var}}</span>
+          </a>
+        </sc-for>
+      </section>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(460px, 100%), 1fr)); gap: 16px">
+        <section style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 16px">
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <h2 style="margin: 0; font-size: 16px; font-weight: 600">Mais da metade está em Investimentos</h2>
+            <span style="font-size: 13px; color: #3F4945">Composição do saldo por conta · hoje</span>
+          </div>
+          <sc-for list="{{contas}}" as="c" hint-placeholder-count="4">
+            <a href="ContaExtrato.dc.html" style="display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: #171D1B">
+              <span style="display: flex; justify-content: space-between; font-size: 14px"><span>{{c.nome}}</span><span style="font-weight: 600">{{c.saldo}} · {{c.pct}}</span></span>
+              <span style="height: 14px; background: #EFF5F1; border-radius: 4px; display: flex"><span style="{{c.barra}}"></span></span>
+            </a>
+          </sc-for>
+        </section>
+
+        <section style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <h2 style="margin: 0; font-size: 16px; font-weight: 600">O patrimônio melhora R$ 1,3 mil por mês</h2>
+            <span style="font-size: 13px; color: #3F4945">Evolução do saldo e do patrimônio · fim de ago, set e out 2026</span>
+          </div>
+          <svg viewBox="0 0 520 240" role="img" aria-label="Saldo em todas as contas: agosto R$ 26.104,20, setembro R$ 26.391,40, outubro R$ 27.029,45. Patrimônio líquido: agosto −R$ 20.312,80, setembro −R$ 18.950,10, outubro −R$ 17.621,30." style="width: 100%; height: auto">
+            <g font-size="11" fill="#3F4945" font-family="Roboto Flex, Roboto, sans-serif">
+              <line x1="70" y1="20" x2="500" y2="20" stroke="#E3EAE6"></line><text x="62" y="24" text-anchor="end">R$ 30 mil</text>
+              <line x1="70" y1="74.5" x2="500" y2="74.5" stroke="#E3EAE6"></line><text x="62" y="78" text-anchor="end">R$ 15 mil</text>
+              <line x1="70" y1="129" x2="500" y2="129" stroke="#6F7975"></line><text x="62" y="133" text-anchor="end">R$ 0</text>
+              <line x1="70" y1="183.5" x2="500" y2="183.5" stroke="#E3EAE6"></line><text x="62" y="187" text-anchor="end">−R$ 15 mil</text>
+              <text x="110" y="232" text-anchor="middle">ago</text><text x="285" y="232" text-anchor="middle">set</text><text x="460" y="232" text-anchor="middle">out</text>
+            </g>
+            <polyline points="110,34.1 285,33.1 460,30.8" fill="none" stroke="#1B6B5A" stroke-width="3"></polyline>
+            <circle cx="110" cy="34.1" r="5" fill="#1B6B5A"></circle><circle cx="285" cy="33.1" r="5" fill="#1B6B5A"></circle><circle cx="460" cy="30.8" r="5" fill="#1B6B5A"></circle>
+            <polyline points="110,202.8 285,197.9 460,193.0" fill="none" stroke="#B3261E" stroke-width="3"></polyline>
+            <circle cx="110" cy="202.8" r="5" fill="#B3261E"></circle><circle cx="285" cy="197.9" r="5" fill="#B3261E"></circle><circle cx="460" cy="193.0" r="5" fill="#B3261E"></circle>
+          </svg>
+          <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px; color: #3F4945">
+            <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 3px; background: #1B6B5A"></span>Saldo em todas as contas</span>
+            <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 3px; background: #B3261E"></span>Patrimônio líquido</span>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div style="position: sticky; bottom: 24px; display: flex; justify-content: flex-end; padding: 0 24px; margin-top: -96px; pointer-events: none">
+      <a href="LancarDialog.dc.html" aria-keyshortcuts="N" style="pointer-events: auto; height: 56px; padding: 0 20px 0 16px; border-radius: 16px; background: #A6F2DA; color: #00201A; display: flex; align-items: center; gap: 12px; text-decoration: none; font-size: 15px; font-weight: 600; box-shadow: 0 3px 8px rgba(0,0,0,0.18)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Lançar</a>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1400}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dot = (c) => 'width: 12px; height: 12px; border-radius: 6px; background: ' + c + ';';
+    const barra = (p, c) => 'width: ' + p + '%; background: ' + c + '; border-radius: 4px;';
+    const contas = [
+      { nome: 'Conta corrente', saldo: 'R$ 3.048,61', pct: '11,4%', var: '−R$ 273,90 em novembro', cor: '#1B6B5A', fora: false, spark: '0,30 20,30 30,6 50,12 60,22 80,24 100,28 120,20 140,26 160,30 180,32 200,33' },
+      { nome: 'Poupança', saldo: 'R$ 8.120,40', pct: '30,4%', var: 'R$ 0,00 em novembro', cor: '#3B6FB6', fora: false, spark: '0,22 40,22 80,21 120,20 160,20 200,20' },
+      { nome: 'Carteira', saldo: 'R$ 86,50', pct: '0,3%', var: 'R$ 0,00 em novembro', cor: '#C26A12', fora: false, spark: '0,10 40,18 70,24 110,14 150,26 200,28' },
+      { nome: 'Investimentos', saldo: 'R$ 15.500,00', pct: '57,9%', var: '+R$ 500,00 em outubro (transferência)', cor: '#8E5BC4', fora: true, spark: '0,26 100,26 120,18 200,18' }
+    ].map((c) => ({ ...c, dot: dot(c.cor), barra: barra(c.pct.replace('%', '').replace(',', '.'), c.cor) }));
+    return { contas };
+  }
+}
+</script>
+</body>
+</html>

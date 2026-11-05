@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Login</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;display=swap">
+<style>
+body{margin:0;background:#F5FBF7}
+button,input{font:inherit}
+:focus-visible{outline:3px solid #1B6B5A;outline-offset:2px}
+a{color:#1B6B5A}a:hover{color:#0F4F42}
+</style>
+</helmet>
+<div style="font-family: 'Roboto Flex', Roboto, system-ui, sans-serif; color: #171D1B; background: #E9EFEB; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 32px 16px; box-sizing: border-box">
+  <form style="width: 100%; max-width: 400px; background: #FFFFFF; border-radius: 28px; padding: 40px 32px 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+      <div style="width: 56px; height: 56px; border-radius: 16px; background: #1B6B5A; display: flex; align-items: center; justify-content: center">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h16v13H3zM3 7l12-4v4M15 13h3"></path></svg>
+      </div>
+      <h1 style="margin: 0; font-size: 28px; font-weight: 500">Meu Caixa</h1>
+      <p style="margin: 0; font-size: 14px; color: #3F4945">Entre para ver quanto você tem, quanto deve e quanto vai sobrar.</p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <label for="usuario" style="font-size: 13px; font-weight: 500; color: #3F4945">Usuário</label>
+      <input id="usuario" autocomplete="username" value="admin" style="height: 56px; border-radius: 4px; border: 1px solid #6F7975; padding: 0 16px; font-size: 16px; color: #171D1B; box-sizing: border-box">
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <label for="senha" style="font-size: 13px; font-weight: 500; color: #BA1A1A">Senha</label>
+      <div style="position: relative; display: flex">
+        <input id="senha" type="{{pwType}}" autocomplete="current-password" value="adm" aria-invalid="true" aria-describedby="erro" style="flex: 1 1 auto; height: 56px; border-radius: 4px; border: 2px solid #BA1A1A; padding: 0 56px 0 15px; font-size: 16px; color: #171D1B; box-sizing: border-box">
+        <button type="button" aria-label="{{pwLabel}}" onClick="{{togglePw}}" style="position: absolute; right: 4px; top: 4px; width: 48px; height: 48px; border-radius: 24px; border: 0; background: transparent; color: #3F4945; display: flex; align-items: center; justify-content: center; cursor: pointer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg>
+        </button>
+      </div>
+      <span id="erro" role="alert" style="font-size: 13px; color: #BA1A1A">Usuário ou senha inválidos</span>
+    </div>
+
+    <label style="display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 14px; cursor: pointer">
+      <input type="checkbox" style="width: 20px; height: 20px; accent-color: #1B6B5A">
+      Manter conectado neste dispositivo
+    </label>
+
+    <a href="Main.dc.html" style="height: 48px; border-radius: 24px; background: #1B6B5A; color: #FFFFFF; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none">Entrar</a>
+
+    <p style="margin: 0; font-size: 12px; color: #3F4945; text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 10h12v11H6zM8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+      Seus dados ficam só neste dispositivo.
+    </p>
+  </form>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { show: false }; }
+  renderVals() {
+    const show = this.state.show;
+    return {
+      pwType: show ? 'text' : 'password',
+      pwLabel: show ? 'Ocultar senha' : 'Mostrar senha',
+      togglePw: () => this.setState({ show: !show })
+    };
+  }
+}
+</script>
+</body>
+</html>

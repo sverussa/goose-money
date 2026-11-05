@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Nova compra parcelada</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;display=swap">
+<style>
+body{margin:0;background:#5E6562}
+button,input,select{font:inherit}
+:focus-visible{outline:3px solid #1B6B5A;outline-offset:2px}
+a{color:#1B6B5A}a:hover{color:#0F4F42}
+</style>
+</helmet>
+<div style="font-family: 'Roboto Flex', Roboto, system-ui, sans-serif; color: #171D1B; background: #5E6562; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 32px 16px; box-sizing: border-box; font-variant-numeric: tabular-nums">
+  <div role="dialog" aria-modal="true" aria-labelledby="nct" style="width: 100%; max-width: 920px; background: #F5FBF7; border-radius: 28px; padding: 24px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px">
+    <div style="display: flex; align-items: center; gap: 8px">
+      <div style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px">
+        <h2 id="nct" style="margin: 0; font-size: 22px; font-weight: 500">Nova compra · Cartão A</h2>
+        <span style="font-size: 13px; color: #3F4945">Fecha dia 3 · vence dia 10 · compras de hoje caem na fatura de dez/2026</span>
+      </div>
+      <a href="CartaoFatura.dc.html" aria-label="Fechar (Esc)" style="width: 44px; height: 44px; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #3F4945"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px">
+      <div style="flex: 1 1 380px; display: flex; flex-direction: column; gap: 16px; min-width: 0">
+        <div role="group" aria-label="Informar" style="display: flex; border: 1px solid #6F7975; border-radius: 20px; overflow: hidden; align-self: flex-start">
+          <button type="button" aria-pressed="true" style="height: 40px; padding: 0 16px; border: 0; border-right: 1px solid #6F7975; background: #CDE8DF; color: #072019; font-size: 14px; font-weight: 600">✓ Valor total</button>
+          <button type="button" style="height: 40px; padding: 0 16px; border: 0; background: #FFFFFF; color: #171D1B; font-size: 14px; font-weight: 500">Valor da parcela</button>
+        </div>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; color: #1B6B5A">Valor total
+          <input inputmode="numeric" value="R$ 1.200,00" style="height: 64px; border-radius: 4px; border: 2px solid #1B6B5A; padding: 0 16px; font-size: 30px; font-weight: 500; color: #B3261E; background: #FFFFFF; box-sizing: border-box">
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; color: #3F4945">Descrição
+          <input value="Bicicleta" style="height: 52px; border-radius: 4px; border: 1px solid #6F7975; padding: 0 16px; font-size: 16px; background: #FFFFFF; box-sizing: border-box">
+        </label>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap">
+          <label style="flex: 1 1 160px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; color: #3F4945">Categoria
+            <select style="height: 52px; border-radius: 4px; border: 1px solid #6F7975; padding: 0 12px; font-size: 15px; background: #FFFFFF; color: #171D1B"><option>Lazer</option></select>
+          </label>
+          <label style="flex: 1 1 160px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; color: #3F4945">Data da compra
+            <input value="04/11/2026" style="height: 52px; border-radius: 4px; border: 1px solid #6F7975; padding: 0 16px; font-size: 15px; background: #FFFFFF; box-sizing: border-box">
+          </label>
+        </div>
+        <label style="display: flex; align-items: center; gap: 16px; min-height: 56px; padding: 0 16px; border-radius: 12px; background: #E9EFEB; font-size: 15px; font-weight: 500; cursor: pointer">
+          <span style="flex: 1 1 auto">Parcelado</span>
+          <input type="checkbox" role="switch" checked style="width: 44px; height: 24px; accent-color: #1B6B5A">
+        </label>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 13px; font-weight: 500; color: #3F4945">Número de parcelas</span>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap">
+            <button type="button" style="width: 52px; height: 44px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; font-size: 15px">2</button>
+            <button type="button" style="width: 52px; height: 44px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; font-size: 15px">3</button>
+            <button type="button" style="width: 52px; height: 44px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; font-size: 15px">6</button>
+            <button type="button" style="width: 52px; height: 44px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; font-size: 15px">10</button>
+            <button type="button" aria-pressed="true" style="width: 52px; height: 44px; border-radius: 8px; border: 2px solid #1B6B5A; background: #CDE8DF; color: #072019; font-size: 15px; font-weight: 600">12</button>
+            <input aria-label="Outro número de parcelas" placeholder="Outro" inputmode="numeric" style="width: 88px; height: 44px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; padding: 0 12px; font-size: 15px; box-sizing: border-box">
+          </div>
+        </div>
+      </div>
+
+      <div style="flex: 1 1 340px; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+        <section aria-labelledby="prev" style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; padding: 16px 20px; display: flex; flex-direction: column; gap: 6px">
+          <h3 id="prev" style="margin: 0 0 6px; font-size: 15px; font-weight: 600">Em quais faturas cada parcela cai</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); gap: 2px 16px; font-size: 14px">
+            <sc-for list="{{parcelas}}" as="p" hint-placeholder-count="12">
+              <span style="display: flex; justify-content: space-between; min-height: 30px; align-items: center; border-bottom: 1px solid #EFF5F1"><span style="color: #3F4945">{{p.n}} · {{p.fat}}</span><span style="font-weight: 500">R$ 100,00</span></span>
+            </sc-for>
+          </div>
+          <span style="font-size: 12px; color: #3F4945; padding-top: 6px">12 × R$ 100,00 = R$ 1.200,00. Quando não divide exato, o centavo que sobra vai na 1ª parcela.</span>
+        </section>
+        <section aria-labelledby="efe" style="background: #E9EFEB; border-radius: 16px; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; font-size: 14px">
+          <h3 id="efe" style="margin: 0 0 4px; font-size: 15px; font-weight: 600">O que muda ao salvar</h3>
+          <span style="display: flex; justify-content: space-between; gap: 12px"><span>Limite disponível do Cartão A</span><span style="font-weight: 600">R$ 1.696,57 → R$ 496,57</span></span>
+          <span style="display: flex; justify-content: space-between; gap: 12px"><span>A pagar nos cartões (só a fatura aberta)</span><span style="font-weight: 600; color: #B3261E">+R$ 100,00</span></span>
+          <span style="display: flex; justify-content: space-between; gap: 12px"><span>Patrimônio líquido</span><span style="font-weight: 600; color: #B3261E">−R$ 1.200,00</span></span>
+          <span style="display: flex; justify-content: space-between; gap: 12px"><span>Previsto até o fim do mês</span><span style="font-weight: 600">sem mudança · 1ª parcela vence 10/12</span></span>
+        </section>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end">
+      <a href="CartaoFatura.dc.html" style="height: 40px; padding: 0 16px; border-radius: 20px; color: #1B6B5A; font-size: 14px; font-weight: 600; display: flex; align-items: center; text-decoration: none">Cancelar</a>
+      <button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #6F7975; background: transparent; color: #1B6B5A; font-size: 14px; font-weight: 600">Salvar e lançar outro</button>
+      <a href="CartaoFatura.dc.html" style="height: 40px; padding: 0 24px; border-radius: 20px; background: #1B6B5A; color: #FFFFFF; font-size: 14px; font-weight: 600; display: flex; align-items: center; text-decoration: none">Salvar compra</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const meses = ['dez/26', 'jan/27', 'fev/27', 'mar/27', 'abr/27', 'mai/27', 'jun/27', 'jul/27', 'ago/27', 'set/27', 'out/27', 'nov/27'];
+    return { parcelas: meses.map((m, i) => ({ n: (i + 1) + '/12', fat: m })) };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Conta corrente · Extrato</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;display=swap">
+<style>
+body{margin:0;background:#F5FBF7}
+button{font:inherit}
+:focus-visible{outline:3px solid #1B6B5A;outline-offset:2px}
+a{color:#1B6B5A}a:hover{color:#0F4F42}
+</style>
+</helmet>
+<div style="font-family: 'Roboto Flex', Roboto, system-ui, sans-serif; color: #171D1B; background: #F5FBF7; min-height: 100vh; display: flex; flex-wrap: wrap; align-items: stretch; font-variant-numeric: tabular-nums">
+  <div style="flex: 1 1 260px; min-width: 0; background: #EFF5F1">
+    <dc-import name="Nav" active="contas" hint-size="100%,920px"></dc-import>
+  </div>
+  <main style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column">
+    <header style="display: flex; align-items: center; gap: 12px; padding: 12px 24px; min-height: 64px; box-sizing: border-box; flex-wrap: wrap">
+      <a href="ContaExtrato.dc.html" aria-label="Voltar para Contas" style="width: 44px; height: 44px; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #3F4945"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg></a>
+      <h1 style="margin: 0; font-size: 22px; font-weight: 500; flex: 1 1 auto">Conta corrente</h1>
+      <div style="display: flex; align-items: center; gap: 4px">
+        <button type="button" aria-label="Mês anterior" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: transparent; color: #3F4945; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button>
+        <span style="font-size: 16px; font-weight: 500; min-width: 130px; text-align: center">Outubro 2026</span>
+        <button type="button" aria-label="Próximo mês" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: transparent; color: #3F4945; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button>
+      </div>
+    </header>
+    <div style="position: sticky; top: 0; z-index: 5; display: flex; flex-direction: column">
+      <dc-import name="TotalsBar" hint-size="100%,72px"></dc-import>
+      <div style="background: #F5FBF7; border-bottom: 1px solid #DEE4E0; padding: 14px 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 12px">
+        <span style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #3F4945">Saldo de abertura · 30/09</span><span style="font-size: 18px; font-weight: 600">R$ 2.904,10</span></span>
+        <span style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #3F4945">Entradas</span><span style="font-size: 18px; font-weight: 600; color: #14713A">+R$ 7.700,00</span></span>
+        <span style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #3F4945">Saídas</span><span style="font-size: 18px; font-weight: 600; color: #B3261E">−R$ 7.281,59</span></span>
+        <span style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #3F4945">Saldo de fechamento · 31/10</span><span style="font-size: 18px; font-weight: 600">R$ 3.322,51</span></span>
+        <span style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #3F4945">Saldo atual · hoje</span><span style="font-size: 18px; font-weight: 600">R$ 3.048,61</span></span>
+      </div>
+    </div>
+
+    <div style="padding: 16px 24px 120px; display: flex; flex-direction: column; gap: 16px; max-width: 1180px; box-sizing: border-box; width: 100%">
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+        <nav aria-label="Contas" style="display: flex; gap: 8px; flex-wrap: wrap; flex: 1 1 auto">
+          <a href="ContaExtrato.dc.html" aria-current="page" style="height: 36px; padding: 0 14px; border-radius: 8px; background: #CDE8DF; color: #072019; font-size: 14px; font-weight: 600; display: flex; align-items: center; text-decoration: none">Conta corrente</a>
+          <a href="ContaExtrato.dc.html" style="height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px; font-weight: 500; display: flex; align-items: center; text-decoration: none">Poupança</a>
+          <a href="ContaExtrato.dc.html" style="height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px; font-weight: 500; display: flex; align-items: center; text-decoration: none">Carteira</a>
+          <a href="ContaExtrato.dc.html" style="height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid #BFC9C4; background: #FFFFFF; color: #3F4945; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; text-decoration: none">Investimentos<span style="font-size: 11px; padding: 1px 6px; border-radius: 6px; background: #E9EFEB">fora do total</span></a>
+        </nav>
+        <a href="LancarDialog.dc.html" style="height: 40px; padding: 0 16px; border-radius: 20px; background: #1B6B5A; color: #FFFFFF; font-size: 14px; font-weight: 600; display: flex; align-items: center; text-decoration: none">Lançar</a>
+        <button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #6F7975; background: transparent; color: #1B6B5A; font-size: 14px; font-weight: 600; cursor: pointer">Transferir</button>
+        <button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #6F7975; background: transparent; color: #1B6B5A; font-size: 14px; font-weight: 600; cursor: pointer">Ajustar saldo</button>
+        <button type="button" aria-label="Exportar CSV" style="width: 40px; height: 40px; border-radius: 20px; border: 0; background: transparent; color: #3F4945; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path></svg></button>
+      </div>
+
+      <section style="background: #FFFFFF; border: 1px solid #DEE4E0; border-radius: 16px; overflow: hidden">
+        <div style="overflow-x: auto">
+          <table style="width: 100%; min-width: 760px; border-collapse: collapse; font-size: 14px">
+            <thead>
+              <tr style="color: #3F4945; font-size: 13px; text-align: left; background: #EFF5F1">
+                <th scope="col" style="padding: 12px 16px; font-weight: 500; width: 64px">Data</th>
+                <th scope="col" style="padding: 12px 8px; font-weight: 500">Descrição</th>
+                <th scope="col" style="padding: 12px 8px; font-weight: 500">Categoria ou tipo</th>
+                <th scope="col" style="padding: 12px 8px; font-weight: 500; text-align: right">Valor</th>
+                <th scope="col" style="padding: 12px 16px; font-weight: 500; text-align: right">Saldo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background: #F5FBF7; color: #3F4945">
+                <td style="padding: 12px 16px">30/09</td><td colspan="3" style="padding: 12px 8px; font-weight: 500">Saldo de abertura</td><td style="padding: 12px 16px; text-align: right; font-weight: 600; color: #171D1B">R$ 2.904,10</td>
+              </tr>
+              <sc-for list="{{linhas}}" as="l" hint-placeholder-count="12">
+                <tr style="border-top: 1px solid #EFF5F1">
+                  <td style="padding: 14px 16px; color: #3F4945">{{l.d}}</td>
+                  <td style="padding: 14px 8px"><span style="display: flex; align-items: center; gap: 10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{l.cor}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{l.icon}}"></path></svg><span style="font-weight: 500">{{l.desc}}</span></span></td>
+                  <td style="padding: 14px 8px; color: #3F4945">{{l.cat}}</td>
+                  <td style="{{l.vst}}">{{l.v}}</td>
+                  <td style="padding: 14px 16px; text-align: right">{{l.s}}</td>
+                </tr>
+              </sc-for>
+              <tr style="border-top: 2px solid #DEE4E0; background: #F5FBF7">
+                <td style="padding: 14px 16px; color: #3F4945">31/10</td><td colspan="3" style="padding: 14px 8px; font-weight: 600">Saldo de fechamento</td><td style="padding: 14px 16px; text-align: right; font-weight: 700">R$ 3.322,51</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <span style="font-size: 13px; color: #3F4945">Saldo inicial informado: R$ 3.200,00 no fim de 31/07/2026. Meses antes dessa data mostram os movimentos sem a coluna de saldo.</span>
+    </div>
+
+    <div style="position: sticky; bottom: 24px; display: flex; justify-content: flex-end; padding: 0 24px; margin-top: -96px; pointer-events: none">
+      <a href="LancarDialog.dc.html" aria-keyshortcuts="N" style="pointer-events: auto; height: 56px; padding: 0 20px 0 16px; border-radius: 16px; background: #A6F2DA; color: #00201A; display: flex; align-items: center; gap: 12px; text-decoration: none; font-size: 15px; font-weight: 600; box-shadow: 0 3px 8px rgba(0,0,0,0.18)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Lançar</a>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1400}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const IN = ['M12 19V5M6 11l6-6 6 6', '#14713A'], OUT = ['M12 5v14M6 13l6 6 6-6', '#B3261E'], CARD = ['M2 6h20v12H2zM2 10h20M6 15h4', '#48617A'], SW = ['M7 4l-4 4 4 4M3 8h14M17 20l4-4-4-4M21 16H7', '#48617A'], DOC = ['M6 2h9l5 5v15H6zM15 2v5h5M10 12h6M10 16h6', '#48617A'];
+    const vs = (c) => 'padding: 14px 8px; text-align: right; font-weight: 600; color: ' + c + ';';
+    const L = (d, desc, cat, k, v, s) => ({ d, desc, cat, icon: k[0], cor: k[1], v, s, vst: vs(k === IN ? '#14713A' : (k === OUT ? '#B3261E' : '#48617A')) });
+    const linhas = [
+      L('05/10', 'Salário', 'Renda fixa', IN, '+R$ 6.500,00', 'R$ 9.404,10'),
+      L('05/10', 'Pagamento de fatura · Cartão B', 'Pagamento de fatura · parcial', CARD, '−R$ 888,00', 'R$ 8.516,10'),
+      L('05/10', 'Academia', 'Saúde e bem-estar', OUT, '−R$ 99,00', 'R$ 8.417,10'),
+      L('10/10', 'Aluguel', 'Moradia', OUT, '−R$ 1.800,00', 'R$ 6.617,10'),
+      L('10/10', 'Pagamento de fatura · Cartão A', 'Pagamento de fatura', CARD, '−R$ 1.540,80', 'R$ 5.076,30'),
+      L('15/10', 'Internet', 'Moradia', OUT, '−R$ 119,90', 'R$ 4.956,40'),
+      L('15/10', 'Financiamento do veículo · 14/48', 'Pagamento de dívida', DOC, '−R$ 1.172,49', 'R$ 3.783,91'),
+      L('18/10', 'Para Investimentos', 'Transferência', SW, '−R$ 500,00', 'R$ 3.283,91'),
+      L('20/10', 'Freelance', 'Renda fixa', IN, '+R$ 1.200,00', 'R$ 4.483,91'),
+      L('20/10', 'Empréstimo pessoal · 5/12', 'Pagamento de dívida', DOC, '−R$ 450,00', 'R$ 4.033,91'),
+      L('22/10', 'Mercado Pão de Açúcar', 'Alimentação', OUT, '−R$ 412,70', 'R$ 3.621,21'),
+      L('28/10', 'A classificar', 'A classificar', OUT, '−R$ 86,30', 'R$ 3.534,91'),
+      L('31/10', 'Energia', 'Moradia', OUT, '−R$ 212,40', 'R$ 3.322,51')
+    ];
+    return { linhas };
+  }
+}
+</script>
+</body>
+</html>

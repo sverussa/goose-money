@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Menu lateral</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<nav aria-label="Menu principal" style="font-family: 'Roboto Flex', Roboto, system-ui, sans-serif; color: #171D1B; background: #EFF5F1; box-sizing: border-box; width: 100%; min-height: 100%; padding: 16px 12px 24px; display: flex; flex-direction: column; gap: 4px">
+  <div style="display: flex; align-items: center; gap: 12px; padding: 8px 16px 20px">
+    <div style="width: 40px; height: 40px; border-radius: 12px; background: #1B6B5A; display: flex; align-items: center; justify-content: center">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h16v13H3zM3 7l12-4v4M15 13h3"></path></svg>
+    </div>
+    <div style="display: flex; flex-direction: column">
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.2px">Meu Caixa</span>
+      <span style="font-size: 12px; color: #3F4945">Controle financeiro pessoal</span>
+    </div>
+  </div>
+  <sc-for list="{{items}}" as="item" hint-placeholder-count="9">
+    <a href="{{item.href}}" aria-current="{{item.current}}" style="{{item.style}}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{item.d}}"></path></svg>
+      <span style="flex: 1 1 auto">{{item.label}}</span>
+      <sc-if value="{{item.badge}}" hint-placeholder-val="{{false}}">
+        <span style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: #BA1A1A; color: #FFFFFF; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center">{{item.badge}}</span>
+      </sc-if>
+    </a>
+  </sc-for>
+  <div style="flex: 1 1 auto; min-height: 24px"></div>
+  <div style="border-top: 1px solid #BFC9C4; margin: 8px 16px 0; padding-top: 16px; display: flex; align-items: center; gap: 12px">
+    <div style="width: 36px; height: 36px; border-radius: 18px; background: #CDE8DF; color: #072019; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px">A</div>
+    <div style="display: flex; flex-direction: column; flex: 1 1 auto">
+      <span style="font-size: 14px; font-weight: 500">admin</span>
+      <span style="font-size: 12px; color: #3F4945">Dados neste dispositivo</span>
+    </div>
+    <a href="Login.dc.html" aria-label="Sair" style="width: 44px; height: 44px; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #3F4945">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"></path></svg>
+    </a>
+  </div>
+</nav>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"active":{"editor":"enum","options":["painel","lancamentos","contas","cartoes","dividas","rendas","gastos","projecoes","configuracoes"],"default":"painel"},"$preview":{"width":280,"height":920}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const active = this.props.active ?? 'painel';
+    const base = 'display: flex; align-items: center; gap: 12px; height: 52px; padding: 0 16px; border-radius: 26px; text-decoration: none; font-size: 14px; ';
+    const list = [
+      { key: 'painel', label: 'Painel', href: 'Main.dc.html', d: 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z' },
+      { key: 'lancamentos', label: 'Lançamentos', href: 'Lancamentos.dc.html', d: 'M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2zM9 8h6M9 12h6M9 16h4', badge: '2' },
+      { key: 'contas', label: 'Contas', href: 'ContaExtrato.dc.html', d: 'M3 10h18M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18M12 3l9 5H3z' },
+      { key: 'cartoes', label: 'Cartões', href: 'CartaoFatura.dc.html', d: 'M2 6h20v12H2zM2 10h20M6 15h4' },
+      { key: 'dividas', label: 'Dívidas', href: 'DividaDetalhe.dc.html', d: 'M6 2h9l5 5v15H6zM15 2v5h5M10 12h6M10 16h6' },
+      { key: 'rendas', label: 'Rendas fixas', href: 'Rendas.dc.html', d: 'M2 7h20v10H2zM9.5 12a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0-5 0M5.5 12h.01M18.5 12h.01' },
+      { key: 'gastos', label: 'Gastos fixos', href: 'GastosFixos.dc.html', d: 'M3 6h18v15H3zM3 10h18M8 3v4M16 3v4M9 16l2 2 4-4', badge: '1' },
+      { key: 'projecoes', label: 'Projeções', href: 'PainelProjecoes.dc.html', d: 'M3 17l6-6 4 4 8-8M15 7h6v6' },
+      { key: 'configuracoes', label: 'Configurações', href: 'Configuracoes.dc.html', d: 'M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0M16 4v4M10 10v4M18 16v4' }
+    ];
+    const items = list.map((it) => {
+      const on = it.key === active;
+      return {
+        ...it,
+        badge: it.badge || false,
+        current: on ? 'page' : 'false',
+        style: base + (on ? 'background: #CDE8DF; color: #072019; font-weight: 600;' : 'background: transparent; color: #3F4945; font-weight: 500;')
+      };
+    });
+    return { items };
+  }
+}
+</script>
+</body>
+</html>
