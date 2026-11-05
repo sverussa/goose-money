@@ -163,6 +163,10 @@ A spec já previa várias contas e vários cartões, mas não definia o formulá
 | `DELETE` no banco | Revogado para os papéis do app (`authenticated`, `anon`) | O banco garante a regra, não só o código |
 | RLS e excluídos | As políticas filtram só o dono, não `is_deleted`; quem filtra os excluídos é `carregarTudo` e as funções RPC | Se a política escondesse excluídos, o Desfazer não conseguiria restaurá-los |
 
+### D57 · Funções novas sem `execute` para PUBLIC (05/11/2026)
+
+Caso encontrado em T00-09. O `revoke execute on functions from anon` por schema, pedido em 12.2, não basta: o Postgres dá `execute` a `PUBLIC` em toda função nova, por um padrão global, e o `anon` herda esse direito. A V001 também tem `alter default privileges revoke execute on functions from public;`. O `authenticated` e o `service_role` continuam com `execute` pelo padrão do Supabase no schema `public`. Opção mais conservadora, testada no banco local. **Precisa da sua validação.**
+
 ## Em aberto
 
 - **Provedor da VPS e domínio do app web** (D53).
