@@ -16,7 +16,7 @@ Deixar prontas as duas camadas de teste: Vitest para o core e para funções do 
 - `vitest.config.ts` na raiz com `test.projects`:
   - `packages/core`: ambiente `node`
   - `apps/app`: ambiente `node`, só arquivos `src/**/*.test.ts` (sem jsdom e sem Testing Library, D20)
-- Cobertura do core com `@vitest/coverage-v8` e limite mínimo conforme a decisão D1.
+- Cobertura do core com `@vitest/coverage-v8` e limite mínimo de 90% de linhas e de ramos em `packages/core`; abaixo disso o comando falha.
 - `apps/app/playwright.config.ts`:
   - `testDir: "tests/e2e"`
   - `webServer`: `pnpm dev`, `url: http://localhost:1420`, `reuseExistingServer: !process.env.CI`
@@ -41,10 +41,6 @@ Testes de banco (T02-01) e testes das telas (etapa 5).
 - [ ] O teste de fumaça passa no Chromium e no WebKit, com axe sem violações.
 - [ ] O relatório de cobertura do core é gerado e o limite está configurado.
 
-## Decisões
+## Decisão tomada
 
-**D1. Qual limite de cobertura exigir do core?**
-
-- **A)** 90% de linhas e de ramos no `packages/core`, com o build falhando abaixo disso. *(recomendado)*
-- **B)** 100%: todo cálculo de dinheiro testado, ao custo de testes artificiais em código trivial.
-- **C)** Sem limite automático; a cobertura é revisada em cada PR.
+**D1. Cobertura do core:** 90% de linhas e de ramos, com falha abaixo disso (opção A, escolhida pelo Saulo em 05/11/2026). Registrada em `DECISOES.md` D31.

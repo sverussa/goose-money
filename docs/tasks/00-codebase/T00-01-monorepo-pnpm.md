@@ -12,12 +12,12 @@ Criar a raiz do monorepo com pnpm, a regra dos 7 dias para versões e a estrutur
 
 ## Escopo
 
-- `package.json` da raiz: `"name": "goose-money"`, `"private": true`, `"packageManager": "pnpm@<versão 12 com ≥ 7 dias>"`, `"engines": { "node": "<versão escolhida>" }`.
+- `package.json` da raiz: `"name": "goose-money"`, `"private": true`, `"packageManager": "pnpm@<versão 12 com ≥ 7 dias>"`, `"engines": { "node": ">=26.0.0 <27" }`.
 - `pnpm-workspace.yaml`:
   - `packages: ["packages/*", "apps/*"]`
   - `minimumReleaseAge: 10080` (7 dias, em minutos)
   - `saveExact: true` (versões sem `^`)
-- `.nvmrc` com a versão do Node.
+- `.nvmrc` com `26`.
 - `.gitignore`: acrescentar `playwright-report/`, `test-results/`, `supabase/.temp/`, `supabase/.branches/`, `*.tsbuildinfo`. Conferir que `.env` e `.env.*` continuam ignorados e `.env.example` não.
 - `tsconfig.base.json` na raiz, usado por todos os pacotes: `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `noFallthroughCasesInSwitch`, `verbatimModuleSyntax`, `moduleResolution: "bundler"`, `target: "ES2023"`, `skipLibCheck`.
 - Pastas `packages/` e `apps/` (cada uma ganha conteúdo em T00-02 e T00-03).
@@ -40,10 +40,6 @@ Pacotes, app, lint e testes (tarefas seguintes).
 - [ ] Dependências novas entram sem `^` no `package.json`.
 - [ ] `tsconfig.base.json` existe com as opções listadas.
 
-## Decisões
+## Decisão tomada
 
-**D1. Qual versão do Node.js o projeto exige?**
-
-- **A)** Node 24 (LTS ativo): estável para ferramentas e CI. *(recomendado)*
-- **B)** Node 26 (versão atual, a que está instalada na máquina): recursos mais novos, mas fora de LTS até outubro de 2027.
-- **C)** Node 22 (LTS em manutenção): máxima compatibilidade, mas perto do fim do suporte.
+**D1. Versão do Node.js:** Node 26 (opção B, escolhida pelo Saulo em 05/11/2026). Registrada em `DECISOES.md` D26.

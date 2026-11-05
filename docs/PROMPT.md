@@ -402,7 +402,8 @@ Para cada tela, entregue: wireframe descrito em compact e expanded, hierarquia v
 - Card centralizado (máx. 400 dp): logo, nome, campos "E-mail" e "Senha" (outlined), mostrar/ocultar senha, "Manter conectado", botão "Entrar".
 - Autenticação pelo Supabase Auth (e-mail e senha). Erro inline: "E-mail ou senha inválidos"; sem rede: "Sem conexão para entrar". `Enter` envia; foco inicial em E-mail.
 - Sessão do `supabase-js` em `sessionStorage` (ou `localStorage` com "Manter conectado"). Rotas protegidas redirecionam para `/login` e voltam à rota pedida após o login.
-- Troca de senha em Configurações, também pelo Supabase. No Tauri, o link de redefinição de senha volta ao app por deep link. Cadastro de usuários em aberto em `docs/DECISOES.md`.
+- Troca de senha em Configurações, também pelo Supabase. No Tauri, os links de redefinição de senha e de confirmação de cadastro voltam ao app por deep link.
+- Cadastro aberto (D28): link "Criar conta" no login leva a `/criar-conta` (E-mail, Senha, Confirmar senha; mínimo de 8 caracteres). O usuário só entra depois de confirmar o e-mail. A mensagem após o envio é neutra ("Se o e-mail puder ser cadastrado, você vai receber um link de confirmação") e não revela se a conta já existe.
 
 ### 6.2 Painel (`/`)
 
@@ -741,6 +742,7 @@ Cada item deve virar um teste automatizado (unitário no domínio ou de integra�
 ### 11.1 Acesso e interação
 
 - [ ] Usuário válido do Supabase entra; credencial errada mostra erro inline; rota protegida sem sessão redireciona para `/login` e volta após o login.
+- [ ] Uma pessoa cria a conta em `/criar-conta`, confirma pelo link do e-mail e entra no primeiro uso; antes de confirmar, o login é recusado; e-mail já cadastrado recebe a mesma mensagem neutra.
 - [ ] De qualquer tela comum, uma despesa é lançada em 3 interações (FAB, valor, salvar); uma receita em 4.
 - [ ] Na tela de um cartão, uma compra à vista naquele cartão é lançada em 3 interações.
 - [ ] Em 360 dp, **Saldo em contas** e **Previsto até o fim do mês** ficam visíveis sem interação; após uma compra no cartão, **A pagar nos cartões** aparece temporariamente com o chip de variação.
@@ -812,7 +814,7 @@ Cada item deve virar um teste automatizado (unitário no domínio ou de integra�
 
 ## 12. Ambiente de desenvolvimento
 
-Pré-requisitos na máquina: Docker com Compose v2, Node.js, pnpm 12, Rust (para o Tauri) e GNU Make 3.81 ou posterior. Decisões em `docs/DECISOES.md`, D23 e D24.
+Pré-requisitos na máquina: Docker com Compose v2, Node.js 26 (D26), pnpm 12, Rust (para o Tauri) e GNU Make 3.81 ou posterior. Decisões em `docs/DECISOES.md`, D23 e D24.
 
 ### 12.1 Supabase local em Docker
 

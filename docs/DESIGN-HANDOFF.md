@@ -111,6 +111,7 @@ Implemente seguindo o `PROMPT.md` e o vocabulário visual das telas existentes, 
 - Diálogos **Transferir**, **Ajustar saldo**, **Confirmar recebimento**, **Registrar pagamento**, **Amortizar**, **Lançar encargo ou estorno**.
 - Menu **"Mais"** do celular (itens 5 a 9) e telas de módulo em compact.
 - Busca global (Ctrl/Cmd + K) e menu do usuário.
+- Tela **Criar conta** e a mensagem de confirmação enviada (6.1, D28), no mesmo card do Login.
 - Fluxo completo de **importação de backup** (etapas e erros) e confirmação de **Apagar tudo**.
 - Primeiro uso sem contas (7.2: o FAB leva ao cadastro de conta).
 

@@ -14,7 +14,7 @@ Fechar os dois pontos de privacidade em aberto antes da primeira versão públic
 
 - Eliminação definitiva dos dados de um usuário, conforme a decisão D1.
 - Criptografia ponta a ponta, conforme a decisão D2.
-- Texto curto de privacidade no app (Configurações ou rodapé do login): onde os dados ficam (Supabase, região de T06-05), quem acessa e como pedir a eliminação.
+- Texto curto de privacidade no app (Configurações, rodapé do login e tela Criar conta, já que o cadastro é aberto, D28): onde os dados ficam (Supabase, região de T06-05), quem acessa e como pedir a eliminação.
 - Registrar as escolhas no `DECISOES.md` e remover os itens de "Em aberto".
 
 ## Fora do escopo

@@ -15,7 +15,7 @@ Empacotar o mesmo app web como aplicativo desktop, com permissões mínimas e CS
 - Pré-requisito: Rust estável via `rustup` e as dependências de sistema do Tauri para o SO.
 - Dependências no app: `@tauri-apps/api` e, em dev, `@tauri-apps/cli` (versões 2 com ≥ 7 dias).
 - `pnpm --filter @goose-money/app exec tauri init`, gerando `apps/app/src-tauri/`:
-  - `productName: "Goose Money"`, `identifier` conforme a decisão D1
+  - `productName: "Goose Money"`, `identifier: "app.goosemoney"`
   - `build.devUrl: "http://localhost:1420"`, `build.frontendDist: "../dist"`
   - `build.beforeDevCommand: "pnpm dev"`, `build.beforeBuildCommand: "pnpm build"`
   - janela: `title: "Goose Money"`, `width: 1280`, `height: 800`, `minWidth: 360`, `minHeight: 640`
@@ -45,10 +45,6 @@ Plugins de arquivo e deep link (etapa 3), ícones definitivos e assinatura do ap
 - [ ] O build gera o pacote `.app`/`.dmg` no macOS.
 - [ ] Uma requisição para um domínio fora da CSP é bloqueada (testar com `fetch` no console da WebView).
 
-## Decisões
+## Decisão tomada
 
-**D1. Qual identificador do aplicativo (`identifier`)?** Ele não pode mudar depois de publicado, porque o sistema usa esse valor para guardar os dados e as permissões do app.
-
-- **A)** `br.com.goosemoney.app`: exige o domínio `goosemoney.com.br` para assinar e distribuir. *(recomendado se o domínio for registrado)*
-- **B)** `io.github.sauloverussa.goosemoney`: usa um domínio que você já controla pelo GitHub.
-- **C)** `app.goosemoney.desktop`: neutro, sem depender de domínio agora; troca futura exige migrar os dados locais do app.
+**D1. Identificador do app:** `app.goosemoney` (resposta do Saulo em 05/11/2026). Não pode mudar depois de publicado. Registrada em `DECISOES.md` D27.

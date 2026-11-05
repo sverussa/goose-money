@@ -23,7 +23,7 @@ Implementar `#/login` como no design, com Supabase Auth.
 
 ## Fora do escopo
 
-Tela de nova senha (T03-08) e cadastro (depende da decisão de T00-08).
+Tela de nova senha (T03-08) e tela de cadastro (T05-30). O link "Criar conta" abaixo de "Entrar" entra na T05-30.
 
 ## Passos
 

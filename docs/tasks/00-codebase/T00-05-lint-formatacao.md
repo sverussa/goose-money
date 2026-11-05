@@ -23,7 +23,7 @@ Configurar análise estática e formatação, e fazer o lint garantir as frontei
   3. Em `apps/app/src/**`, exceto `apps/app/src/plataforma/**`: proibir `@tauri-apps/*`.
 - **Cores fora do tema:** `no-restricted-syntax` em `apps/app/src/**/*.tsx` proibindo literais de string que contenham `[#` (por exemplo `bg-[#1B6B5A]`) ou `#` seguido de 3 a 8 dígitos hexadecimais.
 - `.prettierrc`: `printWidth: 100`, `singleQuote: true`, `semi: true`, `trailingComma: "all"`.
-- `.prettierignore`: conforme a decisão D1 abaixo.
+- `.prettierignore`: ignora `docs/` e `design/`, além dos artefatos de build.
 - Scripts na raiz: `lint` (`eslint .`), `format` (`prettier --write .`), `format:check`.
 
 ## Fora do escopo
@@ -42,10 +42,6 @@ CI (T00-12).
 - [ ] Importar `react` no core, `@supabase/supabase-js` num componente e `@tauri-apps/api` fora de `plataforma/` geram erro de lint.
 - [ ] `className="bg-[#1B6B5A]"` num `.tsx` gera erro de lint.
 
-## Decisões
+## Decisão tomada
 
-**D1. O Prettier formata os documentos Markdown?**
-
-- **A)** Não: ignorar `docs/` e `design/`. Os documentos têm tabelas longas escritas à mão e a reformatação geraria um diff enorme. *(recomendado)*
-- **B)** Sim, formatar tudo uma vez nesta tarefa, num commit separado só de formatação.
-- **C)** Formatar `docs/tasks/` e ignorar o restante de `docs/` e `design/`.
+**D1. Prettier nos documentos:** não formatar `docs/` e `design/` (opção A, escolhida pelo Saulo em 05/11/2026). Registrada em `DECISOES.md` D30.

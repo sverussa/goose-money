@@ -18,6 +18,12 @@ Decisões tomadas fora do texto original do `PROMPT.md`, em casos não cobertos 
 | D22 | **Exclusão lógica e colunas de controle.** Nenhum registro é apagado: excluir grava `is_deleted = true`. Toda tabela tem `created_at`, `updated_at` e `created_by`. Regras em `PROMPT.md` 9.4. | Preservar histórico e permitir desfazer qualquer exclusão; saber quando e por quem cada registro foi criado | 3.6, 6.4, 6.5, 6.9, 9, 11.8 |
 | D23 | **Migrações com Flyway em Docker; Supabase local em Docker.** Todo comando de banco (tabelas, índices, RLS, funções, triggers) é uma migração Flyway. O Supabase de desenvolvimento roda localmente pelo Supabase CLI, em Docker. Regras em `PROMPT.md` 12.1 e 12.2. | Migrações versionadas, validadas por checksum e aplicadas igual em todos os ambientes | 2, 12 |
 | D24 | **Makefile** como ponto de entrada dos comandos do projeto (`make help`). Alvos em `PROMPT.md` 12.3. | Um comando curto e documentado para cada tarefa | 12 |
+| D26 | **Node.js 26** (`.nvmrc` e `engines`). | Versão instalada na máquina de desenvolvimento | 2 |
+| D27 | **Identificador do app desktop `app.goosemoney`.** Não muda depois de publicado. | Não depende de registrar domínio | 2 |
+| D28 | **Cadastro aberto com confirmação por e-mail.** Tela "Criar conta" (ainda sem desenho, T05-30); o link de confirmação volta ao app como o de redefinição de senha (deep link no Tauri); senha com no mínimo 8 caracteres. Resolve o item "Cadastro de usuários" que estava em aberto. | Permitir que outras pessoas usem o app sem criar contas à mão | 6.1, 11.1 |
+| D29 | **CI só com checagens sem banco** por enquanto (formatação, lint, tipos, testes). Testes de banco e Playwright entram no CI na etapa 5. | CI rápido enquanto não há telas | 12.3 |
+| D30 | **Prettier ignora `docs/` e `design/`.** | Evita reformatar as tabelas escritas à mão | 2 |
+| D31 | **Cobertura mínima de 90%** de linhas e de ramos em `packages/core`, com falha abaixo disso. | Cálculos de dinheiro testados sem exigir testes artificiais | 11 |
 
 Consequências de D2:
 
@@ -134,8 +140,7 @@ A spec já previa várias contas e vários cartões, mas não definia o formulá
 
 ## Em aberto
 
-- **Apagar dados de verdade (LGPD).** Com D22, "Apagar tudo" e as exclusões são lógicas e os dados continuam no banco. O titular tem direito de pedir a eliminação. Proposta: um procedimento administrativo, fora do app, que apaga fisicamente todos os registros de um usuário quando ele pedir o encerramento da conta.
+- **Apagar dados de verdade (LGPD).** Com o cadastro aberto (D28), passa a valer para outras pessoas além do dono do projeto. Com D22, "Apagar tudo" e as exclusões são lógicas e os dados continuam no banco. O titular tem direito de pedir a eliminação. Proposta: um procedimento administrativo, fora do app, que apaga fisicamente todos os registros de um usuário quando ele pedir o encerramento da conta.
 - **Criptografia ponta a ponta.** Com D18, os dados ficam legíveis no servidor para quem administra o projeto Supabase. Criptografar no app protegeria contra isso, mas impede consultas e restrições no banco.
 - **Região do projeto Supabase.** Proposta: São Paulo (`sa-east-1`), pela latência e para manter os dados no Brasil (LGPD).
-- **Cadastro de usuários.** Proposta conservadora: sem tela de cadastro; o usuário é criado no painel do Supabase.
 - **Decisões de design** listadas na seção 6 de `DESIGN-HANDOFF.md`, ainda não validadas.

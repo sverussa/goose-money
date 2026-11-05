@@ -4,7 +4,7 @@
 | --- | --- | --- | --- |
 | 0 · Codebase | Back end | T00-01 | `feat/supabase-local` |
 
-**Referências:** PROMPT 12.1, 6.1 · DECISOES D2, D18, D23 · Em aberto: cadastro de usuários
+**Referências:** PROMPT 12.1, 6.1 · DECISOES D2, D18, D23, D28
 
 ## Objetivo
 
@@ -19,7 +19,8 @@ Subir o Supabase completo na máquina, em Docker, pelo Supabase CLI, sem usar as
   - `[api] schemas = ["public", "graphql_public"]` (o schema `flyway` nunca é exposto)
   - `[db.seed] enabled = false` (dados de exemplo vêm do app, T05-29)
   - `[auth] site_url = "http://localhost:1420"` e `additional_redirect_urls` com `http://localhost:1420/**`
-  - `[auth] enable_signup` e `[auth.email] enable_confirmations` conforme a decisão D1
+  - `[auth] enable_signup = true`, `[auth.email] enable_confirmations = true` e `[auth] minimum_password_length = 8` (D28)
+  - `[auth.email] double_confirm_changes = true`
   - `[inbucket]`/Mailpit ligado (porta 54324) para testar e-mails
 - Garantir que **não existe** `supabase/migrations/` (as migrações são do Flyway, T00-09).
 - Conferir que o Docker está rodando antes de `supabase start`.
@@ -41,12 +42,8 @@ Migrações (T00-09), cliente no app (T00-11), tela de login (T05-01).
 - [ ] `supabase start` sobe API (54321), Postgres (54322), Studio (54323) e Mailpit (54324).
 - [ ] `supabase status` mostra as chaves locais.
 - [ ] Não existe pasta `supabase/migrations/`.
-- [ ] A configuração de cadastro segue a decisão D1.
+- [ ] Cadastro aberto com confirmação: o e-mail de confirmação chega ao Mailpit e, antes de confirmar, o login é recusado.
 
-## Decisões
+## Decisão tomada
 
-**D1. Como novos usuários entram no sistema?** (ponto "Cadastro de usuários" em aberto no DECISOES.md)
-
-- **A)** Sem tela de cadastro: `enable_signup = false` e o usuário é criado pelo painel do Supabase. Conservador para um app pessoal. *(recomendado)*
-- **B)** Cadastro aberto com confirmação por e-mail: `enable_signup = true` e `enable_confirmations = true`; exige desenhar a tela de cadastro.
-- **C)** Só por convite: cadastro fechado e convites enviados pelo painel do Supabase (`inviteUserByEmail`); exige tela para definir a senha a partir do convite.
+**D1. Entrada de novos usuários:** cadastro aberto com confirmação por e-mail (opção B, escolhida pelo Saulo em 05/11/2026). A tela de cadastro é a T05-30. Registrada em `DECISOES.md` D28.

@@ -1,6 +1,6 @@
 # Tarefas de implementação
 
-Plano para implementar o Goose Money, quebrado em 99 tarefas pequenas, uma por arquivo, organizadas em 7 etapas e, dentro delas, por contexto. As regras continuam em `docs/PROMPT.md` (a seção 3 vence qualquer conflito); cada tarefa aponta as seções, decisões e telas de design que usa.
+Plano para implementar o Goose Money, quebrado em 100 tarefas pequenas, uma por arquivo, organizadas em 7 etapas e, dentro delas, por contexto. As regras continuam em `docs/PROMPT.md` (a seção 3 vence qualquer conflito); cada tarefa aponta as seções, decisões e telas de design que usa.
 
 ## Como usar
 
@@ -25,14 +25,8 @@ Plano para implementar o Goose Money, quebrado em 99 tarefas pequenas, uma por a
 
 ## Decisões a responder
 
-24 tarefas têm 30 decisões. As que bloqueiam o início do projeto estão na etapa 0 e em T01-01 (modelo de dados) e T02-02 (onde ficam as regras de gravação).
+18 tarefas têm 24 decisões. As da etapa 0 já foram tomadas (DECISOES D26 a D31). As que bloqueiam o próximo passo estão em T01-01 (modelo de dados) e T02-02 (onde ficam as regras de gravação).
 
-- [T00-01](00-codebase/T00-01-monorepo-pnpm.md): 1 decisão
-- [T00-05](00-codebase/T00-05-lint-formatacao.md): 1 decisão
-- [T00-06](00-codebase/T00-06-testes-vitest-playwright.md): 1 decisão
-- [T00-07](00-codebase/T00-07-tauri.md): 1 decisão
-- [T00-08](00-codebase/T00-08-supabase-local.md): 1 decisão
-- [T00-12](00-codebase/T00-12-ci.md): 1 decisão
 - [T01-01](01-dominio/T01-01-modelo-de-dados.md): 4 decisões
 - [T01-04](01-dominio/T01-04-periodos.md): 1 decisão
 - [T01-09](01-dominio/T01-09-fatura-pagamentos.md): 1 decisão
@@ -58,18 +52,18 @@ Base do projeto: monorepo, app, desktop, Supabase local, Flyway, Makefile, CI. N
 
 | Tarefa | Contexto | Depende de | Decisões |
 | --- | --- | --- | --- |
-| [T00-01 · Monorepo com pnpm workspaces](00-codebase/T00-01-monorepo-pnpm.md) | Monorepo | — | 1 |
+| [T00-01 · Monorepo com pnpm workspaces](00-codebase/T00-01-monorepo-pnpm.md) | Monorepo | — | tomada |
 | [T00-02 · Pacote `@goose-money/core`](00-codebase/T00-02-pacote-core.md) | Core | T00-01 | — |
 | [T00-03 · App web com Vite e React](00-codebase/T00-03-app-vite-react.md) | App | T00-02 | — |
 | [T00-04 · Tailwind 4, shadcn/ui e fonte Roboto Flex](00-codebase/T00-04-tailwind-shadcn-fonte.md) | App · Design system | T00-03 | — |
-| [T00-05 · ESLint, Prettier e regras de fronteira](00-codebase/T00-05-lint-formatacao.md) | Qualidade | T00-04 | 1 |
-| [T00-06 · Testes: Vitest e Playwright com axe](00-codebase/T00-06-testes-vitest-playwright.md) | Qualidade | T00-05 | 1 |
-| [T00-07 · App desktop com Tauri 2](00-codebase/T00-07-tauri.md) | Desktop | T00-03 | 1 |
-| [T00-08 · Supabase local em Docker](00-codebase/T00-08-supabase-local.md) | Back end | T00-01 | 1 |
+| [T00-05 · ESLint, Prettier e regras de fronteira](00-codebase/T00-05-lint-formatacao.md) | Qualidade | T00-04 | tomada |
+| [T00-06 · Testes: Vitest e Playwright com axe](00-codebase/T00-06-testes-vitest-playwright.md) | Qualidade | T00-05 | tomada |
+| [T00-07 · App desktop com Tauri 2](00-codebase/T00-07-tauri.md) | Desktop | T00-03 | tomada |
+| [T00-08 · Supabase local em Docker](00-codebase/T00-08-supabase-local.md) | Back end | T00-01 | tomada |
 | [T00-09 · Flyway em Docker e migração base](00-codebase/T00-09-flyway-docker.md) | Back end | T00-08 | — |
 | [T00-10 · Makefile, scripts e `.env.example`](00-codebase/T00-10-makefile-env.md) | Ferramentas | T00-06, T00-07, T00-09 | — |
 | [T00-11 · Cliente Supabase e variáveis de ambiente no app](00-codebase/T00-11-cliente-supabase-env.md) | App · Dados | T00-08, T00-10 | — |
-| [T00-12 · Integração contínua](00-codebase/T00-12-ci.md) | Qualidade | T00-10 | 1 |
+| [T00-12 · Integração contínua](00-codebase/T00-12-ci.md) | Qualidade | T00-10 | tomada |
 | [T00-13 · Documentar a base de código](00-codebase/T00-13-documentacao-base.md) | Documentação | T00-01 a T00-12 | — |
 
 ## Etapa 1 · Domínio
@@ -185,6 +179,7 @@ Uma tela ou diálogo por tarefa, na ordem do handoff.
 | [T05-27 · Configurações › Categorias](05-telas/T05-27-configuracoes-categorias.md) | Configurações | T04-07, T02-08 | 1 |
 | [T05-28 · Configurações › Aparência, Preferências e Acesso](05-telas/T05-28-configuracoes-aparencia-preferencias-acesso.md) | Configurações | T05-27, T04-02, T03-01 | — |
 | [T05-29 · Configurações › Dados: backup, exemplo e apagar tudo](05-telas/T05-29-configuracoes-dados.md) | Configurações | T05-28, T02-10, T01-19, T01-20, T03-07 | 1 |
+| [T05-30 · Criar conta](05-telas/T05-30-criar-conta.md) | Acesso | T05-01, T03-08, T02-08 | — |
 
 ## Etapa 6 · Qualidade e entrega
 
