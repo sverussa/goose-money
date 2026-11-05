@@ -5,10 +5,11 @@ Plano para implementar o Goose Money, quebrado em 100 tarefas pequenas, uma por 
 ## Como usar
 
 - **Uma tarefa por branch**, com o nome sugerido no cabeçalho da tarefa, e um Pull Request por tarefa (CLAUDE.md).
+- Para trabalhar com vários agentes em paralelo, siga [tasks-agents-estrategies.md](tasks-agents-estrategies.md): trilhas, fases, ambiente compartilhado e regras de merge.
 - Só comece uma tarefa quando as dependências estiverem concluídas. Dentro de uma etapa, tarefas sem dependência entre si podem andar em paralelo.
-- Caminhos em paralelo depois da etapa 0: a etapa 1 (domínio); T04-01 a T04-04 (tema e componentes base); e T02-01 (base de testes de banco). A partir de T02-02, o banco espera os comandos do core (T01-22); as telas esperam a etapa 3.
-- **Tarefas com decisões** terminam com a seção "Decisão tomada", que resume a escolha e aponta o registro em `docs/DECISOES.md`. Dúvida nova numa tarefa entra como seção "Decisões", com as opções A, B e C (a recomendada marcada), e precisa de resposta antes de começar.
-- Ao concluir, acrescente "✅" na linha da tarefa neste índice e confira os critérios de aceite dela no PR.
+- Caminhos em paralelo: T01-01 (modelo de dados) desde o primeiro dia; depois da base, a etapa 1 (domínio), T04-01 a T04-04 (tema e componentes base) e a etapa 2 (banco), que só espera o modelo de dados aprovado. As telas esperam a etapa 3.
+- **Tarefas com decisões** terminam com a seção "Decisão tomada", que resume a escolha e aponta o registro em `docs/DECISOES.md`. Dúvida nova numa tarefa vai na descrição do PR, como seção "Decisões" com as opções A, B e C (a recomendada marcada); o coordenador registra a resposta em `docs/DECISOES.md` (D56).
+- Ao concluir, confira os critérios de aceite no PR. O "✅" na linha da tarefa neste índice é acrescentado pelo coordenador, no merge (D56).
 
 ## Estrutura de cada tarefa
 
@@ -53,7 +54,7 @@ Regras da seção 3 em `packages/core`, TypeScript puro e testado. Não depende 
 
 | Tarefa | Contexto | Depende de | Decisões |
 | --- | --- | --- | --- |
-| [T01-01 · Modelo de dados](01-dominio/T01-01-modelo-de-dados.md) | Modelo | T00-13 | tomada |
+| [T01-01 · Modelo de dados](01-dominio/T01-01-modelo-de-dados.md) | Modelo | — | tomada |
 | [T01-02 · Dinheiro: centavos, Decimal e rateios](01-dominio/T01-02-dinheiro.md) | Fundamentos | T00-02 | — |
 | [T01-03 · Datas civis e competências](01-dominio/T01-03-datas-competencias.md) | Fundamentos | T00-02 | — |
 | [T01-04 · Períodos, granularidade e período anterior](01-dominio/T01-04-periodos.md) | Fundamentos | T01-03 | tomada |
@@ -83,7 +84,7 @@ Tabelas, RLS, função de gravação e leitura no Supabase, por migrações Flyw
 | Tarefa | Contexto | Depende de | Decisões |
 | --- | --- | --- | --- |
 | [T02-01 · Base para testes de banco](02-banco/T02-01-testes-de-banco.md) | Testes | T00-09, T00-11 | — |
-| [T02-02 · Função `gravar(ops)` e convenções de escrita](02-banco/T02-02-funcao-gravar.md) | Escrita | T02-01, T01-22 | tomada |
+| [T02-02 · Função `gravar(ops)` e convenções de escrita](02-banco/T02-02-funcao-gravar.md) | Escrita | T02-01, T01-01 | tomada |
 | [T02-03 · Tabelas de cadastros: categorias, contas e preferências](02-banco/T02-03-tabelas-cadastros.md) | Cadastros | T02-02, T01-01 | — |
 | [T02-04 · Tabela de lançamentos](02-banco/T02-04-tabela-lancamentos.md) | Lançamentos | T02-03 | — |
 | [T02-05 · Tabelas de cartões, compras e faturas](02-banco/T02-05-tabelas-cartoes.md) | Cartões | T02-04 | — |

@@ -19,7 +19,9 @@ Deixar prontas as duas camadas de teste: Vitest para o core e para funções do 
 - Cobertura do core com `@vitest/coverage-v8` e limite mínimo de 90% de linhas e de ramos em `packages/core`; abaixo disso o comando falha.
 - `apps/app/playwright.config.ts`:
   - `testDir: "tests/e2e"`
-  - `webServer`: `pnpm dev`, `url: http://localhost:1420`, `reuseExistingServer: !process.env.CI`
+  - porta lida de `PORTA_APP` (padrão `1420`), a mesma do Vite (T00-03)
+  - `webServer`: `pnpm dev`, `url: http://localhost:<porta>`, `reuseExistingServer: !process.env.CI`; com a porta própria de cada worktree, nunca reaproveita o servidor de outra (D56)
+  - `use.baseURL` com a mesma porta
   - projetos `chromium` e `webkit` (WebKit aproxima a WebView do Tauri no macOS)
 - `apps/app/tests/e2e/smoke.spec.ts`: abre `/`, confere o texto "Goose Money" e roda `AxeBuilder` sem violações.
 - Scripts: raiz `test` (`vitest run`), `test:coverage`; app `test:e2e` (`playwright test`).

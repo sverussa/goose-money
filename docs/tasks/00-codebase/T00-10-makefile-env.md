@@ -23,6 +23,7 @@ Um comando `make` curto e documentado para cada tarefa do dia a dia.
   - `db-migrate-prod` usa `docker compose --env-file .env.producao run --rm flyway migrate` e falha com mensagem clara se `.env.producao` não existir
   - `setup` roda `pnpm install` e copia `.env.example` para `.env` se o `.env` não existir
 - `.env.example` (no Git):
+  - `PORTA_APP=1420` (cada worktree usa a sua, de 1420 a 1424; a 1420 fica para quem roda o Tauri)
   - `VITE_SUPABASE_URL=http://127.0.0.1:54321`
   - `VITE_SUPABASE_ANON_KEY=` (preencher com `make db-status`)
   - `FLYWAY_URL`, `FLYWAY_USER`, `FLYWAY_PASSWORD` locais (T00-09)

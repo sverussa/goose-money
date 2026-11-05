@@ -18,7 +18,7 @@ Subir o Supabase completo na máquina, em Docker, pelo Supabase CLI, sem usar as
   - `project_id = "goose-money"`
   - `[api] schemas = ["public", "graphql_public"]` (o schema `flyway` nunca é exposto)
   - `[db.seed] enabled = false` (dados de exemplo vêm do app, T05-29)
-  - `[auth] site_url = "http://localhost:1420"` e `additional_redirect_urls` com `http://localhost:1420/**`
+  - `[auth] site_url = "http://localhost:1420"` e `additional_redirect_urls` com `http://localhost:1420/**` a `http://localhost:1424/**` (uma porta por worktree, D56)
   - `[auth] enable_signup = true`, `[auth.email] enable_confirmations = true` e `[auth] minimum_password_length = 8` (D28)
   - `[auth.email] double_confirm_changes = true`
   - `[inbucket]`/Mailpit ligado (porta 54324) para testar e-mails

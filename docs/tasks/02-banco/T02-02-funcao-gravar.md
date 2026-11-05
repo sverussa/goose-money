@@ -2,7 +2,7 @@
 
 | Etapa | Contexto | Depende de | Branch |
 | --- | --- | --- | --- |
-| 2 · Banco | Escrita | T02-01, T01-22 | `feat/db-gravar` |
+| 2 · Banco | Escrita | T02-01, T01-01 | `feat/db-gravar` |
 
 **Referências:** PROMPT 2.1, 7.1, 9.4, 12.2 · DECISOES D14, D15, D18, D22
 
@@ -24,7 +24,7 @@ Definir como o app grava no banco. As tarefas T02-03 a T02-07 criam as tabelas q
 
 ## Fora do escopo
 
-Tabelas (T02-03 em diante) e a chamada no app (T03-04).
+Tabelas (T02-03 em diante) e a chamada no app (T03-04). Esta tarefa não espera os comandos do core (T01-22): o formato das operações está definido acima e T01-22 passa a produzir exatamente esse formato (D56).
 
 ## Passos
 

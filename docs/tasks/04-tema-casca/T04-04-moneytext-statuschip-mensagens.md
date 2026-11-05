@@ -21,7 +21,8 @@ Criar os componentes que mostram dinheiro e estados exatamente iguais em todo o 
 - `MoneyText`: recebe `Centavos` e o tipo (`receita`, `despesa`, `neutro`); cor `income`/`expense`/`transfer`; sinal "+"/"−" e seta para cima ou para baixo (a cor nunca é o único sinal, 4.1); `tabular-nums`; no modo privacidade mostra "R$ ••••••".
 - `usePrivacidade()`: liga e desliga o modo privacidade; o padrão ao abrir vem da preferência "ocultar valores ao abrir" (T03-03) e a escolha da sessão fica lembrada.
 - `StatusChip`: **um** mapeamento estado → rótulo, cor e ícone para os estados de 3.1, os status de fatura de 3.5, "Paga parcialmente", "A classificar", "Novo", "Anterior ao saldo inicial", "Paga antes do cadastro" (base em `statusChips` de `theme-tokens.ts`).
-- `apps/app/src/app/mensagens.ts`: todos os textos de interface citados na spec (microcopy de 4.3, erros, tooltips dos indicadores de 5.3), agrupados por tela. Componentes nunca escrevem texto solto.
+- `apps/app/src/app/mensagens.ts`: só os textos comuns a várias telas (microcopy de 4.3, erros gerais, tooltips dos indicadores de 5.3, navegação). Componentes nunca escrevem texto solto.
+- Textos de uma tela ficam em `apps/app/src/features/<funcionalidade>/mensagens.ts`, criado pela tarefa da tela (D10 revista, D56). Assim, telas feitas em paralelo não editam o mesmo arquivo.
 
 ## Fora do escopo
 

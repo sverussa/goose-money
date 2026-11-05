@@ -650,7 +650,7 @@ Cada gráfico tem período e destino de clique definidos abaixo; nenhum herda re
 - **Desempenho:** indicadores recalculados em menos de 100 ms com 10 mil lançamentos; listas virtualizadas; projeção de 24 meses em menos de 200 ms.
 - **Conexão e privacidade:** o app exige conexão; sem ela mostra o banner "Sem conexão" e bloqueia gravações (não há modo offline). Dados no Postgres do Supabase, acessíveis só pelo dono via RLS. App web instalável por manifest e app Tauri.
 - **Integridade:** toda gravação composta é atômica (2.1).
-- **Internacionalização:** textos em arquivo de mensagens pt-BR.
+- **Internacionalização:** textos em arquivos de mensagens pt-BR (os comuns em `src/app/mensagens.ts`, os de cada tela na pasta da funcionalidade).
 - **Testes unitários obrigatórios:** atribuição de compra à fatura (dia do fechamento, virada de ano, F ≥ V, meses curtos, mudança de ciclo); rateio de centavos; Price, SAC, taxa zero e parcela informada; saldo com data de saldo inicial; reconhecimento (3.3) para cada tipo de movimento; projeção sem dupla contagem; pagamentos parcial e excedente; versões de recorrência; confirmação automática idempotente; divisões por zero; importação nos dois modos.
 
 ### 9.4 Regras do banco de dados
@@ -883,7 +883,7 @@ O `Makefile` na raiz é o ponto de entrada dos comandos. Regras:
 | --- | --- |
 | `help` | Lista os alvos |
 | `setup` | `pnpm install` e cria o `.env` a partir do `.env.example`, se não existir |
-| `dev` | App web no navegador (Vite, porta 1420) |
+| `dev` | App web no navegador (Vite, porta `PORTA_APP`, padrão 1420) |
 | `dev-desktop` | App Tauri em desenvolvimento |
 | `db-start` | Sobe o Supabase local |
 | `db-stop` | Para o Supabase local |

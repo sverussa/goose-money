@@ -18,7 +18,7 @@ Criar `apps/app` com Vite, React 19, TypeScript e roteamento por hash, já consu
   - dev: `vite`, `@vitejs/plugin-react`, `typescript` 6.0.x, `@types/react`, `@types/react-dom`
   - scripts: `dev` (`vite`), `build` (`tsc --noEmit && vite build`), `preview`, `typecheck`
 - `apps/app/vite.config.ts`:
-  - porta `1420` com `strictPort: true` e `clearScreen: false` (exigências do Tauri)
+  - porta de `process.env.PORTA_APP`, padrão `1420`, com `strictPort: true` e `clearScreen: false` (exigências do Tauri). Cada worktree usa a sua porta para agentes rodarem em paralelo (D56)
   - alias `@` → `./src`
   - `envPrefix: ["VITE_", "TAURI_ENV_"]`
 - `apps/app/tsconfig.json`: estende a base, com `lib` incluindo `DOM` e `DOM.Iterable`, `jsx: "react-jsx"`, `paths: { "@/*": ["./src/*"] }`.
@@ -41,6 +41,7 @@ Tailwind e shadcn (T00-04), Tauri (T00-07), Supabase (T00-11).
 ## Critérios de aceite
 
 - [ ] O app abre na porta 1420 e mostra "Goose Money" e a versão do core.
+- [ ] `PORTA_APP=1421 pnpm dev` abre na 1421; porta ocupada dá erro em vez de trocar de porta.
 - [ ] A URL usa hash (`#/`).
 - [ ] `build` e `typecheck` passam.
 - [ ] Alterar `VERSAO_CORE` no core atualiza a página sem reiniciar o servidor.

@@ -26,6 +26,10 @@ Criar `packages/core/src/comandos/`: cada ação do usuário vira uma lista de m
 - Construtor rejeita com erro de domínio (mensagem pronta para a tela) quando a regra não permite, por exemplo "Arquivar exige saldo zero".
 - Cada construtor tem teste: aplicar `mudancas` e depois `inversas` sobre os fatos devolve os fatos originais.
 
+## Formato de saída
+
+As mudanças têm a mesma forma das operações de `gravar(ops)` (T02-02): `{ entidade, acao: 'inserir' | 'alterar', id, dados }`, com os nomes do domínio em `camelCase`. A conversão para o nome da tabela e as colunas em `snake_case` fica só em `src/data` (T03-04), como manda a regra de mapeamento. Se o core precisar de outra forma, a mudança passa pelo coordenador (D56).
+
 ## Fora do escopo
 
 Execução no banco (T02-02, T03-04).

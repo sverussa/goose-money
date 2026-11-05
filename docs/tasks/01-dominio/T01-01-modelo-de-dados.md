@@ -2,7 +2,7 @@
 
 | Etapa | Contexto | Depende de | Branch |
 | --- | --- | --- | --- |
-| 1 · Domínio | Modelo | T00-13 | `docs/modelo-dados` |
+| 1 · Domínio | Modelo | — | `docs/modelo-dados` |
 
 **Referências:** PROMPT 2.1, 3, 6, 9.1, 9.4 · DECISOES D3, D21, D22, D25
 
@@ -38,14 +38,14 @@ Também definir:
 
 ## Fora do escopo
 
-Código. Esta tarefa só produz o documento.
+Código. Esta tarefa só produz o documento, por isso não depende da base de código e começa no primeiro dia (D56). O documento é o contrato entre core, banco e interface: precisa da aprovação do Saulo antes de T01-05 e T02-03 começarem.
 
 ## Passos
 
 1. Percorrer PROMPT 3 e 6 e listar todo campo citado.
 2. Escrever o documento com uma tabela por entidade e um diagrama de relações em lista (sem imagem).
 3. Revisar contra os critérios de 11.2–11.8: cada cenário precisa ser representável.
-4. Registrar no `DECISOES.md` qualquer outra escolha feita aqui.
+4. Listar na descrição do PR qualquer outra escolha feita aqui, para o coordenador registrar no `DECISOES.md`.
 
 ## Critérios de aceite
 

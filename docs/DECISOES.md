@@ -48,6 +48,7 @@ Decisões tomadas fora do texto original do `PROMPT.md`, em casos não cobertos 
 | D53 | **App web numa VPS privada**, servido por Caddy em Docker com HTTPS automático e cabeçalhos de segurança; deploy por `make deploy-web`. O Supabase continua gerenciado. | Escolha do Saulo | 12 |
 | D54 | **Eliminação definitiva por script administrativo** (`make db-eliminar-usuario`), fora do app. | Atende ao pedido do titular (LGPD) sem dar ao app um caminho de apagar de verdade | 9.4 |
 | D55 | **Sem criptografia ponta a ponta no MVP.** Proteção por login, RLS e criptografia em disco do provedor. | Mantém as restrições do banco e a recuperação de senha | 9.3 |
+| D56 | **Desenvolvimento com agentes em paralelo** conforme `docs/tasks/tasks-agents-estrategies.md`: T01-01 sem dependência; T02-02 sem esperar T01-22 (os comandos do core produzem o formato de `gravar`); porta do app em `PORTA_APP` (1420 a 1424, uma por worktree); textos por funcionalidade; status do índice e decisões novas registrados só pelo coordenador. | Encurtar o caminho crítico de 32 para 26 ondas e evitar que um agente atrapalhe outro | 2, 12 |
 
 Consequências de D2:
 
@@ -126,7 +127,7 @@ Detalhes de D20:
 | D7 | **Adaptador Zod → React Hook Form próprio** (~10 linhas), sem `@hookform/resolvers`. | O pacote lançou as versões 6 e 7 em duas semanas | 2 |
 | D8 | **Roboto Flex instalada no app** (`@fontsource-variable/roboto-flex`), sem Google Fonts. | Não depende de terceiros para carregar a fonte | 4.3 |
 | D9 | **Lista virtualizada só em Lançamentos** (`@tanstack/react-virtual`). As demais listas são mensais e pequenas. | Única lista que chega a milhares de itens | 9.3 |
-| D10 | **Textos em `src/app/mensagens.ts`**, sem biblioteca de i18n. | Só existe pt-BR | 9.3 |
+| D10 | **Textos em arquivos de mensagens**, sem biblioteca de i18n: os comuns em `src/app/mensagens.ts` e os de cada tela em `src/features/<funcionalidade>/mensagens.ts` (revista por D56). | Só existe pt-BR | 9.3 |
 | D11 | **Exportar CSV** a partir dos dados do gráfico, com código próprio, e **PNG** com html-to-image (revista por D20). | O Recharts não exporta imagem nem CSV | 8.3 |
 | D12 | **"Hoje" é parâmetro** de toda função do Motor (`(fatos, hoje)`). O core nunca lê o relógio. | Testes de 11.6 e seed relativo à data | 2.1, 3 |
 | D13 | **Derivação única por mudança de fatos:** uma função calcula faturas e seus saldos, saldos por conta e cronogramas; os indicadores de 3.10 leem desse resultado. | Cumprir < 100 ms com 10 mil lançamentos sem recalcular o mesmo dado várias vezes | 2.1, 9.3 |
