@@ -7,11 +7,18 @@
     "node": ">=26.0.0 <27"
   },
   "scripts": {
+    "dev": "pnpm --filter @goose-money/app dev",
+    "dev:desktop": "pnpm --filter @goose-money/app dev:desktop",
+    "build": "pnpm --filter @goose-money/app build",
+    "build:desktop": "pnpm --filter @goose-money/app build:desktop",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "typecheck": "pnpm -r typecheck",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "pnpm --filter @goose-money/app test:e2e",
+    "db:types": "supabase gen types typescript --local > apps/app/src/data/database.types.ts"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
