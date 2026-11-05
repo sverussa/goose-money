@@ -9,6 +9,8 @@ const porta = Number(process.env.PORTA_APP ?? 1420);
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   clearScreen: false,
+  // O .env fica na raiz do monorepo (T00-10).
+  envDir: fileURLToPath(new URL('../..', import.meta.url)),
   envPrefix: ['VITE_', 'TAURI_ENV_'],
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },

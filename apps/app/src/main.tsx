@@ -6,6 +6,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Route, Routes } from 'react-router';
 
+import { ConfiguracaoIncompleta } from '@/app/ConfiguracaoIncompleta';
+import { resultadoEnv } from '@/app/env';
 import { Button } from '@/components/ui/button';
 
 function Inicio() {
@@ -23,10 +25,14 @@ if (!raiz) throw new Error('Elemento #root não encontrado');
 
 createRoot(raiz).render(
   <StrictMode>
-    <HashRouter>
-      <Routes>
-        <Route path="/" element={<Inicio />} />
-      </Routes>
-    </HashRouter>
+    {resultadoEnv.ok ? (
+      <HashRouter>
+        <Routes>
+          <Route path="/" element={<Inicio />} />
+        </Routes>
+      </HashRouter>
+    ) : (
+      <ConfiguracaoIncompleta variaveis={resultadoEnv.invalidas} />
+    )}
   </StrictMode>,
 );

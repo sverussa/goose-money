@@ -27,6 +27,7 @@ export default tseslint.config(
       'apps/app/src/components/ui/**',
       'design/**',
       '.claude/**',
+      'apps/app/src/data/database.types.ts',
     ],
   },
   js.configs.recommended,
