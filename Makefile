@@ -15,7 +15,7 @@ DOCKER_OK = @docker info >/dev/null 2>&1 || { echo "O Docker não está rodando.
 	format-check typecheck check build build-desktop
 
 help: ## Lista os alvos
-	@grep -E '^[a-zA-Z0-9_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  %-22s %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z0-9_-]+:.*## ' Makefile | awk 'BEGIN {FS = ":.*## "}; {printf "  %-22s %s\n", $$1, $$2}'
 
 setup: ## Instala as dependências e cria o .env a partir do .env.example
 	pnpm install
@@ -24,8 +24,8 @@ setup: ## Instala as dependências e cria o .env a partir do .env.example
 dev: ## App web no navegador (Vite, porta PORTA_APP, padrão 1420)
 	pnpm dev
 
-dev-desktop: ## App Tauri em desenvolvimento
-	pnpm dev:desktop
+dev-desktop: ## App Tauri em desenvolvimento (sempre na porta 1420, a do devUrl)
+	PORTA_APP=1420 pnpm dev:desktop
 
 db-start: ## Sobe o Supabase local
 	$(DOCKER_OK)
