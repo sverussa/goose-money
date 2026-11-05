@@ -21,6 +21,15 @@ dist/
 build/
 target/
 coverage/
+*.tsbuildinfo
+
+# Testes
+playwright-report/
+test-results/
+
+# Supabase local
+supabase/.temp/
+supabase/.branches/
 
 # Logs
 *.log

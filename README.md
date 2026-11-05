@@ -59,6 +59,8 @@ A ideia é que registrar uma despesa leve segundos e que, com o tempo, o app mos
 
 ```text
 GooseMoney/
+├── apps/                    # front end (apps/app, a partir de T00-03)
+├── packages/                # domínio e Motor (packages/core, a partir de T00-02)
 ├── docs/
 │   ├── PROMPT.md            # especificação do produto (fonte da verdade)
 │   ├── DECISOES.md          # decisões de stack, arquitetura e casos não cobertos
@@ -70,6 +72,11 @@ GooseMoney/
 │   ├── telas/               # 18 telas e componentes desenhados (.dc.html)
 │   ├── canvas.json          # disposição das telas no canvas de design
 │   └── theme-tokens.ts      # cores, tipografia e formas (Material 3)
+├── package.json             # raiz do monorepo (pnpm 12, Node 26)
+├── pnpm-workspace.yaml      # workspaces e regra dos 7 dias (minimumReleaseAge)
+├── pnpm-lock.yaml
+├── tsconfig.base.json       # opções do TypeScript usadas por todos os pacotes
+├── .nvmrc
 ├── CLAUDE.md
 ├── README.md
 └── .gitignore
