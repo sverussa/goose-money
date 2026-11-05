@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-Goose Money is still before the first line of code (roadmap phase 0), but the product spec and the screen designs are done:
+Stage 0 (codebase) is done: pnpm monorepo, `packages/core`, `apps/app` (Vite + React + Tailwind/shadcn + Tauri), local Supabase, Flyway, Makefile, lint, tests and CI. No business rules yet; stage 1 (domain) is next. The product spec and the screen designs are done:
 
 - `docs/PROMPT.md`: full product and technical spec (calculation rules, indicators, screens, flows, charts, persistence, sample data, acceptance criteria). It names the product "Meu Caixa"; the product is **Goose Money**, so use that name in all UI text.
 - `docs/DECISOES.md`: stack, architecture and uncovered-case decisions (versions policy, Supabase as back end, monorepo, Tauri, persisted debt installments, shadcn/ui instead of MUI, adaptations from `docs/StackShowCase.md`). Also lists open questions.
@@ -14,7 +14,7 @@ Goose Money is still before the first line of code (roadmap phase 0), but the pr
 - `design/telas/*.dc.html`: the 18 designed screens and components (visual reference only, see below).
 - `design/theme-tokens.ts`: colors, typography, shapes and layout values used in the designs.
 
-Stack: `docs/PROMPT.md` section 2 (React + TypeScript 6 strict + Vite, shadcn/ui (Radix + Tailwind CSS 4) with Material 3 tokens, Recharts, lucide-react icons, TanStack Query, decimal.js, Supabase (Auth + Postgres with RLS) as the back end, Tauri 2, Vitest, Playwright + axe-core). Pin exact versions published at least 7 days ago (D5 in `docs/DECISOES.md`), and update this file with the `make` targets once the project is set up (the target list is in `docs/PROMPT.md` 12.3).
+Stack: `docs/PROMPT.md` section 2 (React + TypeScript 6 strict + Vite, shadcn/ui (Radix + Tailwind CSS 4) with Material 3 tokens, Recharts, lucide-react icons, TanStack Query, decimal.js, Supabase (Auth + Postgres with RLS) as the back end, Tauri 2, Vitest, Playwright + axe-core). Pin exact versions published at least 7 days ago (D5 in `docs/DECISOES.md`); pnpm enforces it through `minimumReleaseAge`, Cargo does not (check crate dates by hand, D58).
 
 Architecture (D18, D19, D20): pnpm workspaces monorepo, with `minimumReleaseAge` enforcing the 7-day rule. `packages/core` holds the domain and the Motor (pure TypeScript, never imports React or `@supabase/supabase-js`). `apps/app` is the front end (React, shadcn, TanStack Query, `src/data`, `src/plataforma`, `src-tauri/`). `supabase/` is the back end (local Supabase config and Flyway migrations in `supabase/flyway/sql`). Online-first with no offline mode: Postgres is the source of truth, every write goes through the `gravar(ops)` RPC function in one transaction with the business rules kept in `packages/core` (D36), and every table has RLS with `created_by = auth.uid()`. Never put the `service_role` key in the app.
 
@@ -24,6 +24,29 @@ Database rules (D22–D24, `docs/PROMPT.md` 9.4 and 12):
 - Every business table has `id`, `created_at`, `updated_at` (trigger `set_updated_at`), `created_by` (default `auth.uid()`, also the RLS owner) and `is_deleted`. `snake_case` in the database, `camelCase` in the domain; mapping only in `src/data`.
 - Deletion is always logical (`is_deleted = true`). `delete` is revoked for `authenticated` and `anon`. Reads in `carregarTudo` and RPC functions filter `not is_deleted`; uniqueness uses partial indexes `where not is_deleted`.
 - Local Supabase runs in Docker through the Supabase CLI (`make db-start`).
+
+## Commands
+
+Run `make` to list every target. Each target only calls `pnpm`, `docker compose` or `pnpm exec supabase`; the logic lives in the root `package.json` scripts. The Makefile loads `.env` (copied from `.env.example` by `make setup`).
+
+| Target                                                | What it does                                                                                                           |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `make setup`                                          | `pnpm install` and create `.env` from `.env.example`                                                                   |
+| `make dev`                                            | Web app with Vite on `PORTA_APP` (default 1420; each worktree uses its own, 1421 to 1424)                              |
+| `make dev-desktop`                                    | Tauri app in development (always port 1420)                                                                            |
+| `make build` / `make build-desktop`                   | Web build / Tauri bundle (`.app`, `.dmg`)                                                                              |
+| `make db-start` / `db-stop` / `db-status`             | Local Supabase in Docker; `db-status` shows the anon key                                                               |
+| `make db-migrate` / `db-info` / `db-validate`         | Flyway migrate, info and validate on the local database                                                                |
+| `make db-reset`                                       | Recreate the local database and migrate (asks to type `RESET`)                                                         |
+| `make db-migrate-prod`                                | Migrate production with `.env.producao` (asks to type `PRODUCAO`)                                                      |
+| `make db-types`                                       | Generate `apps/app/src/data/database.types.ts` from the local database                                                 |
+| `make test`                                           | Vitest (core and app); `pnpm test:coverage` enforces 90% lines and branches in core                                    |
+| `make test-e2e`                                       | Playwright + axe-core (Chromium and WebKit)                                                                            |
+| `make lint` / `format` / `format-check` / `typecheck` | ESLint (with layer boundary rules), Prettier, `tsc` in every package                                                   |
+| `make check`                                          | `format-check` + `lint` + `typecheck` + `test` + `db-validate`; run before every PR (needs the local Supabase running) |
+| `make deploy-web` / `db-eliminar-usuario`             | Not implemented yet (T06-05, T06-06)                                                                                   |
+
+Single package: `pnpm --filter @goose-money/core test`, `pnpm --filter @goose-money/app typecheck`. Single test file: `pnpm exec vitest run packages/core/src/index.test.ts`.
 
 ## Source of truth
 
