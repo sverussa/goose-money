@@ -1,0 +1,10 @@
+{
+  "name": "Goose Money",
+  "short_name": "Goose Money",
+  "start_url": "./",
+  "display": "standalone",
+  "lang": "pt-BR",
+  "theme_color": "#1B6B5A",
+  "background_color": "#F5FBF7",
+  "icons": [{ "src": "icone.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
