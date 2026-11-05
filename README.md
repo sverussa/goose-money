@@ -101,6 +101,7 @@ GooseMoney/
 │   ├── DECISOES.md          # decisões de stack, arquitetura e casos não cobertos
 │   ├── DECISOES-REVISAO.md  # decisões da revisão da especificação
 │   ├── DESIGN-HANDOFF.md    # mapa telas → rotas → componentes
+│   ├── MODELO-DADOS.md      # entidades, campos e relações (contrato core ↔ banco)
 │   ├── StackShowCase.md     # stack de referência (Desktop UI Showcase), base da D20
 │   └── tasks/               # tarefas de implementação, uma por arquivo, por etapa
 ├── design/
