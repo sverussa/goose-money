@@ -22,6 +22,7 @@ A ideia é que registrar uma despesa leve segundos e que, com o tempo, o app mos
 ## ✨ Funcionalidades planejadas
 
 ### Essenciais (MVP)
+
 - [ ] Cadastro de contas (conta corrente, poupança, carteira, cartão de crédito)
 - [ ] Registro de receitas e despesas
 - [ ] Categorias e subcategorias personalizáveis
@@ -29,17 +30,20 @@ A ideia é que registrar uma despesa leve segundos e que, com o tempo, o app mos
 - [ ] Histórico de transações com busca e filtros
 
 ### Planejamento
+
 - [ ] Orçamento mensal por categoria
 - [ ] Metas de economia (ex.: viagem, reserva de emergência)
 - [ ] Lançamentos recorrentes (aluguel, assinaturas, salário)
 - [ ] Controle de faturas e parcelamentos no cartão
 
 ### Análise
+
 - [ ] Resumo mensal de entradas e saídas
 - [ ] Gráficos de gastos por categoria
 - [ ] Evolução do patrimônio ao longo do tempo
 
 ### Extras
+
 - [ ] Importação de extratos (OFX/CSV)
 - [ ] Exportação de dados
 - [ ] Lembretes de contas a pagar
@@ -47,13 +51,13 @@ A ideia é que registrar uma despesa leve segundos e que, com o tempo, o app mos
 
 ## 🗺 Roadmap
 
-| Fase | Entrega |
-|------|---------|
-| 0 | Definição de escopo, requisitos e tecnologias |
-| 1 | MVP: contas, transações e categorias |
-| 2 | Orçamentos, metas e recorrências |
-| 3 | Relatórios, gráficos e importação de extratos |
-| 4 | Primeira versão pública |
+| Fase | Entrega                                       |
+| ---- | --------------------------------------------- |
+| 0    | Definição de escopo, requisitos e tecnologias |
+| 1    | MVP: contas, transações e categorias          |
+| 2    | Orçamentos, metas e recorrências              |
+| 3    | Relatórios, gráficos e importação de extratos |
+| 4    | Primeira versão pública                       |
 
 ## 📁 Estrutura do repositório
 

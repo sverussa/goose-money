@@ -1,0 +1,13 @@
+# D30: documentos escritos à mão
+docs/
+design/
+
+# Artefatos de build e gerados
+dist/
+coverage/
+playwright-report/
+test-results/
+apps/app/src-tauri/target/
+apps/app/src-tauri/gen/
+pnpm-lock.yaml
+.claude/

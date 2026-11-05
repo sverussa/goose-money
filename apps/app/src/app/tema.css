@@ -1,13 +1,13 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
 /* Provisório: os tokens completos de design/theme-tokens.ts chegam em T04-01;
    as variáveis abaixo são as que o shadcn init gerou, com a cor primária do design. */
 @theme {
-  --font-sans: "Roboto Flex Variable", Roboto, system-ui, sans-serif;
+  --font-sans: 'Roboto Flex Variable', Roboto, system-ui, sans-serif;
 }
 
 @theme inline {

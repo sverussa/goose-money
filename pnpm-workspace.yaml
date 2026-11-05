@@ -1,6 +1,6 @@
 packages:
-  - "packages/*"
-  - "apps/*"
+  - 'packages/*'
+  - 'apps/*'
 
 # D5: só versões publicadas há pelo menos 7 dias (em minutos)
 minimumReleaseAge: 10080
