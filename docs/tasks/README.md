@@ -46,7 +46,7 @@ Base do projeto: monorepo, app, desktop, Supabase local, Flyway, Makefile, CI. N
 | ✅ [T00-10 · Makefile, scripts e `.env.example`](00-codebase/T00-10-makefile-env.md) | Ferramentas | T00-06, T00-07, T00-09 | — |
 | ✅ [T00-11 · Cliente Supabase e variáveis de ambiente no app](00-codebase/T00-11-cliente-supabase-env.md) | App · Dados | T00-08, T00-10 | — |
 | ✅ [T00-12 · Integração contínua](00-codebase/T00-12-ci.md) | Qualidade | T00-10 | tomada |
-| [T00-13 · Documentar a base de código](00-codebase/T00-13-documentacao-base.md) | Documentação | T00-01 a T00-12 | — |
+| ✅ [T00-13 · Documentar a base de código](00-codebase/T00-13-documentacao-base.md) | Documentação | T00-01 a T00-12 | — |
 
 ## Etapa 1 · Domínio
 

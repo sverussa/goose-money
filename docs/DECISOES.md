@@ -167,6 +167,10 @@ A spec já previa várias contas e vários cartões, mas não definia o formulá
 
 Caso encontrado em T00-09. O `revoke execute on functions from anon` por schema, pedido em 12.2, não basta: o Postgres dá `execute` a `PUBLIC` em toda função nova, por um padrão global, e o `anon` herda esse direito. A V001 também tem `alter default privileges revoke execute on functions from public;`. O `authenticated` e o `service_role` continuam com `execute` pelo padrão do Supabase no schema `public`. Opção mais conservadora, testada no banco local. **Precisa da sua validação.**
 
+### D58 · Regra dos 7 dias nos crates Rust (05/11/2026)
+
+Caso encontrado em T00-07. O pnpm aplica a D5 sozinho (`minimumReleaseAge`), o Cargo não. Os crates diretos (`tauri`, `tauri-build`) ficam fixos com `=`, o `Cargo.lock` é versionado, e as datas dos crates do lock são conferidas no crates.io sempre que ele muda. Na T00-07, 20 crates indiretos com menos de 7 dias voltaram para a versão anterior com `cargo update --precise`. Sem ferramenta extra (como `cargo-deny`) por enquanto. **Precisa da sua validação.**
+
 ## Em aberto
 
 - **Provedor da VPS e domínio do app web** (D53).
