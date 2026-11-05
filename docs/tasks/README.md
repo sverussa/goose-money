@@ -34,7 +34,7 @@ Base do projeto: monorepo, app, desktop, Supabase local, Flyway, Makefile, CI. N
 
 | Tarefa | Contexto | Depende de | Decisões |
 | --- | --- | --- | --- |
-| [T00-01 · Monorepo com pnpm workspaces](00-codebase/T00-01-monorepo-pnpm.md) | Monorepo | — | tomada |
+| ✅ [T00-01 · Monorepo com pnpm workspaces](00-codebase/T00-01-monorepo-pnpm.md) | Monorepo | — | tomada |
 | [T00-02 · Pacote `@goose-money/core`](00-codebase/T00-02-pacote-core.md) | Core | T00-01 | — |
 | [T00-03 · App web com Vite e React](00-codebase/T00-03-app-vite-react.md) | App | T00-02 | — |
 | [T00-04 · Tailwind 4, shadcn/ui e fonte Roboto Flex](00-codebase/T00-04-tailwind-shadcn-fonte.md) | App · Design system | T00-03 | — |
