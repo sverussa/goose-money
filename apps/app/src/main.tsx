@@ -1,13 +1,19 @@
+import '@fontsource-variable/roboto-flex';
+import './app/tema.css';
+
 import { VERSAO_CORE } from '@goose-money/core';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Route, Routes } from 'react-router';
+
+import { Button } from '@/components/ui/button';
 
 function Inicio() {
   return (
     <main>
       <h1>Goose Money</h1>
       <p>Core {VERSAO_CORE}</p>
+      <Button>Lançar</Button>
     </main>
   );
 }

@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url';
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
@@ -6,7 +7,7 @@ import { defineConfig } from 'vite';
 const porta = Number(process.env.PORTA_APP ?? 1420);
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   clearScreen: false,
   envPrefix: ['VITE_', 'TAURI_ENV_'],
   resolve: {
