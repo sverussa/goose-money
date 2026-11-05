@@ -10,7 +10,7 @@
 
 Definir como o app busca, de uma vez, todos os registros não excluídos do usuário.
 
-## Escopo (conforme a decisão D1, opção A)
+## Escopo
 
 - `R__carregar_tudo.sql`: `public.carregar_tudo() returns jsonb`, `security invoker`, `stable`:
   - um objeto com uma chave por tabela de negócio e a lista de linhas `where not is_deleted`
@@ -32,10 +32,6 @@ Mapeamento para os tipos do core (T03-02).
 - [ ] Registros excluídos e de outros usuários não aparecem.
 - [ ] 10 mil lançamentos em menos de 1 s localmente.
 
-## Decisões
+## Decisão tomada
 
-**D1. Como buscar os fatos?**
-
-- **A)** Uma função `carregar_tudo()` que devolve um único JSON com todas as tabelas: uma requisição, sem o limite de 1.000 linhas por página do PostgREST. *(recomendado)*
-- **B)** Um `select` por tabela pela API, paginando de 1.000 em 1.000. Sem função nova, mas são 12 ou mais requisições e o filtro `is_deleted` repetido em cada uma.
-- **C)** Views por tabela já filtrando `is_deleted`, lidas com paginação. O filtro fica num lugar só, mas continua com várias requisições.
+**D1. Leitura** (respondida pelo Saulo em 05/11/2026): uma função `carregar_tudo()` devolvendo um único JSON (opção A). Registrada em `DECISOES.md` D41.

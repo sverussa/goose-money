@@ -16,7 +16,7 @@
 - Tabs secundárias roláveis, uma por fatura, abrindo na aberta (`montarFaturas`, T01-09); a fatura fica na URL (`?fatura=2026-12`).
 - Cabeçalho de contexto da fatura: saldo, `StatusChip` (Futura, Aberta, Fechada, Vencida, Paga, Transportada, "Paga parcialmente"), fechamento, vencimento, pagamentos feitos, **Limite disponível**.
 - Itens: compras à vista, parcelas ("Notebook · 3/10"), estornos, encargos, ajustes, "Saldo anterior não pago", "Crédito de pagamento", "Saldo anterior ao cadastro".
-- Item previsto (gasto fixo no cartão não confirmado) conforme a decisão D1.
+- Item previsto (gasto fixo no cartão não confirmado) separado no fim da lista, tracejado, com o chip "Previsto" e fora do saldo da fatura (D46).
 - Ações: "Nova compra" (T05-13), "Pagar fatura", "Lançar encargo ou estorno", "Configurar ciclo" (T05-15). Clique numa compra abre o menu da compra (T05-14).
 - O FAB nesta tela abre "Compra no cartão" com este cartão (7.2).
 
@@ -35,10 +35,6 @@ Os diálogos das ações (T05-13 a T05-15).
 - [ ] Os status do seed batem com 3.5 (paga parcialmente, transportada, crédito de R$ 50,00).
 - [ ] O item previsto não soma no saldo da fatura.
 
-## Decisões
+## Decisão tomada
 
-**D1. Como mostrar o gasto fixo previsto dentro da fatura?** (decisão de design 4 do handoff)
-
-- **A)** Separado no fim da lista, tracejado, com o chip "Previsto" e fora do saldo da fatura, como desenhado. *(recomendado)*
-- **B)** Misturado aos itens pela data, com o chip "Previsto" e fora do saldo.
-- **C)** Não mostrar na fatura; só na projeção e em Gastos fixos.
+**D1. Previsto na fatura** (respondida pelo Saulo em 05/11/2026): separado no fim, como desenhado (opção A). Registrada em `DECISOES.md` D46.

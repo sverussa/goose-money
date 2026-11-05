@@ -10,7 +10,7 @@
 
 Definir como o app grava no banco. As tarefas T02-03 a T02-07 criam as tabelas que esta função aceita.
 
-## Escopo (conforme a decisão D1, opção A)
+## Escopo
 
 - `supabase/flyway/sql/R__gravar.sql` com `public.gravar(ops jsonb) returns jsonb`, `security invoker` (respeita o RLS), `set search_path = public`:
   - `ops` é uma lista de `{ tabela, acao: 'inserir' | 'alterar', id, dados }`; não existe ação de apagar
@@ -37,12 +37,6 @@ Tabelas (T02-03 em diante) e a chamada no app (T03-04).
 - [ ] Usuário A não consegue alterar registro do usuário B pela função (o RLS bloqueia).
 - [ ] A função nunca apaga linhas.
 
-## Decisões
+## Decisões tomadas
 
-**D1. Onde ficam as regras das gravações compostas?**
-
-- **A)** No core (T01-22). O banco recebe uma lista de mudanças já validadas e só garante atomicidade, dono do registro e as restrições baratas (unicidade, referências, checks, soma das parcelas). Uma função só para manter e nenhuma regra duplicada. *(recomendado)*
-- **B)** Uma função RPC por operação (`criar_compra_parcelada`, `pagar_fatura`…), com a regra escrita em SQL. O banco garante tudo sozinho, mas a regra fica duplicada em TypeScript e SQL.
-- **C)** Supabase Edge Functions (Deno) rodando o próprio core no servidor. Regra única e validada no servidor, mas mais infraestrutura, deploy separado e latência maior.
-
-Se a escolha não for A, as tarefas T02-03 a T02-07 continuam valendo e esta tarefa é reescrita.
+**D1. Regras das gravações compostas** (D36, respondida pelo Saulo em 05/11/2026, opção A): ficam no core (T01-22). O banco recebe a lista de mudanças já validadas e só garante atomicidade, dono do registro e as restrições simples (unicidade, referências, checks, soma das parcelas).

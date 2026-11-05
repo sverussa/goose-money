@@ -18,7 +18,7 @@ Atalhos do desktop e a busca global com `Ctrl/Cmd + K`.
   - `Esc`: fecha diálogo ou busca
   - `Enter`: salva no formulário aberto (tratado no próprio formulário)
   - `Ctrl/Cmd + K`: abre a busca
-- Busca com o componente `Command` do shadcn, com o escopo da decisão D1.
+- Busca com o componente `Command` do shadcn, encontrando telas, ações ("Nova conta", "Pagar fatura") e lançamentos por descrição; escolher um lançamento abre Lançamentos com ele em destaque (D45).
 - Lista de atalhos visível no menu do usuário ("Atalhos de teclado").
 
 ## Fora do escopo
@@ -36,10 +36,6 @@ Busca dentro da tela Lançamentos (T05-07).
 - [ ] `Ctrl+K` (Windows/Linux) e `Cmd+K` (macOS) abrem a busca.
 - [ ] A busca é navegável só pelo teclado.
 
-## Decisões
+## Decisão tomada
 
-**D1. O que a busca global encontra?**
-
-- **A)** Telas e ações ("Nova conta", "Pagar fatura") e lançamentos por descrição, levando ao item em Lançamentos. *(recomendado)*
-- **B)** Só telas e ações (uma paleta de comandos), sem buscar dados.
-- **C)** Tudo: lançamentos, compras, contas, cartões, dívidas, recorrências e categorias, com resultados agrupados por tipo.
+**D1. Escopo da busca** (respondida pelo Saulo em 05/11/2026): telas, ações e lançamentos (opção A). Registrada em `DECISOES.md` D45.

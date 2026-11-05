@@ -13,7 +13,7 @@ A aba Saldos, como no design.
 ## Escopo
 
 - Destaque do **Patrimônio líquido** de hoje com a decomposição visível: Saldo em todas as contas − Obrigações de cartão − Saldo devedor de dívidas.
-- Frase explicativa quando o patrimônio é negativo, conforme a decisão D1.
+- Frase explicativa quando o patrimônio é negativo, como no design: explica que dívidas e compras parceladas somam mais que o saldo das contas e aponta a parcela que mais pesa, vinda do core (D47).
 - Cards por conta: saldo atual, variação no mês, sparkline de 30 dias, marca "Fora do total".
 - Gráficos (8.1):
   - Composição do saldo por conta (barras horizontais), hoje; clique abre o extrato da conta no mês corrente
@@ -35,10 +35,6 @@ Contas (T05-08).
 - [ ] Conta fora do total aparece com a marca e entra em "Saldo em todas as contas".
 - [ ] Clique numa barra abre o extrato daquela conta no mês corrente.
 
-## Decisões
+## Decisão tomada
 
-**D1. O que dizer quando o patrimônio líquido é negativo?** (decisão de design 5 do handoff)
-
-- **A)** A frase do design, explicando que as dívidas e as compras parceladas somam mais que o saldo das contas e apontando qual parcela pesa mais. *(recomendado)*
-- **B)** Só o valor em `error`, sem frase.
-- **C)** Frase genérica ("Você deve mais do que tem hoje"), sem apontar a causa.
+**D1. Patrimônio negativo** (respondida pelo Saulo em 05/11/2026): frase com a causa (opção A). Registrada em `DECISOES.md` D47.

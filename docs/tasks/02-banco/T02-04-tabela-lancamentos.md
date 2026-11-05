@@ -16,7 +16,7 @@ Criar `lancamentos`, que guarda todo movimento de caixa e todo lançamento previ
   - `tipo` com `check` nos valores de T01-01
   - `status` (`previsto`, `efetivado`)
   - `valor bigint` com `check (valor > 0)`, exceto em `ajuste`, que pode ser negativo
-  - `data date`, `conta_id`, e os campos de transferência conforme a decisão de T01-01
+  - `data date`, `conta_id`, e `conta_destino_id` para transferências (D32: um lançamento só, com `check` exigindo destino diferente da origem quando `tipo = 'transferencia'` e nulo nos outros tipos)
   - referências opcionais de origem (recorrência, ocorrência, dívida, parcela de dívida, fatura) para o filtro "origem" de 6.3
   - `categoria_id` obrigatória para receita e despesa (`check` condicional)
 - Índices para as consultas do Motor: `(created_by, data) where not is_deleted`, `(conta_id) where not is_deleted`.

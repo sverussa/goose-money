@@ -15,7 +15,7 @@ Os padrões inteligentes e a revelação progressiva do formulário.
 - Descrição com autocomplete das descrições já usadas; escolher uma sugestão preenche a categoria usada da última vez com aquela descrição.
 - Categoria em grade com as 8 mais usadas (no tipo atual) + "Ver todas" (lista com busca, agrupada por categoria pai).
 - Data com chips "Hoje" e "Ontem" + campo de data nativo (D6).
-- "Mais opções" (recolhido por padrão): observação; status "Previsto" para despesas e receitas avulsas futuras; tags conforme a decisão de T01-01.
+- "Mais opções" (recolhido por padrão): observação; status "Previsto" para despesas e receitas avulsas futuras; sem tags no MVP (D34).
 - Aviso inline quando a data é anterior ao saldo inicial da conta, com as opções "Manter fora do saldo" (padrão) e "Mudar a data do saldo inicial" (3.4).
 - As sugestões e a contagem de "mais usadas" vêm de uma função do core sobre os fatos (sem contar no componente).
 

@@ -47,7 +47,7 @@ Um único código React gera a versão web e a desktop (Tauri, desde a fundaçã
 | Estado e dados no app | TanStack Query (fatos em cache, mutações chamando RPC) + `useMemo` sobre o Motor | Nenhum indicador é gravado; recarrega ao voltar o foco e ao reconectar |
 | Pacotes | pnpm workspaces | `minimumReleaseAge` de 7 dias (D5) |
 | Decimal | decimal.js | Só em cálculos intermediários com juros e taxas |
-| Back end e dados | Supabase Postgres via `supabase-js` | RLS por usuário; gravações compostas em funções RPC (uma transação cada); exclusão lógica e colunas de controle (9.4) |
+| Back end e dados | Supabase Postgres via `supabase-js` | RLS por usuário; gravações pela função RPC `gravar(ops)`, uma transação por ação (D36); exclusão lógica e colunas de controle (9.4) |
 | Migrações | Flyway 13 em Docker | Todo comando de banco é migração (12.2) |
 | Ambiente local | Supabase local e Flyway em Docker; Makefile | Seção 12 |
 | Autenticação | Supabase Auth (`flowType: 'pkce'`) | E-mail e senha; deep link do Tauri para redefinir senha |
@@ -62,7 +62,7 @@ Um único código React gera a versão web e a desktop (Tauri, desde a fundaçã
 - **Domínio puro** em `packages/core`: tipos, regras da seção 3 e o **Motor** (`core/src/motor`), que expõe uma função por indicador da seção 3.10 e a função `projetarFluxo` da seção 3.9. Sem dependência de React nem de rede. Toda função do Motor recebe `hoje` como parâmetro; o domínio nunca lê o relógio. Uma derivação única por mudança de fatos (faturas, saldos, cronogramas) alimenta todos os indicadores.
 - **Acesso a dados** em `apps/app/src/data`: funções do domínio (`carregarTudo`, `gravar(ops)`) sobre o `supabase-js`; a UI nunca chama o Supabase diretamente. Ao entrar, o app carrega todos os fatos do usuário e o Motor roda sobre eles; recarrega ao voltar o foco e ao reconectar.
 - **Cache do TanStack Query** guarda apenas fatos (lançamentos, compras, parcelas de cartão e de dívida, pagamentos, dívidas, recorrências e suas versões, ocorrências gravadas, preferências do usuário). Seletores chamam o Motor.
-- **Gravações compostas são atômicas**: cada uma é uma função Postgres chamada por RPC (ex.: compra em 10 parcelas; confirmação de recorrência + lançamento; importação de backup).
+- **Gravações compostas são atômicas**: o core monta a lista de mudanças de cada ação e a função Postgres `gravar(ops)`, chamada por RPC, grava tudo numa transação (ex.: compra em 10 parcelas; confirmação de recorrência + lançamento; importação de backup). As regras ficam só no core; o banco garante o dono do registro e as restrições simples (D36).
 
 ### 2.2 Aritmética monetária
 
@@ -537,7 +537,7 @@ Segmented button com duas visões. A visão e os filtros ficam na URL.
 2. **Trocar o tipo, se preciso:** chips no topo do formulário: Despesa · Receita · Compra no cartão · Transferência · Pagamento de fatura.
 3. **Informar o valor** e, opcionalmente, descrição, categoria, data, conta ou cartão.
 4. **Salvar** (botão ou `Enter`). Erros aparecem inline e o formulário não fecha.
-5. **Gravação atômica** por função RPC no Supabase; o botão mostra "Salvando…" e o cache é atualizado com as linhas devolvidas depois que ela termina. Se falhar ou não houver conexão, snackbar de erro e nada muda.
+5. **Gravação atômica** pela função RPC `gravar(ops)` no Supabase; o botão mostra "Salvando…" e o cache é atualizado com as linhas devolvidas depois que ela termina. Se falhar ou não houver conexão, snackbar de erro e nada muda.
 6. **Seletores recalculam** os indicadores pelo Motor (seção 3).
 7. **Barra de Totais e cabeçalhos animam**; indicador oculto no compact aparece temporariamente (4.2).
 8. **Snackbar "Lançado · Desfazer".** Desfazer restaura, em uma transação, a imagem anterior dos registros alterados; os indicadores voltam ao valor anterior.
@@ -613,7 +613,7 @@ Cada gráfico tem período e destino de clique definidos abaixo; nenhum herda re
 
 - Aparece apenas nas abas Visão geral e Saldos e na tela Lançamentos.
 - Filter chips: Este mês · Mês passado · Últimos 3 meses · Últimos 6 meses · Últimos 12 meses · Este ano · Personalizado. Setas `◀ ▶` deslocam o período inteiro.
-- Período na URL (`?de=2026-08-01&ate=2026-10-31`), lembrado por aba.
+- Período na URL (`?de=2026-09-01&ate=2026-11-04`), lembrado por aba. "Últimos N meses" inclui o mês corrente até hoje (D37).
 - Granularidade: até 31 dias → diária; até 12 meses → mensal; acima → mensal com opção trimestral.
 - **Variação** compara com o período anterior de mesma duração (3.10).
 
@@ -674,7 +674,7 @@ Campos de negócio seguem o mesmo padrão de nomes: `snake_case` no banco e `cam
 - Toda menção a excluir, remover, apagar ou cancelar nesta spec (3.6, 6.4, 6.5, 6.9, 9.2) é exclusão lógica: `is_deleted = true`. Nenhuma linha é apagada fisicamente pelo app.
 - O banco garante a regra: `delete` é revogado para os papéis `authenticated` e `anon` em todas as tabelas.
 - Excluir é diferente de arquivar: um item arquivado continua visível só para leitura (6.4, 6.5); um item excluído some de listas, seletores, indicadores, gráficos e backups.
-- Itens que só existem por causa de outro são excluídos juntos, na mesma função RPC: compra e suas parcelas; dívida e suas parcelas; recorrência e suas versões.
+- Itens que só existem por causa de outro são excluídos juntos, na mesma chamada de `gravar(ops)`: compra e suas parcelas; dívida e suas parcelas; recorrência e suas versões.
 - `carregarTudo` e todas as funções RPC leem só `not is_deleted`. O Motor nunca recebe um registro excluído. As políticas de RLS filtram só o dono, para que o Desfazer consiga restaurar.
 - **Desfazer** uma exclusão volta `is_deleted` para `false`; os valores do registro não mudam.
 - Restrições de unicidade usam índices parciais `where not is_deleted`: (recorrência, competência) de 3.8 e nome entre contas e cartões ativos (6.4, 6.5). Um nome de item excluído pode ser reutilizado.
@@ -893,6 +893,8 @@ O `Makefile` na raiz é o ponto de entrada dos comandos. Regras:
 | `db-validate` | Confere nomes e checksums das migrações |
 | `db-reset` | Recria o banco local do zero (`supabase db reset` + `db-migrate`); pede confirmação |
 | `db-migrate-prod` | Aplica as migrações em produção com `.env.producao`; pede confirmação |
+| `deploy-web` | Gera o build de produção e envia para a VPS (D53); pede confirmação |
+| `db-eliminar-usuario` | Apaga fisicamente os dados e a conta de um usuário que pediu (LGPD, D54); pede confirmação |
 | `test` | Testes Vitest (os de dados exigem `db-start` e `db-migrate`) |
 | `test-e2e` | Testes Playwright + axe-core |
 | `lint` | ESLint |

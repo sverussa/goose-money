@@ -12,10 +12,10 @@ Fechar os dois pontos de privacidade em aberto antes da primeira versão públic
 
 ## Escopo
 
-- Eliminação definitiva dos dados de um usuário, conforme a decisão D1.
-- Criptografia ponta a ponta, conforme a decisão D2.
+- Eliminação definitiva (D54): `make db-eliminar-usuario EMAIL=…`, fora do app, apaga fisicamente todas as linhas do usuário e a conta no Auth, numa transação, com confirmação digitada do e-mail. Roda com a conexão administrativa de `.env.producao`, nunca pelo app.
+- Sem criptografia ponta a ponta no MVP (D55): os dados ficam protegidos por login, RLS e criptografia em disco do provedor. O texto de privacidade diz isso com clareza.
 - Texto curto de privacidade no app (Configurações, rodapé do login e tela Criar conta, já que o cadastro é aberto, D28): onde os dados ficam (Supabase, região de T06-05), quem acessa e como pedir a eliminação.
-- Registrar as escolhas no `DECISOES.md` e remover os itens de "Em aberto".
+- Acrescentar `db-eliminar-usuario` na tabela de PROMPT 12.3.
 
 ## Fora do escopo
 
@@ -23,24 +23,17 @@ Política de privacidade jurídica completa.
 
 ## Passos
 
-1. Responder as decisões.
-2. Implementar o que for escolhido.
+1. Escrever o script de eliminação e testá-lo no banco local com dois usuários (só o pedido é apagado).
+2. Escrever o texto de privacidade.
 
 ## Critérios de aceite
 
 - [ ] Existe um caminho documentado e testado para apagar de verdade os dados de um usuário.
 - [ ] O texto de privacidade descreve o comportamento real do app.
 
-## Decisões
+## Decisões tomadas
 
-**D1. Como apagar de verdade os dados de um usuário que pede (LGPD)?**
+Respondidas pelo Saulo em 05/11/2026, ambas na opção A.
 
-- **A)** Script administrativo (`make db-eliminar-usuario EMAIL=…`), fora do app, que apaga fisicamente todas as linhas do usuário e a conta no Auth, com confirmação digitada. *(recomendado)*
-- **B)** Botão "Excluir minha conta" em Configurações, que chama uma função com privilégio elevado para apagar tudo do próprio usuário.
-- **C)** Nada no MVP; tratar pedidos manualmente no painel do Supabase.
-
-**D2. Criptografar os dados no app antes de enviar ao Supabase?**
-
-- **A)** Não no MVP: os dados ficam protegidos por login, RLS e criptografia em disco do provedor. *(recomendado)*
-- **B)** Só os textos livres (descrições e observações), com chave derivada da senha; valores e datas continuam legíveis para as restrições do banco.
-- **C)** Tudo, com chave derivada da senha: máxima privacidade, mas perde as restrições e a unicidade no banco e torna a recuperação de senha impossível sem perder os dados.
+- **D1. Eliminação definitiva** (D54): script administrativo.
+- **D2. Criptografia ponta a ponta** (D55): não no MVP.

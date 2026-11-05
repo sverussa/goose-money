@@ -12,7 +12,7 @@ Criar as tabelas `categorias`, `contas` e `preferencias` seguindo a checklist de
 
 ## Escopo
 
-- `V002__categorias.sql`: campos do modelo, `categoria_pai_id` (se D4 de T01-01 = A), `sistema boolean`, `tipo` com `check`.
+- `V002__categorias.sql`: campos do modelo, `categoria_pai_id` opcional, um nível só (D35; `check` impede apontar para uma categoria que já é filha), `sistema boolean`, `tipo` com `check`.
 - `V003__contas.sql`: campos do modelo, `tipo` com `check` (corrente, poupanca, investimento, dinheiro, outra), `saldo_inicial bigint`, `data_saldo_inicial date`, `incluir_no_total`, `arquivada`.
 - `V004__preferencias.sql`: uma linha por usuário (`unique (created_by) where not is_deleted`).
 - Em cada tabela, a checklist de 12.2:

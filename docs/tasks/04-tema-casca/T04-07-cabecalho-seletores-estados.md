@@ -14,7 +14,7 @@ Criar os componentes compartilhados que toda tela de módulo usa no topo e nos e
 
 - `ContextHeader`: faixa fixa logo abaixo da Barra ao rolar, recebendo uma lista de indicadores (rótulo + `MoneyText`) e ações à direita.
 - `MonthSelector`: "◀ Novembro 2026 ▶" na top app bar; atalhos `←` e `→` (T04-09); mês na URL (`?mes=2026-11`).
-- `PeriodPicker` (8.2): filter chips Este mês · Mês passado · Últimos 3 meses · Últimos 6 meses · Últimos 12 meses · Este ano · Personalizado; setas ◀ ▶; texto "01/08/2026 – 31/10/2026 · comparado a mai–jul"; período na URL e lembrado por aba (`sessionStorage`). Toda a lógica vem de `periodos` (T01-04).
+- `PeriodPicker` (8.2): filter chips Este mês · Mês passado · Últimos 3 meses · Últimos 6 meses · Últimos 12 meses · Este ano · Personalizado; setas ◀ ▶; texto "01/09/2026 – 04/11/2026 · comparado a 01/06 – 04/08" (D37); período na URL e lembrado por aba (`sessionStorage`). Toda a lógica vem de `periodos` (T01-04).
 - `EmptyState`: ilustração simples (ícone lucide grande), uma frase e um botão (4.1, item 8).
 - `EstadoCarregando` (esqueleto com `Skeleton`) e `EstadoErro` (mensagem + "Tentar de novo"), usados por toda tela enquanto `useFatos` carrega ou falha.
 

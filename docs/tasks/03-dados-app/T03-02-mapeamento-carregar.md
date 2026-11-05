@@ -15,7 +15,7 @@ Transformar as linhas do banco nos `Fatos` do core, num lugar só.
 - `apps/app/src/data/mapeamento.ts`: para cada tabela, `deBanco(linha)` (`snake_case` → `camelCase`, `bigint` → `Centavos`, `date` → `DataCivil`) e `paraBanco(entidade)` (o inverso, sem colunas de controle preenchidas pelo banco).
 - Mapeamento tipado com os tipos gerados (`database.types.ts`) de um lado e os tipos do core do outro: uma coluna nova no banco sem mapeamento quebra a checagem de tipos.
 - `apps/app/src/data/carregar.ts`: `carregarTudo()` chama `carregar_tudo()` (T02-09), mapeia e valida com os schemas de domínio do core.
-  - Validação conforme a decisão D1.
+  - Validação com os schemas Zod do domínio sempre, também em produção (D42); dado inválido mostra o estado de erro da carga e não chega ao Motor.
 - `bigint`: o PostgREST devolve número; conferir que todo valor cabe em inteiro seguro e lançar erro claro se não couber.
 
 ## Fora do escopo
@@ -33,10 +33,6 @@ Cache e hooks (T03-03).
 - [ ] `carregarTudo` com o seed devolve fatos que passam nos schemas.
 - [ ] Nenhum outro arquivo do app conhece nomes de colunas `snake_case`.
 
-## Decisões
+## Decisão tomada
 
-**D1. Validar com Zod os dados que vêm do banco?**
-
-- **A)** Sim, sempre: os schemas de domínio rodam sobre o resultado de `carregarTudo`. Pega dado corrompido antes de chegar ao Motor; custa alguns milissegundos por carga. *(recomendado)*
-- **B)** Só em desenvolvimento e nos testes; em produção, confia no banco.
-- **C)** Não validar; as restrições do banco bastam.
+**D1. Validação** (respondida pelo Saulo em 05/11/2026): sempre, com Zod (opção A). Registrada em `DECISOES.md` D42.

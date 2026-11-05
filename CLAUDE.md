@@ -16,7 +16,7 @@ Goose Money is still before the first line of code (roadmap phase 0), but the pr
 
 Stack: `docs/PROMPT.md` section 2 (React + TypeScript 6 strict + Vite, shadcn/ui (Radix + Tailwind CSS 4) with Material 3 tokens, Recharts, lucide-react icons, TanStack Query, decimal.js, Supabase (Auth + Postgres with RLS) as the back end, Tauri 2, Vitest, Playwright + axe-core). Pin exact versions published at least 7 days ago (D5 in `docs/DECISOES.md`), and update this file with the `make` targets once the project is set up (the target list is in `docs/PROMPT.md` 12.3).
 
-Architecture (D18, D19, D20): pnpm workspaces monorepo, with `minimumReleaseAge` enforcing the 7-day rule. `packages/core` holds the domain and the Motor (pure TypeScript, never imports React or `@supabase/supabase-js`). `apps/app` is the front end (React, shadcn, TanStack Query, `src/data`, `src/plataforma`, `src-tauri/`). `supabase/` is the back end (local Supabase config and Flyway migrations in `supabase/flyway/sql`). Online-first with no offline mode: Postgres is the source of truth, every composite write is one RPC function in one transaction, and every table has RLS with `created_by = auth.uid()`. Never put the `service_role` key in the app.
+Architecture (D18, D19, D20): pnpm workspaces monorepo, with `minimumReleaseAge` enforcing the 7-day rule. `packages/core` holds the domain and the Motor (pure TypeScript, never imports React or `@supabase/supabase-js`). `apps/app` is the front end (React, shadcn, TanStack Query, `src/data`, `src/plataforma`, `src-tauri/`). `supabase/` is the back end (local Supabase config and Flyway migrations in `supabase/flyway/sql`). Online-first with no offline mode: Postgres is the source of truth, every write goes through the `gravar(ops)` RPC function in one transaction with the business rules kept in `packages/core` (D36), and every table has RLS with `created_by = auth.uid()`. Never put the `service_role` key in the app.
 
 Database rules (D22–D24, `docs/PROMPT.md` 9.4 and 12):
 
@@ -38,7 +38,7 @@ When the design and the spec disagree, follow the spec and record the divergence
 - The `.dc.html` files use the design canvas format (`<x-dc>`, `<sc-for>`, `<sc-if>`, `<dc-import>`, inline styles, a `renderVals()` script with mock data). Do not copy their markup; rebuild in React + shadcn/ui + Tailwind, adjusting the shadcn components to match the designs.
 - Money values in the designs are illustrative (seed data with "today" = 2026-11-04). Never hardcode them: every number comes from the domain engine.
 - Every indicator is computed by a single domain function. Never compute an indicator inside a component.
-- Colors, sizes and radii go through the Tailwind theme variables built from `design/theme-tokens.ts` (`src/app/tema.css`). No hex values or arbitrary values (`bg-[#...]`) in components.
+- Colors, sizes and radii go through the Tailwind theme variables built from `design/theme-tokens.ts` (`src/app/tema.css`); the dark theme sets the same variables at runtime from the seed color (D43). No hex values or arbitrary values (`bg-[#...]`) in components.
 - Build one screen per branch, with its design file and the spec sections listed in `docs/DESIGN-HANDOFF.md`.
 
 ## Domain (from README)

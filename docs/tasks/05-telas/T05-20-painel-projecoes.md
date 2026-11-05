@@ -14,7 +14,7 @@ A aba Projeções (também em `#/projecoes`): gráfico, tabela mês a mês e det
 
 - Segmented de horizonte: 3, 6, 12 ou 24 meses; padrão da preferência "horizonte padrão" (6.9).
 - Banner quando algum mês fica negativo ou abaixo do limite de alerta, e alerta de rendas atrasadas não incluídas (`alertas`, T01-16).
-- Gráfico Saldo projetado (linha) com referência no zero e linha de alerta conforme a decisão D1; clique num mês abre o detalhamento (não Lançamentos, 8.1).
+- Gráfico Saldo projetado (linha) com uma **faixa colorida** (`ReferenceArea` do Recharts, cor de alerta com transparência do tema) entre zero e o limite de alerta configurado, no lugar das duas linhas do design (D48); a faixa tem rótulo acessível "Abaixo do limite de alerta" e aparece também no `ChartCard` como legenda; clique num mês abre o detalhamento (não Lançamentos, 8.1).
 - Tabela mês a mês com as colunas dos 6 grupos de 3.9 e o saldo final. A primeira linha é o mês corrente e seu saldo final é igual ao **Previsto até o fim do mês** da Barra.
 - Detalhamento do mês selecionado: lista de cada item pendente que compôs aquele mês, por grupo (o clique no mês troca o detalhamento, como no design).
 - `#/projecoes` abre esta aba com o mês corrente detalhado (destino do clique no Previsto da Barra, 5.3).
@@ -33,11 +33,8 @@ Simulador "E se?" e previsão de quitação (T05-21).
 - [ ] Saldo final do mês corrente na tabela = Previsto até o fim do mês na Barra (11.4).
 - [ ] O Streaming no cartão aparece só dentro da fatura, nunca em "Gastos fixos em conta" (11.4).
 - [ ] Clique em outro mês troca o detalhamento.
+- [ ] Mudar o limite de alerta em Configurações muda a altura da faixa.
 
-## Decisões
+## Decisão tomada
 
-**D1. O gráfico mostra a linha do limite de alerta?** (decisão de design 3 do handoff)
-
-- **A)** Sim: linha de referência no zero e outra no limite de alerta configurado (padrão R$ 500,00), como desenhado. *(recomendado)*
-- **B)** Só a referência no zero (texto da spec); o limite aparece só no banner.
-- **C)** Faixa colorida entre zero e o limite, em vez de duas linhas.
+**D1. Limite de alerta no gráfico** (respondida pelo Saulo em 05/11/2026): faixa colorida entre zero e o limite (opção C). Diverge do design, que mostra duas linhas. Registrada em `DECISOES.md` D48.

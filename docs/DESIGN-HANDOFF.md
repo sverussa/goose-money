@@ -88,14 +88,14 @@ Os valores usados no design estão em `design/theme-tokens.ts`, prontos para vir
 - **Formas**: raios 4 / 8 / 12 / 16 / 28; elevação tonal, sombra só no FAB e no snackbar.
 - Contraste conferido para texto normal (≥ 4,5:1) no tema claro. **O tema escuro não foi desenhado**: gere-o a partir da mesma semente e verifique o contraste dos semânticos.
 
-## 6. Decisões de design para validar e registrar em `docs/DECISOES.md`
+## 6. Decisões de design (respondidas em 05/11/2026)
 
-1. **"Últimos 3 meses"** foi desenhado como os três meses completos anteriores (ago–out, com hoje em novembro), igual ao exemplo de URL de 8.2. O `PROMPT.md` não define se o mês corrente entra.
-2. **Botão de privacidade no celular**: no compact, o olho fica na top app bar para não ocupar espaço na Barra.
-3. **Linha de alerta no gráfico de Saldo projetado**: mostra o limite configurado (padrão R$ 500,00) além da referência no zero.
-4. **Item previsto dentro da fatura** (gasto fixo no cartão ainda não confirmado) aparece separado, tracejado e fora do saldo da fatura.
-5. **Patrimônio líquido negativo** ganha uma frase explicativa na aba Saldos.
-6. **Parcela Price do exemplo**: R$ 40.000,00 a 1,49% a.m. em 48x dá parcela de R$ 1.172,49 (a última, R$ 1.172,71). O design já usa esses valores; os testes de 11.5 devem confirmar.
+1. **"Últimos 3 meses"** foi desenhado como os três meses completos anteriores (ago–out, com hoje em novembro), igual ao exemplo de URL de 8.2. O `PROMPT.md` não definia. **Decidido (D37): incluem o mês corrente até hoje**, diferente do desenhado.
+2. **Botão de privacidade no celular**: no compact, o olho fica na top app bar para não ocupar espaço na Barra. **Mantido (D44).**
+3. **Linha de alerta no gráfico de Saldo projetado**: mostra o limite configurado (padrão R$ 500,00) além da referência no zero. **Decidido (D48): faixa colorida entre zero e o limite**, no lugar das duas linhas.
+4. **Item previsto dentro da fatura** (gasto fixo no cartão ainda não confirmado) aparece separado, tracejado e fora do saldo da fatura. **Mantido (D46).**
+5. **Patrimônio líquido negativo** ganha uma frase explicativa na aba Saldos. **Mantido (D47).**
+6. **Parcela Price do exemplo**: R$ 40.000,00 a 1,49% a.m. em 48x dá parcela de R$ 1.172,49 (a última, R$ 1.172,71). O design já usa esses valores. **Conferido em 05/11/2026**: o cálculo com arredondamento meio para cima dá os mesmos valores (saldo antes da última R$ 1.155,49, juros da última R$ 17,22). Os valores entram como esperados no teste de T01-11.
 
 ## 7. O que ainda não foi desenhado
 

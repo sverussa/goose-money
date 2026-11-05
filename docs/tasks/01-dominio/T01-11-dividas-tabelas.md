@@ -34,7 +34,7 @@ Parcela informada e amortização extraordinária (T01-12).
 ## Critérios de aceite
 
 - [ ] Price R$ 40.000,00, 1,49% a.m., 48x: saldo final exatamente R$ 0,00, com a diferença de centavos na última parcela (11.5).
-- [ ] O mesmo caso confere com os valores do design (parcela R$ 1.172,49, última R$ 1.172,71; handoff 6, item 6). Se divergir, vale o cálculo da spec e a divergência vai para o `DECISOES.md`.
+- [ ] O mesmo caso dá parcela de R$ 1.172,49 da 1ª à 47ª, saldo devedor de R$ 1.155,49 antes da última, juros de R$ 17,22 e última parcela de R$ 1.172,71 (conferido contra o design em 05/11/2026, handoff 6, item 6).
 - [ ] Taxa zero, R$ 1.200,00 em 12x: 12 × R$ 100,00, juros zero, sem divisão por zero (11.5).
 - [ ] Taxa zero, R$ 1.000,00 em 3x: 333,33 + 333,33 + 333,34 (11.5).
 - [ ] Em toda tabela, soma das amortizações = PV (invariante de D3).

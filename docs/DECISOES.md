@@ -24,6 +24,30 @@ Decisões tomadas fora do texto original do `PROMPT.md`, em casos não cobertos 
 | D29 | **CI só com checagens sem banco** por enquanto (formatação, lint, tipos, testes). Testes de banco e Playwright entram no CI na etapa 5. | CI rápido enquanto não há telas | 12.3 |
 | D30 | **Prettier ignora `docs/` e `design/`.** | Evita reformatar as tabelas escritas à mão | 2 |
 | D31 | **Cobertura mínima de 90%** de linhas e de ramos em `packages/core`, com falha abaixo disso. | Cálculos de dinheiro testados sem exigir testes artificiais | 11 |
+| D32 | **Transferência é um lançamento só**, do tipo `transferencia`, com conta de origem e de destino. | Nunca fica "meia transferência" | 3.4, 7 |
+| D33 | **Fatura sem tabela.** Derivada pelo par (cartão, competência) e pelo ciclo vigente; itens e alocações de pagamento referenciam esse par. | Nada para manter sincronizado | 3.5 |
+| D34 | **Sem tags no MVP**, só observação em texto livre. | A spec não define filtro nem relatório por tag | 4.1 |
+| D35 | **Subcategoria é uma `Categoria` com `categoriaPaiId`**, um nível só. Os gráficos agrupam pela categoria pai. | Uma tabela só para categorias | 6.9 |
+| D36 | **Regras das gravações no core.** Cada ação vira uma lista de mudanças (T01-22) gravada pela função única `gravar(ops)` numa transação; o banco garante dono do registro e restrições simples. Revê o item "Gravações compostas" dos detalhes de D18. | Nenhuma regra duplicada em SQL | 2.1, 7.1 |
+| D37 | **"Últimos N meses" incluem o mês corrente até hoje** (com hoje em 04/11, "Últimos 3 meses" = 01/09 a 04/11). O período anterior corta no mesmo dia (01/06 a 04/08). Diverge do design, que mostra os meses completos anteriores. | Mostrar os dados mais recentes | 8.2, 3.10 |
+| D38 | **Transporte de saldo e crédito de pagamento da fatura derivados** no Motor, sem gravar nada. | Funciona com o app fechado e não fica inconsistente | 3.5 |
+| D39 | **Inicialização do usuário chamada pelo app** depois do login e da confirmação do cadastro, com função idempotente. | Não mexe no schema `auth` do Supabase | 6.9, 12.2 |
+| D40 | **Usuário novo recebe as 8 categorias da paleta do design**, além das de sistema. | Começar a lançar sem configurar nada | 6.9, 4.3 |
+| D41 | **Leitura por uma função `carregar_tudo()`** que devolve um único JSON. Revê o item "Leitura" dos detalhes de D18. | Uma requisição, sem o limite de 1.000 linhas por página | 9.3 |
+| D42 | **Dados do banco validados com Zod sempre**, também em produção. | Dado corrompido não chega ao Motor | 9 |
+| D43 | **Tema escuro gerado em execução** com `@material/material-color-utilities` a partir da semente; o claro continua estático, vindo do design. | Permitir trocar a cor semente no futuro | 4.3, 6.9 |
+| D44 | **Botão de ocultar valores no celular fica na top app bar**, como desenhado. | Não ocupa espaço na Barra compacta | 5.3 |
+| D45 | **Busca global encontra telas, ações e lançamentos** por descrição. | Cobre o uso mais comum sem indexar tudo | 5.1 |
+| D46 | **Gasto fixo previsto na fatura fica separado no fim**, tracejado e fora do saldo, como desenhado. | Não confunde o previsto com o que já está na fatura | 3.5, 3.8 |
+| D47 | **Patrimônio negativo ganha a frase do design**, apontando a causa. | Explica o número em vez de só mostrá-lo | 6.2 |
+| D48 | **Limite de alerta no gráfico de projeção como faixa colorida** entre zero e o limite, no lugar das duas linhas do design. | Escolha do Saulo | 6.2, 8 |
+| D49 | **Excluir categoria em uso move os itens para "A classificar"**, com Desfazer. Excluir uma categoria pai exclui as subcategorias e move os itens delas também (caso não coberto, sinalizado). | Excluir não fica bloqueado e nada fica sem categoria | 6.9 |
+| D50 | **Dados de exemplo só com a base vazia.** | Nunca misturar exemplo com dados reais | 6.9, 10 |
+| D51 | **App desktop para macOS, Windows e Linux** pelo GitHub Actions (`tauri-action`), sem assinatura no início. | Alcance maior sem custo de certificados agora | 2 |
+| D52 | **Supabase de produção em São Paulo** (`sa-east-1`). | Menor latência no Brasil e dados no país (LGPD) | 9.3 |
+| D53 | **App web numa VPS privada**, servido por Caddy em Docker com HTTPS automático e cabeçalhos de segurança; deploy por `make deploy-web`. O Supabase continua gerenciado. | Escolha do Saulo | 12 |
+| D54 | **Eliminação definitiva por script administrativo** (`make db-eliminar-usuario`), fora do app. | Atende ao pedido do titular (LGPD) sem dar ao app um caminho de apagar de verdade | 9.4 |
+| D55 | **Sem criptografia ponta a ponta no MVP.** Proteção por login, RLS e criptografia em disco do provedor. | Mantém as restrições do banco e a recuperação de senha | 9.3 |
 
 Consequências de D2:
 
@@ -42,7 +66,7 @@ Invariantes de D3 (testados no domínio):
 Detalhes de D17:
 
 - **Base:** shadcn (CLI 4) com primitivos Radix e Tailwind CSS 4. O código dos componentes fica no repositório, em `src/components/ui`, e é ajustado para seguir as telas de `design/telas/` (Material 3). O visual padrão do shadcn não vale onde o design disser outra coisa.
-- **Tema:** os valores de `design/theme-tokens.ts` viram variáveis CSS no `@theme` do Tailwind (`src/app/tema.css`). Tema escuro pela classe `.dark`, gerado da mesma semente, com contraste AA verificado.
+- **Tema:** os valores de `design/theme-tokens.ts` viram variáveis CSS no `@theme` do Tailwind (`src/app/tema.css`). Tema escuro pela classe `.dark`, gerado em execução da mesma semente (D43), com contraste AA verificado.
 - **Gráficos:** Recharts 3, pelo componente `Chart` do shadcn, no lugar do MUI X Charts.
 - **Snackbar** com Sonner; **ícones** com lucide-react, no lugar de Material Symbols (equivalências na tabela 5.1 do PROMPT).
 - **Correspondência com o design:** menu lateral e rail com `Sidebar`; segmented buttons com `ToggleGroup`; filter chips com `Toggle`; formulário em tela cheia no compact com `Drawer`; busca Ctrl/Cmd+K com `Command`. Feitos à mão: FAB "+ Lançar" e navigation bar do celular.
@@ -53,8 +77,8 @@ Detalhes de D18:
 - **Dados por usuário:** toda tabela tem RLS ligado e política `created_by = auth.uid()` (D22: `created_by` é também o dono do registro e substitui o `user_id`). Sem política, nenhuma linha é visível.
 - **Tipos no Postgres:** centavos em `bigint`, datas civis em `date`, ids em `uuid`.
 - **Restrições no banco** onde forem simples: chaves estrangeiras, unicidade de (recorrência, competência) da 3.8 e `check` de valores. Elas valem além das validações do domínio.
-- **Gravações compostas** (compra parcelada, confirmação de recorrência, pagamento, importação de backup) e o **Desfazer** são funções Postgres chamadas por RPC, cada uma numa transação, com `security invoker` para respeitar o RLS.
-- **Leitura:** ao entrar, `carregarTudo` busca todos os fatos do usuário, paginando (o PostgREST devolve até 1.000 linhas por requisição). O Motor roda no app sobre esses fatos, como antes.
+- **Gravações compostas** (compra parcelada, confirmação de recorrência, pagamento, importação de backup) e o **Desfazer** passam pela função `gravar(ops)`, numa transação, com `security invoker` para respeitar o RLS (D36).
+- **Leitura:** ao entrar, `carregarTudo` busca todos os fatos do usuário numa chamada da função `carregar_tudo()` (D41). O Motor roda no app sobre esses fatos, como antes.
 - **Vários aparelhos:** o app recarrega os fatos quando a janela volta ao foco e quando a conexão volta (`refetchOnWindowFocus` e `refetchOnReconnect` do TanStack Query, D20). Atualização em tempo real (Supabase Realtime) fica para depois.
 - **Sem conexão:** banner "Sem conexão" e gravações bloqueadas. Não há cópia local dos dados.
 - **Sai da stack:** Dexie, fake-indexeddb, vite-plugin-pwa e `navigator.storage.persist()` (D16). Para instalar o app web basta um `manifest.webmanifest` estático.
@@ -140,7 +164,4 @@ A spec já previa várias contas e vários cartões, mas não definia o formulá
 
 ## Em aberto
 
-- **Apagar dados de verdade (LGPD).** Com o cadastro aberto (D28), passa a valer para outras pessoas além do dono do projeto. Com D22, "Apagar tudo" e as exclusões são lógicas e os dados continuam no banco. O titular tem direito de pedir a eliminação. Proposta: um procedimento administrativo, fora do app, que apaga fisicamente todos os registros de um usuário quando ele pedir o encerramento da conta.
-- **Criptografia ponta a ponta.** Com D18, os dados ficam legíveis no servidor para quem administra o projeto Supabase. Criptografar no app protegeria contra isso, mas impede consultas e restrições no banco.
-- **Região do projeto Supabase.** Proposta: São Paulo (`sa-east-1`), pela latência e para manter os dados no Brasil (LGPD).
-- **Decisões de design** listadas na seção 6 de `DESIGN-HANDOFF.md`, ainda não validadas.
+- **Provedor da VPS e domínio do app web** (D53).

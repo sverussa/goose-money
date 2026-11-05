@@ -15,7 +15,7 @@ Criar `packages/core/src/cartoes/faturas.ts`: montar cada fatura com seus itens,
 - `montarFaturas(fatos, cartaoId, hoje)` → lista ordenada de faturas com competência, datas, itens (parcelas, encargos, estornos, ajustes, "Saldo anterior não pago", "Crédito de pagamento", "Saldo anterior ao cadastro"), pagamentos alocados, saldo e status.
 - Saldo da fatura M = parcelas M + encargos − estornos + saldo transportado de M−1 − crédito transportado de M−1 − pagamentos alocados a M.
 - Status: Futura, Aberta, Fechada, Vencida, Paga, Transportada; chip extra "Paga parcialmente" (pagamento e saldo > 0).
-- **Transporte de saldo** e **crédito de pagamento** conforme a decisão D1.
+- **Transporte de saldo** e **crédito de pagamento** calculados no Motor a partir das datas e dos pagamentos, sem gravar nada (D38).
 - `destinoPadraoDoPagamento(faturas)`: fatura vencida ou fechada mais antiga com saldo; senão, a aberta.
 - `previaDoPagamento(faturas, destino, valor)`: saldo restante, ou crédito para a próxima fatura (6.5).
 - `itensPrevistosNaFatura(fatos, cartaoId, competencia, hoje)`: gastos fixos no cartão ainda não confirmados, separados do saldo (decisão de design 4 do handoff).
@@ -37,10 +37,6 @@ Indicadores do cartão (T01-10).
 - [ ] Pagamento sem destino escolhido vai para a fatura vencida mais antiga com saldo.
 - [ ] Gasto fixo previsto no cartão aparece na fatura certa e não entra no saldo.
 
-## Decisões
+## Decisão tomada
 
-**D1. Como acontece o transporte de saldo e o crédito de pagamento?** (a spec diz "na data de fechamento da fatura seguinte", mas nada roda com o app fechado)
-
-- **A)** Derivado no Motor: "Saldo anterior não pago", "Crédito de pagamento" e o status "Transportada" são calculados a partir das datas e dos pagamentos, sem gravar nada. Funciona mesmo com o app fechado e não pode ficar inconsistente. *(recomendado)*
-- **B)** Gravado ao abrir o app, como a confirmação automática (3.8): cria os itens de transporte com a data do fechamento.
-- **C)** Gravado por um job agendado no banco (`pg_cron`), na data de fechamento.
+**D1. Transporte de saldo e crédito de pagamento** (respondida pelo Saulo em 05/11/2026): derivados no Motor (opção A). Registrada em `DECISOES.md` D38.

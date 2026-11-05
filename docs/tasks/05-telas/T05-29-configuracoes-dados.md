@@ -18,7 +18,7 @@ Exportar, importar, carregar dados de exemplo e apagar tudo, com as confirmaçõ
   2. validação e relatório prévio com contagens, conflitos e erros por entidade (`relatorio`, T01-20), como no design
   3. botão "Importar" só se o plano for válido; em Substituir, antes de gravar, baixa automaticamente um backup do estado atual
   4. resultado: "N registros importados" ou o erro, sem nada gravado
-- **Carregar dados de exemplo**: conforme a decisão D1; gera com `gerarSeed(hoje)` e grava num comando.
+- **Carregar dados de exemplo**: só com a base vazia; com dados, o botão fica desabilitado com o motivo "Disponível só sem dados. Use Apagar tudo antes" (D50); gera com `gerarSeed(hoje)` e grava num comando.
 - **Apagar tudo**: confirmação digitando "APAGAR"; chama `apagar_tudo()` (exclusão lógica, 9.4); depois mostra o estado vazio do app.
 
 ## Fora do escopo
@@ -37,10 +37,6 @@ Eliminação definitiva dos dados (LGPD, T06-06).
 - [ ] Arquivo com referência quebrada não grava nada e o relatório aponta a entidade (11.7).
 - [ ] "Apagar tudo" só roda depois de digitar "APAGAR".
 
-## Decisões
+## Decisão tomada
 
-**D1. Quando "Carregar dados de exemplo" pode ser usado?**
-
-- **A)** Só com a base vazia; com dados, o botão fica desabilitado com o motivo "Disponível só sem dados. Use Apagar tudo antes". Nunca mistura exemplo com dados reais. *(recomendado)*
-- **B)** Sempre, mesclando os dados de exemplo com os existentes.
-- **C)** Sempre, substituindo tudo, com backup automático antes (como o modo Substituir).
+**D1. Dados de exemplo** (respondida pelo Saulo em 05/11/2026): só com a base vazia (opção A). Registrada em `DECISOES.md` D50.

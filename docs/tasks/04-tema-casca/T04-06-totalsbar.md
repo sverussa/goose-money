@@ -20,7 +20,7 @@ Mostrar os 5 indicadores essenciais, sempre sobre hoje e o mês corrente, atuali
   - ≥ 600 dp: os 5 visíveis
   - < 600 dp: Saldo em contas e Previsto visíveis; os outros 3 a um toque ("expandir")
 - Após uma gravação (snapshot de T03-04): o valor anima do antigo ao novo em ~400 ms (sem animação com `prefers-reduced-motion`) e aparece o chip de variação por 2 s (`+R$ 6.500,00` em `income`, `−R$ 89,90` em `expense`). No compact, um indicador oculto que mudou aparece temporariamente com o chip e depois volta.
-- Botão de olho: liga o modo privacidade (T04-04), com `aria-pressed`; posição no compact conforme a decisão D1.
+- Botão de olho: liga o modo privacidade (T04-04), com `aria-pressed`; no compact, fica na top app bar, como em `MobilePainel.dc.html` (D44).
 
 ## Fora do escopo
 
@@ -38,10 +38,6 @@ Os indicadores em si (core, T01-17).
 - [ ] Cada indicador leva ao destino de 5.3.
 - [ ] Desfazer volta os valores com a mesma animação.
 
-## Decisões
+## Decisão tomada
 
-**D1. Onde fica o botão de privacidade no celular?** (decisão de design 2 do handoff)
-
-- **A)** Na top app bar, como desenhado em `MobilePainel.dc.html`, para não ocupar espaço na barra compacta. *(recomendado)*
-- **B)** Dentro da barra, ao lado do botão "expandir", igual ao desktop.
-- **C)** Só em Configurações e no menu do usuário no celular.
+**D1. Botão de privacidade no celular** (respondida pelo Saulo em 05/11/2026): na top app bar (opção A). Registrada em `DECISOES.md` D44.
