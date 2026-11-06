@@ -35,3 +35,12 @@ Casos que a spec não cobre ou em que o texto da tarefa diverge do `MODELO-DADOS
 3. Uma parcela de dívida tem no máximo um `pagamento_divida` ativo (índice único parcial), para não contar o pagamento duas vezes.
 4. O tipo da categoria (receita, despesa, `ajuste_saldo` no ajuste) não é conferido no banco; fica no core (`validarLancamento`), como as demais regras compostas (D36).
 5. Cada regra por tipo é um `check` com nome próprio (`lancamentos_destino`, `lancamentos_categoria`, `lancamentos_fatura`, `lancamentos_divida`, `lancamentos_previsto`, `lancamentos_valor`), para o app traduzir pelo nome.
+
+## T02-05
+1. Sem a tabela `alocacoes_pagamento` do texto da tarefa: a alocação são os campos `cartao_id` e `fatura_competencia` do lançamento `pagamento_fatura` (D59). A V006 acrescenta a chave estrangeira de `lancamentos.cartao_id`.
+2. Sem a coluna `paga_antes_do_cadastro` em `parcelas`: é derivada da competência (D60).
+3. `compras.cancelada` é só o booleano do modelo, sem a data do cancelamento que o texto da tarefa cita (a data do estorno fica no item de fatura).
+4. Trigger adiado `compras_parcelas_conferem`: compra ativa e não cancelada tem exatamente as parcelas 1..n somando o valor total; cancelada só mantém parcelas entre 1 e n; **compra excluída não pode ficar com parcelas ativas** (exclusão em conjunto, 11.8). A ordem das competências fica no core.
+5. Trigger adiado `cartoes_conta_pagamento` dos dois lados: gravar um cartão ativo com conta arquivada, excluída ou fora do total é recusado, e também tirar do total, arquivar ou excluir a conta de pagamento de um cartão ativo.
+6. Não conferidos no banco (ficam no core, D36): categoria do encargo ser `juros_encargos` ou `tarifas`; item de fatura com compra de outro cartão; excluir a compra levar os itens de fatura dela.
+7. A V007 aplicada só no banco local desta branch tinha um erro no trigger; foi desfeita à mão (drop e histórico do Flyway da V007 e V008) e reaplicada corrigida, antes do merge.
