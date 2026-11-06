@@ -88,7 +88,7 @@ Tabelas, RLS, função de gravação e leitura no Supabase, por migrações Flyw
 | ✅ [T02-03 · Tabelas de cadastros: categorias, contas e preferências](02-banco/T02-03-tabelas-cadastros.md) | Cadastros | T02-02, T01-01 | — |
 | ✅ [T02-04 · Tabela de lançamentos](02-banco/T02-04-tabela-lancamentos.md) | Lançamentos | T02-03 | — |
 | ✅ [T02-05 · Tabelas de cartões, compras e faturas](02-banco/T02-05-tabelas-cartoes.md) | Cartões | T02-04 | — |
-| [T02-06 · Tabelas de dívidas](02-banco/T02-06-tabelas-dividas.md) | Dívidas | T02-04 | — |
+| ✅ [T02-06 · Tabelas de dívidas](02-banco/T02-06-tabelas-dividas.md) | Dívidas | T02-04 | — |
 | [T02-07 · Tabelas de recorrências](02-banco/T02-07-tabelas-recorrencias.md) | Recorrências | T02-05 | — |
 | [T02-08 · Inicialização de um usuário novo](02-banco/T02-08-inicializacao-usuario.md) | Cadastros | T02-03 | tomada |
 | [T02-09 · Leitura: carregar todos os fatos do usuário](02-banco/T02-09-carregar-tudo.md) | Leitura | T02-06, T02-07 | tomada |
