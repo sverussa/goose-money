@@ -12,6 +12,7 @@ import { InicioProvisorio } from '@/app/InicioProvisorio';
 import { LoginProvisorio } from '@/app/LoginProvisorio';
 import { SessaoProvider } from '@/app/providers/sessao';
 import { RotaProtegida } from '@/app/RotaProtegida';
+import { Toaster } from '@/components/ui/sonner';
 import { clienteDeConsultas } from '@/queries/cliente';
 
 const raiz = document.getElementById('root');
@@ -32,6 +33,7 @@ createRoot(raiz).render(
             </Routes>
           </SessaoProvider>
         </HashRouter>
+        <Toaster />
       </QueryClientProvider>
     ) : (
       <ConfiguracaoIncompleta variaveis={resultadoEnv.invalidas} />

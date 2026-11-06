@@ -1,4 +1,5 @@
 import {
+  type DataCivil,
   type Derivado,
   derivar,
   despesas,
@@ -50,11 +51,20 @@ function mapear<T, R>(c: Carga<T>, f: (dados: T) => R): Carga<R> {
   return c.estado === 'pronto' ? { estado: 'pronto', dados: f(c.dados) } : c;
 }
 
+// Uma derivação para o app inteiro (D13), não uma por componente: os fatos do cache só mudam de
+// identidade quando mudam de conteúdo (structural sharing do TanStack Query).
+let ultima: { fatos: Fatos; hoje: DataCivil; derivado: Derivado } | null = null;
+export function derivarUmaVez(fatos: Fatos, hoje: DataCivil): Derivado {
+  if (ultima?.fatos !== fatos || ultima.hoje !== hoje)
+    ultima = { fatos, hoje, derivado: derivar(fatos, hoje) };
+  return ultima.derivado;
+}
+
 /** A derivação única (D13), refeita só quando os fatos ou o dia mudam. */
 export function useDerivado(): Carga<Derivado> {
   const fatos = useFatos();
   const hoje = useHoje();
-  return useMemo(() => mapear(fatos, (f) => derivar(f, hoje)), [fatos, hoje]);
+  return useMemo(() => mapear(fatos, (f) => derivarUmaVez(f, hoje)), [fatos, hoje]);
 }
 
 // Hooks finos: cada um só chama funções do core sobre a derivação; nenhum faz conta.
