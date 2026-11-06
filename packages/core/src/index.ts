@@ -8,3 +8,4 @@ export * from './cartoes';
 export * from './contas';
 export * from './backup';
 export * from './recorrencias';
+export * from './motor';
