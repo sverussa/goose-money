@@ -6,3 +6,4 @@ export * from './periodos';
 export * from './modelo';
 export * from './cartoes';
 export * from './contas';
+export * from './backup';
