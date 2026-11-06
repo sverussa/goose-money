@@ -83,7 +83,7 @@ Tabelas, RLS, função de gravação e leitura no Supabase, por migrações Flyw
 
 | Tarefa | Contexto | Depende de | Decisões |
 | --- | --- | --- | --- |
-| [T02-01 · Base para testes de banco](02-banco/T02-01-testes-de-banco.md) | Testes | T00-09, T00-11 | — |
+| ✅ [T02-01 · Base para testes de banco](02-banco/T02-01-testes-de-banco.md) | Testes | T00-09, T00-11 | — |
 | [T02-02 · Função `gravar(ops)` e convenções de escrita](02-banco/T02-02-funcao-gravar.md) | Escrita | T02-01, T01-01 | tomada |
 | [T02-03 · Tabelas de cadastros: categorias, contas e preferências](02-banco/T02-03-tabelas-cadastros.md) | Cadastros | T02-02, T01-01 | — |
 | [T02-04 · Tabela de lançamentos](02-banco/T02-04-tabela-lancamentos.md) | Lançamentos | T02-03 | — |
