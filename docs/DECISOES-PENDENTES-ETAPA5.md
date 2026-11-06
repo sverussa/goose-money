@@ -41,3 +41,13 @@ Decisões tomadas durante as tarefas da etapa 5 (e da T00-14, que a prepara) em 
 7. O aviso da transferência entre inclusões diferentes também cobre o sentido contrário ("o Saldo em contas vai subir R$ X").
 8. A descrição (opcional) aparece em todos os tipos, inclusive transferência e pagamento de fatura (o lançamento tem o campo).
 9. O `Enter` só envia a partir de um campo de texto: com o foco num seletor ou num chip, o `Enter` aciona aquele controle, como no navegador.
+
+## T05-04
+
+1. `sugestoesDeLancamento(fatos, tipo)` (core, aprovada): conta os lançamentos do tipo e, na despesa, também as compras no cartão. As descrições vêm das mais usadas para as menos (empate: a mais recente), sem diferenciar maiúsculas; a categoria sugerida é a do uso mais recente. Ficam fora a categoria de ajuste de saldo e as categorias que não existem mais.
+2. A grade mostra as 8 mais usadas e, se a escolhida (por padrão "A classificar") não estiver entre elas, ela também, mais "Ver todas". Usuário sem histórico vê só a escolhida e "Ver todas".
+3. A lista de sugestões mostra até 5 descrições que contêm o texto digitado. Com a lista aberta, `Esc` fecha só a lista (o diálogo continua aberto).
+4. "Mais opções" diz "previsto e observação" (sem tags, D34). O "Previsto" aparece só em despesa e receita; não é marcado sozinho quando a data é futura: sem ele, o erro do core pede para marcar.
+5. Aviso de data anterior ao saldo inicial (3.4): aparece quando a data é igual ou anterior à `dataSaldoInicial` da conta do movimento (a de origem, na transferência) e o lançamento é efetivado; compra no cartão e previsto não mexem no saldo e não mostram o aviso. "Mudar a data do saldo inicial" leva a data para a véspera do movimento, sem mudar o valor do saldo inicial, e grava a conta e o lançamento num comando só (o Desfazer desfaz os dois). A composição dos dois comandos está no app (`formulario.ts`), sem função nova no core.
+6. Na transferência, o aviso olha só a conta de origem.
+7. A data ocupa a linha inteira (chips Hoje e Ontem e o seletor nativo), e a conta vem na linha de baixo; no design, data e conta dividem a linha.

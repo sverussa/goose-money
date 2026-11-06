@@ -1,13 +1,18 @@
 import {
+  aplicar,
   type Centavos,
   type Comando,
   type Competencia,
+  type Conta,
   type Contexto,
   dataCivil,
+  type DataCivil,
+  editarConta,
   type Fatos,
   lancar,
   novaCompra,
   pagarFatura,
+  somarDias,
 } from '@goose-money/core';
 import type { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
 import { z } from 'zod';
@@ -43,6 +48,11 @@ export const esquemaDoFormulario = z
     contaDestinoId: z.string(),
     cartaoId: z.string(),
     faturaCompetencia: z.string(),
+    observacao: z.string(),
+    /** "Mais opções" (7.3): despesa ou receita avulsa que ainda vai acontecer. */
+    previsto: z.boolean(),
+    /** Data anterior ao saldo inicial da conta (3.4): manter fora do saldo (padrão) ou mudar a data. */
+    saldoInicial: z.enum(['manter', 'mudar']),
   })
   .superRefine((v, ctx) => {
     const falta = (campo: keyof typeof v, message: string) => {
@@ -73,11 +83,49 @@ export function resolverZod<T extends FieldValues>(schema: z.ZodType<T>): Resolv
   };
 }
 
+/** Só despesa e receita podem ser previstas (3.1). */
+export const podeSerPrevisto = (tipo: TipoDoFormulario) => tipo === 'despesa' || tipo === 'receita';
+
+/**
+ * A conta cujo saldo inicial é posterior à data de um movimento efetivado (3.4): o movimento fica
+ * "Anterior ao saldo inicial" e fora do saldo. Compras no cartão e previstos não mexem no saldo.
+ */
+export function contaComDataPosterior(fatos: Fatos, v: ValoresDoFormulario): Conta | null {
+  if (v.tipo === 'compra' || (v.previsto && podeSerPrevisto(v.tipo))) return null;
+  const conta = fatos.contas.find((c) => c.id === v.contaId);
+  return conta && v.data && v.data <= conta.dataSaldoInicial ? conta : null;
+}
+
+/** "Mudar a data do saldo inicial": para a véspera do movimento, que passa a contar no saldo. */
+export const novaDataDoSaldoInicial = (data: string): DataCivil => somarDias(dataCivil(data), -1);
+
+/** Dois comandos gravados juntos, numa transação; o Desfazer desfaz os dois. */
+function emSequencia(fatos: Fatos, primeiro: Comando, segundo: (f: Fatos) => Comando): Comando {
+  const depois = segundo(aplicar(fatos, primeiro.mudancas));
+  return {
+    mudancas: [...primeiro.mudancas, ...depois.mudancas],
+    inversas: [...depois.inversas, ...primeiro.inversas],
+    descricao: depois.descricao,
+  };
+}
+
 /** O comando do core para o que foi digitado; o core valida as regras e lança `ErroDeDominio`. */
 export function comandoDoFormulario(fatos: Fatos, ctx: Contexto, v: ValoresDoFormulario): Comando {
+  const conta = contaComDataPosterior(fatos, v);
+  if (conta && v.saldoInicial === 'mudar')
+    return emSequencia(
+      fatos,
+      editarConta(fatos, ctx, conta.id, { dataSaldoInicial: novaDataDoSaldoInicial(v.data) }),
+      (f) => comandoSimples(f, ctx, v),
+    );
+  return comandoSimples(fatos, ctx, v);
+}
+
+function comandoSimples(fatos: Fatos, ctx: Contexto, v: ValoresDoFormulario): Comando {
   const data = dataCivil(v.data);
   const valor = v.valor as Centavos;
   const descricao = v.descricao.trim() || null;
+  const observacao = v.observacao.trim() || null;
   switch (v.tipo) {
     case 'compra':
       return novaCompra(fatos, ctx, {
@@ -85,7 +133,7 @@ export function comandoDoFormulario(fatos: Fatos, ctx: Contexto, v: ValoresDoFor
         data,
         descricao,
         categoriaId: v.categoriaId,
-        observacao: null,
+        observacao,
         valorTotal: valor,
         numeroParcelas: 1,
       });
@@ -100,11 +148,11 @@ export function comandoDoFormulario(fatos: Fatos, ctx: Contexto, v: ValoresDoFor
     default:
       return lancar(fatos, ctx, {
         tipo: v.tipo,
-        status: 'efetivado',
+        status: v.previsto && podeSerPrevisto(v.tipo) ? 'previsto' : 'efetivado',
         data,
         valor,
         descricao,
-        observacao: null,
+        observacao,
         contaId: v.contaId,
         contaDestinoId: v.tipo === 'transferencia' ? v.contaDestinoId : null,
         categoriaId: v.tipo === 'transferencia' ? null : v.categoriaId,

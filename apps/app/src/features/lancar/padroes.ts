@@ -127,3 +127,24 @@ export function destinoPadrao(d: Derivado, cartaoId: Id): Competencia | null {
     return null;
   }
 }
+
+export interface GrupoDeCategorias {
+  /** Nome da categoria pai; as subcategorias vêm logo depois dela. */
+  nome: string;
+  itens: OpcaoDeCategoria[];
+}
+
+/** "Ver todas" (7.3): cada categoria de primeiro nível com as subcategorias dela. */
+export function gruposDeCategoria(fatos: Fatos, tipo: 'receita' | 'despesa'): GrupoDeCategorias[] {
+  const opcoes = new Map(opcoesDeCategoria(fatos, tipo).map((o) => [o.id, o]));
+  const raizes = fatos.categorias
+    .filter((c) => c.categoriaPaiId === null && opcoes.has(c.id))
+    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  return raizes.map((r) => ({
+    nome: r.nome,
+    itens: [
+      r.id,
+      ...fatos.categorias.filter((c) => c.categoriaPaiId === r.id).map((c) => c.id),
+    ].flatMap((id) => opcoes.get(id) ?? []),
+  }));
+}

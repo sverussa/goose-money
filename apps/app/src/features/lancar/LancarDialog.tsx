@@ -60,6 +60,7 @@ export function LancarDialog({ aberto, onFechar }: { aberto: boolean; onFechar: 
   const { pathname } = useLocation();
   const navegar = useNavigate();
   const valorRef = useRef<HTMLInputElement>(null);
+  const listaAbertaRef = useRef(false);
 
   function conteudo() {
     if (derivado.estado !== 'pronto') return <EstadoDaCarga carga={derivado} />;
@@ -89,6 +90,7 @@ export function LancarDialog({ aberto, onFechar }: { aberto: boolean; onFechar: 
         derivado={derivado.dados}
         inicial={{ tipo: padrao.tipo, contaId, cartaoId: cartaoId ?? '', data: hoje }}
         valorRef={valorRef}
+        listaAbertaRef={listaAbertaRef}
         onFechar={onFechar}
       />
     );
@@ -105,6 +107,10 @@ export function LancarDialog({ aberto, onFechar }: { aberto: boolean; onFechar: 
       >
         <DialogContent
           aria-describedby={undefined}
+          onEscapeKeyDown={(e) => {
+            // Esc com as sugestões da descrição abertas fecha só a lista (padrão combobox).
+            if (listaAbertaRef.current) e.preventDefault();
+          }}
           onOpenAutoFocus={(e) => {
             if (!valorRef.current) return;
             e.preventDefault();
