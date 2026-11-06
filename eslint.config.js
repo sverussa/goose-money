@@ -66,6 +66,17 @@ export default tseslint.config(
           ],
         },
       ],
+      'no-restricted-syntax': [
+        'error',
+        ...[
+          'NewExpression[callee.name="Date"][arguments.length=0]',
+          'CallExpression[callee.name="Date"]',
+          'MemberExpression[object.name="Date"][property.name="now"]',
+        ].map((selector) => ({
+          selector,
+          message: 'O core não lê o relógio: "hoje" é parâmetro (D12).',
+        })),
+      ],
     },
   },
   {
