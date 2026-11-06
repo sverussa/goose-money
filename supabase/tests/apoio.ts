@@ -129,3 +129,12 @@ export const opsDe = (entidade: string, registros: readonly object[]): Op[] =>
     const dados = Object.fromEntries(Object.entries(r).map(([k, v]) => [paraSnake(k), v]));
     return inserir(paraSnake(entidade), dados, String(dados.id));
   });
+
+/** Todas as entidades dos fatos do core como inserções, na ordem do modelo. */
+export const opsDosFatos = (fatos: Record<string, unknown>): Op[] =>
+  Object.entries(fatos).flatMap(([entidade, registros]) =>
+    opsDe(
+      entidade,
+      Array.isArray(registros) ? (registros as object[]) : registros ? [registros] : [],
+    ),
+  );

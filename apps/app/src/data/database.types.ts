@@ -393,7 +393,10 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "gravar":
+            "carregar_tudo":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"gravar":
 { Args: { "ops": Json }; Returns: Json
                            },
 "inicializar_usuario":
