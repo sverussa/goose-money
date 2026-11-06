@@ -1,0 +1,68 @@
+export {
+  aplicar,
+  type CamposDe,
+  type Comando,
+  type Contexto,
+  ErroDeDominio,
+  type Mudanca,
+} from './mudancas';
+export {
+  ajustarSaldo,
+  classificar,
+  editarLancamento,
+  excluirLancamento,
+  lancar,
+} from './lancamentos';
+export {
+  arquivarCartao,
+  arquivarConta,
+  configurarCiclo,
+  criarCartao,
+  criarCategoria,
+  criarConta,
+  desarquivarCartao,
+  desarquivarConta,
+  editarCartao,
+  editarCategoria,
+  editarConta,
+  excluirCartao,
+  excluirCategoria,
+  excluirConta,
+  type NovaCategoria,
+  type NovaConta,
+  type NovoCartao,
+  permissoesDaConta,
+  salvarPreferencias,
+} from './cadastros';
+export {
+  anteciparParcelasDaCompra,
+  cancelarCompraDoCartao,
+  editarCompra,
+  type EncargoOuEstorno,
+  excluirCompra,
+  lancarAjusteDeCompra,
+  lancarEncargoOuEstorno,
+  type NovaCompra,
+  novaCompra,
+  type Pagamento,
+  pagarFatura,
+} from './compras';
+export {
+  type Amortizacao,
+  amortizarDivida,
+  type Contratacao,
+  contratarDivida,
+  excluirDivida,
+  parcelasDaDivida,
+  registrarPagamentoDeParcela,
+} from './dividas';
+export {
+  confirmarEmLote,
+  confirmarOcorrencia,
+  criarRecorrencia,
+  editarRecorrencia,
+  ignorarOcorrencia,
+  type NovaRecorrencia,
+  type NovaVersao,
+  novaVersaoDaRecorrencia,
+} from './recorrencias';

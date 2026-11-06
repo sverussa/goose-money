@@ -9,3 +9,4 @@ export * from './contas';
 export * from './backup';
 export * from './recorrencias';
 export * from './motor';
+export * from './comandos';
