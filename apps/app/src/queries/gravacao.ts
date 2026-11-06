@@ -1,7 +1,12 @@
 import type { Comando, Fatos, Mudanca } from '@goose-money/core';
 import type { MutationOptions, QueryClient, QueryKey } from '@tanstack/react-query';
 
-import { aplicarGravadas, type Gravadas, mensagemDoErroAoGravar } from '@/data/gravacao';
+import {
+  aplicarGravadas,
+  type Gravadas,
+  mensagemDoErroAoGravar,
+  SemConexao,
+} from '@/data/gravacao';
 
 /** O que a mutação de `useComando` grava: as mudanças e, fora do Desfazer, o comando. */
 export interface Gravacao {
@@ -31,7 +36,10 @@ interface Dependencias {
  */
 export function opcoesDaGravacao(d: Dependencias): MutationOptions<void, unknown, Gravacao> {
   return {
+    // Sem conexão, a tentativa falha na hora e mostra a mensagem (T03-05); nunca fica na fila.
+    networkMode: 'always',
     mutationFn: async ({ mudancas }) => {
+      if (!d.online()) throw new SemConexao();
       const gravadas = await d.executar(mudancas);
       if (d.chave)
         d.consultas.setQueryData<Fatos>(d.chave, (f) => (f ? aplicarGravadas(f, gravadas) : f));

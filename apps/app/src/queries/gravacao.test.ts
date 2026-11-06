@@ -17,13 +17,13 @@ const comando: Comando = {
   descricao: 'Lançamento alterado',
 };
 
-function montar(executar: () => Promise<Gravadas>) {
+function montar(executar: () => Promise<Gravadas>, online = true) {
   const consultas = new QueryClient();
   consultas.setQueryData<Fatos>(chave, seed);
   const avisos = { gravado: vi.fn(), desfeito: vi.fn(), erro: vi.fn() };
   const observador = new MutationObserver(
     consultas,
-    opcoesDaGravacao({ consultas, chave, executar, avisos, online: () => true }),
+    opcoesDaGravacao({ consultas, chave, executar, avisos, online: () => online }),
   );
   return { consultas, avisos, observador };
 }
@@ -60,5 +60,14 @@ describe('gravação do useComando', () => {
     await observador.mutate({ mudancas: comando.inversas, comando: null });
     expect(executar).toHaveBeenCalledWith(comando.inversas);
     expect(avisos.desfeito).toHaveBeenCalled();
+  });
+
+  it('sem conexão, nem tenta gravar e mostra a mensagem (T03-05)', async () => {
+    const executar = vi.fn(() => Promise.resolve({}));
+    const { consultas, avisos, observador } = montar(executar, false);
+    await expect(observador.mutate({ mudancas: comando.mudancas, comando })).rejects.toThrow();
+    expect(executar).not.toHaveBeenCalled();
+    expect(consultas.getQueryData(chave)).toBe(seed);
+    expect(avisos.erro).toHaveBeenCalledWith('Sem conexão: tente de novo quando a internet voltar');
   });
 });

@@ -101,11 +101,16 @@ export async function gravarCom(
   return lerGravadas(r.data);
 }
 
+/** A gravação nem foi tentada: o app está sem conexão (T03-05). */
+export class SemConexao extends Error {
+  override name = 'SemConexao';
+}
+
 /** Erro de qualquer gravação → texto do snackbar (D14). */
 export function mensagemDoErroAoGravar(erro: unknown, online = true): string {
   const m = mensagens.gravacao;
   if (erro instanceof ErroDeDominio) return erro.message;
-  if (!online) return m.semConexao;
+  if (!online || erro instanceof SemConexao) return m.semConexao;
   if (!(erro instanceof ErroDeGravacao)) return m.erro;
   if (erro.status === 0) return m.semConexao;
   if (erro.status === 401 || erro.codigo.startsWith('PGRST30')) return m.sessaoExpirada;

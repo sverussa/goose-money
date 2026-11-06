@@ -3,6 +3,12 @@ export const mensagens = {
   app: 'Goose Money',
   carregando: 'Carregando…',
   tentarDeNovo: 'Tentar de novo',
+  conexao: {
+    titulo: 'Sem conexão',
+    texto:
+      'Os dados mostrados podem estar desatualizados e nada pode ser salvo até a internet voltar.',
+    salvarBloqueado: 'Sem conexão: nada pode ser salvo agora',
+  },
   carga: {
     erro: 'Não foi possível carregar os seus dados.',
   },

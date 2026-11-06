@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { mensagens } from '@/app/mensagens';
 import { useSessao } from '@/app/providers/useSessao';
 import { executar } from '@/data/gravar';
+import { conexao } from '@/data/supabase';
 
 import { guardarBarraAnterior, registrarBarraAtual } from './barraAnterior';
 import { chaveDosFatos, useBarraDeTotais } from './fatos';
@@ -43,7 +44,7 @@ export function useComando() {
       consultas,
       chave: usuario ? chaveDosFatos(usuario.id) : null,
       executar,
-      online: () => navigator.onLine,
+      online: conexao.online,
       avisos: {
         gravado: (comando) =>
           toast(comando.descricao, {
