@@ -23,7 +23,7 @@ function validar(pv: Centavos, i: Decimal, n: number) {
  * Monta as `n` linhas com J(k) = round(SD(k−1) × i). `amortizar` dá A(k) para k < n;
  * a última amortiza o saldo restante, então SD(n) = 0 exatamente (3.7).
  */
-function gerar(
+export function gerar(
   pv: Centavos,
   i: Decimal,
   n: number,
@@ -76,4 +76,32 @@ export function tabelaPrice(
   const taxa = new D(i);
   const pmt = paraCentavos(new D(pv).times(taxa).div(new D(1).minus(taxa.plus(1).pow(-n))));
   return gerar(pv, i, n, primeiraData, (juros) => menos(pmt, juros));
+}
+
+/** Maior taxa i em [0; 1] com PMT × (1 − (1 + i)^−n) ÷ i ≥ PV, por bisseção (tolerância 1e-12, 3.7). */
+export function taxaImplicita(pv: Centavos, pmt: Centavos, n: number): Decimal {
+  if (pmt * n === pv) return new D(0);
+  let [lo, hi] = [new D(0), new D(1)];
+  while (hi.minus(lo).gt('1e-12')) {
+    const i = lo.plus(hi).div(2);
+    const valorPresente = new D(pmt).times(new D(1).minus(i.plus(1).pow(-n))).div(i);
+    if (valorPresente.gte(pv)) lo = i;
+    else hi = i;
+  }
+  return lo.plus(hi).div(2);
+}
+
+/** Parcela informada: PMT fixo, taxa implícita e a última ajustada para zerar o saldo (3.7). */
+export function tabelaParcelaInformada(
+  pv: Centavos,
+  pmt: Centavos,
+  n: number,
+  primeiraData: DataCivil,
+): { taxa: Decimal; linhas: LinhaTabela[]; diferencaUltima: Centavos } {
+  validar(pv, new D(0), n);
+  if (pmt <= 0) throw new RangeError(`Parcela precisa ser positiva: ${String(pmt)}`);
+  if (pmt * n < pv) throw new RangeError('As parcelas somam menos que o valor contratado');
+  const taxa = taxaImplicita(pv, pmt, n);
+  const linhas = gerar(pv, taxa, n, primeiraData, (juros) => menos(pmt, juros));
+  return { taxa, linhas, diferencaUltima: menos((linhas[n - 1] as LinhaTabela).valor, pmt) };
 }
