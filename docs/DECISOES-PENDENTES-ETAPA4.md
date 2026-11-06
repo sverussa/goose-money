@@ -63,3 +63,15 @@ Escolhas feitas durante T04-01 a T04-09 em casos que a spec e o design não cobr
 6. "Personalizado" abre um popover com dois campos de data nativos (`type="date"`) e "Aplicar"; data final antes da inicial mostra erro e não aplica. Depois de deslocar com as setas, o chip ativo passa a ser "Personalizado" quando o período não coincide com nenhum atalho.
 7. Mês inválido na URL (`?mes=2026-13`) e período inválido (`?de=2026-02-30`) voltam ao padrão em silêncio, sem mensagem.
 8. `EstadoDaCarga` cobre carregando (esqueleto) e erro ("Tentar de novo") de qualquer consulta; o estado vazio de cada tela usa `EmptyState`.
+
+## T04-08
+
+1. Recharts fica na **3.8.0**, a versão do registro do shadcn para o componente `chart` (o CLI trocou a 3.10.1 que eu tinha instalado); as duas têm mais de 7 dias. O CLI trouxe de novo o pacote `cn`, removido.
+2. O percentual do tooltip é a fatia do **total da série no gráfico** (o mês dentro das receitas do período, a fatia dentro da rosca), com "—" quando o total é zero. A spec diz só "percentual do total".
+3. CSV com `;` e vírgula decimal, sem "R$" nem separador de milhar (abre como número em planilha pt-BR); cabeçalho com os rótulos das séries; campos com `;` ou aspas entre aspas.
+4. O PNG é o card inteiro em 2×, com o fundo do card e sem o botão de menu.
+5. No modo privacidade, os gráficos escondem os valores dos eixos e do tooltip e o resumo acessível diz só as séries; exportar continua com os valores reais (ação explícita do usuário).
+6. Estado vazio quando não há pontos ou todos os valores são zero; nesse caso "Exportar PNG/CSV" fica desabilitado.
+7. O gráfico inteiro é uma imagem (`role="img"`) com o resumo no `aria-label` (total e maior valor de cada série); o ranking da rosca é visual.
+8. Cores das séries pelas chaves do tema (D77): `income`, `expense`, `categorica-N` → `cat-N`, `cartao-a`; categoria de sistema (cor nula) usa `cat-sistema`. Previsto: tracejado nas linhas e hachura `forecast` nas barras.
+9. Animações desligadas com `prefers-reduced-motion`.

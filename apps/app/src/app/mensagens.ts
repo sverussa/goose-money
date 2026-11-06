@@ -63,6 +63,19 @@ export const mensagens = {
     aplicar: 'Aplicar',
     invalido: 'A data final precisa ser igual ou posterior à inicial.',
   },
+  graficos: {
+    opcoes: 'Opções do gráfico',
+    verItens: 'Ver itens',
+    exportarPng: 'Exportar PNG',
+    exportarCsv: 'Exportar CSV',
+    exportado: (nome: string) => `Arquivo salvo: ${nome}`,
+    erroAoExportar: 'Não foi possível exportar o gráfico.',
+    semDados: 'Sem dados neste período',
+    /** "Receitas: total R$ 10,00; maior valor R$ 6,00 em nov/2026." */
+    resumoDaSerie: (serie: string, total: string, maior: string, onde: string) =>
+      `${serie}: total ${total}; maior valor ${maior} em ${onde}.`,
+    resumoOculto: (series: string) => `Valores ocultos. Séries: ${series}.`,
+  },
   /** Microcopy de 4.3. */
   acoes: {
     lancar: 'Lançar',
