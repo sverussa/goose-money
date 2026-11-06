@@ -11,3 +11,4 @@ export {
   somarItens,
 } from './reconhecimento';
 export * from './pendencias';
+export * from './barra';

@@ -1,15 +1,8 @@
-import {
-  compararDatas,
-  type Competencia,
-  competenciaDe,
-  type DataCivil,
-  somarDias,
-  somarMeses,
-} from '../datas';
+import { compararDatas, type Competencia, type DataCivil, somarDias } from '../datas';
 import type { Centavos } from '../dinheiro';
 import type { Cartao, Id } from '../modelo';
-import { type OcorrenciaDoMes, ocorrenciasDoMes } from '../recorrencias';
 import type { Derivado } from './derivar';
+import { ocorrenciasAte } from './ocorrencias';
 
 /** Card Pendências (PROMPT 6.2) e badges do menu (5.1), lidos do `Derivado` (D13). */
 
@@ -34,22 +27,6 @@ export type Pendencia = Comum &
 
 /** Gastos fixos: vencidos ou vencendo em até 3 dias (5.1, 6.2). */
 const DIAS_A_VENCER = 3;
-
-/**
- * Ocorrências de recorrências ativas desde o início da mais antiga até o mês de `ate`, como na
- * projeção (3.9): o mês de hoje vem do `Derivado`; os outros, de `ocorrenciasDoMes`.
- */
-function ocorrenciasAte(derivado: Derivado, ate: DataCivil): OcorrenciaDoMes[] {
-  const { fatos, hoje } = derivado;
-  const atual = competenciaDe(hoje);
-  const inicio = fatos.recorrencias
-    .filter((r) => r.ativa)
-    .reduce((a, r) => (r.competenciaInicio < a ? r.competenciaInicio : a), atual);
-  const lista: OcorrenciaDoMes[] = [];
-  for (let m = inicio; m <= competenciaDe(ate); m = somarMeses(m, 1))
-    lista.push(...(m === atual ? derivado.ocorrenciasDoMes : ocorrenciasDoMes(fatos, m, hoje)));
-  return lista;
-}
 
 /**
  * Rendas atrasadas e gastos fixos vencidos de qualquer mês desde o início, gastos vencendo em
