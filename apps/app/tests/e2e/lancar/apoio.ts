@@ -1,4 +1,10 @@
-import { derivar, gerarSeed, indicadoresDaBarra, type IndicadoresDaBarra } from '@goose-money/core';
+import {
+  type Derivado,
+  derivar,
+  gerarSeed,
+  indicadoresDaBarra,
+  type IndicadoresDaBarra,
+} from '@goose-money/core';
 import { expect, type Page } from '@playwright/test';
 
 import { formatarMoeda } from '../../../src/app/formatacao';
@@ -32,12 +38,16 @@ export async function entrar(page: Page, u: Usuario, rota = '/') {
   await page.waitForLoadState('networkidle');
 }
 
-/** Os indicadores da Barra calculados pelo core sobre o que está gravado. */
-export async function barraNoBanco(u: Usuario): Promise<IndicadoresDaBarra> {
+/** O que está gravado, derivado pelo core com o "hoje" de Brasília. */
+export async function derivadoNoBanco(u: Usuario): Promise<Derivado> {
   const r = await u.cliente.rpc('carregar_tudo');
   if (r.error) throw new Error(r.error.message);
-  return indicadoresDaBarra(derivar(lerFatos(r.data), hojeEmBrasilia()));
+  return derivar(lerFatos(r.data), hojeEmBrasilia());
 }
+
+/** Os indicadores da Barra calculados pelo core sobre o que está gravado. */
+export const barraNoBanco = async (u: Usuario): Promise<IndicadoresDaBarra> =>
+  indicadoresDaBarra(await derivadoNoBanco(u));
 
 const ROTULOS: Record<keyof IndicadoresDaBarra, string> = {
   saldoEmContas: 'Saldo em contas',
@@ -60,3 +70,9 @@ export const dialogo = (page: Page) => page.getByRole('dialog', { name: 'Novo la
 export const fab = (page: Page) => page.getByRole('button', { name: 'Lançar', exact: true });
 export const campoValor = (page: Page) =>
   dialogo(page).getByRole('textbox', { name: 'Valor', exact: true });
+
+/** Escolhe `opcao` no seletor `rotulo` do formulário. */
+export async function escolher(page: Page, rotulo: string, opcao: string) {
+  await dialogo(page).getByRole('combobox', { name: rotulo, exact: true }).click();
+  await page.getByRole('option', { name: opcao, exact: true }).click();
+}

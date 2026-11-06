@@ -7,12 +7,18 @@ import { EmptyState, EstadoDaCarga } from '@/components/EstadosDaTela';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { useFatos } from '@/queries/fatos';
+import { useDerivado } from '@/queries/fatos';
 import { useHoje } from '@/queries/relogio';
 
 import { FormularioLancamento } from './FormularioLancamento';
 import { mensagensLancar as m } from './mensagens';
-import { contaInicial, lerUltimaConta, padraoDaTela } from './padroes';
+import {
+  cartaoInicial,
+  contaInicial,
+  lerUltimaConta,
+  lerUltimoCartao,
+  padraoDaTela,
+} from './padroes';
 
 /** FAB "+ Lançar" (5.2): estendido no topo da página, só o ícone depois de rolar. */
 function QuickAddFab() {
@@ -49,16 +55,18 @@ function QuickAddFab() {
  * (7.2) e com o foco no valor. Sem nenhuma conta, leva ao cadastro de conta.
  */
 export function LancarDialog({ aberto, onFechar }: { aberto: boolean; onFechar: () => void }) {
-  const fatos = useFatos();
+  const derivado = useDerivado();
   const hoje = useHoje();
   const { pathname } = useLocation();
   const navegar = useNavigate();
   const valorRef = useRef<HTMLInputElement>(null);
 
   function conteudo() {
-    if (fatos.estado !== 'pronto') return <EstadoDaCarga carga={fatos} />;
+    if (derivado.estado !== 'pronto') return <EstadoDaCarga carga={derivado} />;
+    const { fatos } = derivado.dados;
     const padrao = padraoDaTela(pathname);
-    const contaId = contaInicial(fatos.dados, padrao.contaId, lerUltimaConta());
+    const contaId = contaInicial(fatos, padrao.contaId, lerUltimaConta());
+    const cartaoId = cartaoInicial(fatos, padrao.cartaoId, lerUltimoCartao());
     if (!contaId)
       return (
         <EmptyState
@@ -78,8 +86,8 @@ export function LancarDialog({ aberto, onFechar }: { aberto: boolean; onFechar: 
       );
     return (
       <FormularioLancamento
-        fatos={fatos.dados}
-        inicial={{ tipo: padrao.tipo, contaId, data: hoje }}
+        derivado={derivado.dados}
+        inicial={{ tipo: padrao.tipo, contaId, cartaoId: cartaoId ?? '', data: hoje }}
         valorRef={valorRef}
         onFechar={onFechar}
       />

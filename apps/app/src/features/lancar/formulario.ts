@@ -1,4 +1,14 @@
-import { type CamposDe, type Centavos, dataCivil, type Lancamento } from '@goose-money/core';
+import {
+  type Centavos,
+  type Comando,
+  type Competencia,
+  type Contexto,
+  dataCivil,
+  type Fatos,
+  lancar,
+  novaCompra,
+  pagarFatura,
+} from '@goose-money/core';
 import type { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -8,8 +18,8 @@ import { mensagensLancar } from './mensagens';
 
 export const TIPOS = ['despesa', 'receita', 'compra', 'transferencia', 'pagamento'] as const;
 export type TipoDoFormulario = (typeof TIPOS)[number];
-/** Tipos que já gravam; os outros chegam na T05-03. */
-export const TIPOS_PRONTOS: readonly TipoDoFormulario[] = ['despesa', 'receita'];
+/** Tipos que usam um cartão: sem cartão cadastrado, levam ao cadastro de cartão (D21). */
+export const TIPOS_DE_CARTAO: readonly TipoDoFormulario[] = ['compra', 'pagamento'];
 
 const e = mensagensLancar.erros;
 const dataValida = (s: string) => {
@@ -21,14 +31,34 @@ const dataValida = (s: string) => {
   }
 };
 
-export const esquemaDoFormulario = z.object({
-  tipo: z.enum(TIPOS),
-  valor: z.number().int().positive(e.valor),
-  descricao: z.string(),
-  categoriaId: z.string().min(1, e.categoria),
-  data: z.string().refine(dataValida, e.data),
-  contaId: z.string().min(1, e.conta),
-});
+/** Os campos de todos os tipos; cada tipo exige os seus (`exigidos`). */
+export const esquemaDoFormulario = z
+  .object({
+    tipo: z.enum(TIPOS),
+    valor: z.number().int().positive(e.valor),
+    descricao: z.string(),
+    categoriaId: z.string(),
+    data: z.string().refine(dataValida, e.data),
+    contaId: z.string(),
+    contaDestinoId: z.string(),
+    cartaoId: z.string(),
+    faturaCompetencia: z.string(),
+  })
+  .superRefine((v, ctx) => {
+    const falta = (campo: keyof typeof v, message: string) => {
+      if (!v[campo]) ctx.addIssue({ code: 'custom', path: [campo], message });
+    };
+    if (v.tipo === 'despesa' || v.tipo === 'receita' || v.tipo === 'compra')
+      falta('categoriaId', e.categoria);
+    if (v.tipo !== 'compra') falta('contaId', e.conta);
+    if (v.tipo === 'compra' || v.tipo === 'pagamento') falta('cartaoId', e.cartao);
+    if (v.tipo === 'pagamento') falta('faturaCompetencia', e.fatura);
+    if (v.tipo === 'transferencia') {
+      falta('contaDestinoId', e.contaDestino);
+      if (v.contaDestinoId && v.contaDestinoId === v.contaId)
+        ctx.addIssue({ code: 'custom', path: ['contaDestinoId'], message: e.mesmaConta });
+    }
+  });
 export type ValoresDoFormulario = z.infer<typeof esquemaDoFormulario>;
 
 /** Adaptador Zod → React Hook Form (D7), sem `@hookform/resolvers`: o primeiro erro de cada campo. */
@@ -43,23 +73,45 @@ export function resolverZod<T extends FieldValues>(schema: z.ZodType<T>): Resolv
   };
 }
 
-/** Despesa ou receita avulsa, efetivada (o "Previsto" de "Mais opções" chega na T05-04). */
-export function camposDoLancamento(v: ValoresDoFormulario): CamposDe<Lancamento> {
-  if (v.tipo !== 'despesa' && v.tipo !== 'receita')
-    throw new Error(`Tipo ainda sem gravação: ${v.tipo}`);
-  return {
-    tipo: v.tipo,
-    status: 'efetivado',
-    data: dataCivil(v.data),
-    valor: v.valor as Centavos,
-    descricao: v.descricao.trim() || null,
-    observacao: null,
-    contaId: v.contaId,
-    contaDestinoId: null,
-    categoriaId: v.categoriaId,
-    cartaoId: null,
-    faturaCompetencia: null,
-    dividaId: null,
-    parcelaDividaId: null,
-  };
+/** O comando do core para o que foi digitado; o core valida as regras e lança `ErroDeDominio`. */
+export function comandoDoFormulario(fatos: Fatos, ctx: Contexto, v: ValoresDoFormulario): Comando {
+  const data = dataCivil(v.data);
+  const valor = v.valor as Centavos;
+  const descricao = v.descricao.trim() || null;
+  switch (v.tipo) {
+    case 'compra':
+      return novaCompra(fatos, ctx, {
+        cartaoId: v.cartaoId,
+        data,
+        descricao,
+        categoriaId: v.categoriaId,
+        observacao: null,
+        valorTotal: valor,
+        numeroParcelas: 1,
+      });
+    case 'pagamento':
+      return pagarFatura(fatos, ctx, {
+        cartaoId: v.cartaoId,
+        valor,
+        data,
+        contaId: v.contaId,
+        faturaCompetencia: v.faturaCompetencia as Competencia,
+      });
+    default:
+      return lancar(fatos, ctx, {
+        tipo: v.tipo,
+        status: 'efetivado',
+        data,
+        valor,
+        descricao,
+        observacao: null,
+        contaId: v.contaId,
+        contaDestinoId: v.tipo === 'transferencia' ? v.contaDestinoId : null,
+        categoriaId: v.tipo === 'transferencia' ? null : v.categoriaId,
+        cartaoId: null,
+        faturaCompetencia: null,
+        dividaId: null,
+        parcelaDividaId: null,
+      });
+  }
 }

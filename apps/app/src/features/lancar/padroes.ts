@@ -1,4 +1,14 @@
-import type { Categoria, Conta, Fatos, Id } from '@goose-money/core';
+import {
+  type Cartao,
+  type Categoria,
+  type Competencia,
+  type Conta,
+  type Derivado,
+  destinoPadraoDoPagamento,
+  type Fatos,
+  type Fatura,
+  type Id,
+} from '@goose-money/core';
 
 import type { TipoDoFormulario } from './formulario';
 
@@ -25,12 +35,17 @@ export function guardarUltimaConta(id: string): void {
 export interface PadraoDaTela {
   tipo: TipoDoFormulario;
   contaId: Id | null;
+  cartaoId: Id | null;
 }
 
-/** Tabela 7.2: na tela de uma conta, Despesa naquela conta; nas demais, Despesa. */
+/**
+ * Tabela 7.2: na tela de uma conta, Despesa naquela conta; na de um cartão, Compra no cartão
+ * naquele cartão; nas demais, Despesa.
+ */
 export function padraoDaTela(pathname: string): PadraoDaTela {
-  const conta = /^\/contas\/([^/]+)$/.exec(pathname)?.[1];
-  return { tipo: 'despesa', contaId: conta ?? null };
+  const conta = /^\/contas\/([^/]+)$/.exec(pathname)?.[1] ?? null;
+  const cartao = /^\/cartoes\/([^/]+)$/.exec(pathname)?.[1] ?? null;
+  return { tipo: cartao ? 'compra' : 'despesa', contaId: conta, cartaoId: cartao };
 }
 
 export const contasAtivas = (fatos: Fatos): Conta[] => fatos.contas.filter((c) => !c.arquivada);
@@ -70,3 +85,45 @@ export function opcoesDeCategoria(fatos: Fatos, tipo: 'receita' | 'despesa'): Op
 
 export const aClassificar = (fatos: Fatos): Id | null =>
   fatos.categorias.find((c) => c.sistema === 'a_classificar')?.id ?? null;
+
+const CHAVE_ULTIMO_CARTAO = 'goose-money:ultimo-cartao';
+
+export function lerUltimoCartao(): string | null {
+  try {
+    return localStorage.getItem(CHAVE_ULTIMO_CARTAO);
+  } catch {
+    return null;
+  }
+}
+
+export function guardarUltimoCartao(id: string): void {
+  try {
+    localStorage.setItem(CHAVE_ULTIMO_CARTAO, id);
+  } catch {
+    // Sem armazenamento: fica o padrão da próxima vez.
+  }
+}
+
+export const cartoesAtivos = (fatos: Fatos): Cartao[] => fatos.cartoes.filter((c) => !c.arquivado);
+
+/** O cartão já marcado: o da tela, senão o último usado neste aparelho, senão o primeiro ativo. */
+export function cartaoInicial(fatos: Fatos, daTela: Id | null, ultimo: string | null): Id | null {
+  const ativos = cartoesAtivos(fatos);
+  const ativo = (id: string | null) => ativos.find((c) => c.id === id)?.id;
+  return ativo(daTela) ?? ativo(ultimo) ?? ativos[0]?.id ?? null;
+}
+
+/** Faturas que podem receber um pagamento: vencidas, fechadas e a aberta (3.5). */
+export const faturasParaPagar = (d: Derivado, cartaoId: Id): Fatura[] =>
+  (d.faturas.get(cartaoId) ?? []).filter(
+    (f) => f.status === 'vencida' || f.status === 'fechada' || f.status === 'aberta',
+  );
+
+/** Destino padrão do pagamento (3.5), ou nenhum se o cartão ainda não tem fatura aberta. */
+export function destinoPadrao(d: Derivado, cartaoId: Id): Competencia | null {
+  try {
+    return destinoPadraoDoPagamento(d.faturas.get(cartaoId) ?? []);
+  } catch {
+    return null;
+  }
+}
