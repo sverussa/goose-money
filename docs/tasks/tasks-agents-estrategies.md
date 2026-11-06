@@ -1,6 +1,6 @@
 # Estratégia de implementação com agentes em paralelo
 
-Como dividir as 100 tarefas de `docs/tasks/` entre vários agentes ao mesmo tempo sem que um quebre o trabalho do outro. Complementa o índice (`README.md`), que continua sendo a fonte das dependências.
+Como dividir as 101 tarefas de `docs/tasks/` entre vários agentes ao mesmo tempo sem que um quebre o trabalho do outro. Complementa o índice (`README.md`), que continua sendo a fonte das dependências.
 
 ## Recomendação
 
@@ -52,7 +52,7 @@ T00-01 → 02 → 03 → 04 → 05 → 06 → 10 → 11 → T02-01 → 02 → 03
 
 | Trilha | Tarefas | Pastas que só ela edita |
 | --- | --- | --- |
-| **F · Fundação** | T00-01 a T00-13 | raiz (`package.json`, `pnpm-workspace.yaml`, `Makefile`, configs), `.github/` |
+| **F · Fundação** | T00-01 a T00-14 (T00-14 também mexe em `supabase/` e roda sozinha, antes da etapa 5) | raiz (`package.json`, `pnpm-workspace.yaml`, `Makefile`, configs), `.github/` |
 | **C · Core** | T01-02 a T01-22 | `packages/core/src/<contexto>/` (uma pasta por contexto: `dinheiro`, `datas`, `periodos`, `contas`, `cartoes`, `dividas`, `recorrencias`, `motor`, `seed`, `backup`, `comandos`) |
 | **B · Banco** | T02-01 a T02-11, T06-05, T06-06 | `supabase/` |
 | **D · Dados no app** | T03-01 a T03-08 | `apps/app/src/data/`, `src/queries/`, `src/plataforma/`, `src-tauri/` |

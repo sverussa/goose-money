@@ -1,6 +1,6 @@
 # Tarefas de implementação
 
-Plano para implementar o Goose Money, quebrado em 100 tarefas pequenas, uma por arquivo, organizadas em 7 etapas e, dentro delas, por contexto. As regras continuam em `docs/PROMPT.md` (a seção 3 vence qualquer conflito); cada tarefa aponta as seções, decisões e telas de design que usa.
+Plano para implementar o Goose Money, quebrado em 101 tarefas pequenas, uma por arquivo, organizadas em 7 etapas e, dentro delas, por contexto. As regras continuam em `docs/PROMPT.md` (a seção 3 vence qualquer conflito); cada tarefa aponta as seções, decisões e telas de design que usa.
 
 ## Como usar
 
@@ -47,6 +47,7 @@ Base do projeto: monorepo, app, desktop, Supabase local, Flyway, Makefile, CI. N
 | ✅ [T00-11 · Cliente Supabase e variáveis de ambiente no app](00-codebase/T00-11-cliente-supabase-env.md) | App · Dados | T00-08, T00-10 | — |
 | ✅ [T00-12 · Integração contínua](00-codebase/T00-12-ci.md) | Qualidade | T00-10 | tomada |
 | ✅ [T00-13 · Documentar a base de código](00-codebase/T00-13-documentacao-base.md) | Documentação | T00-01 a T00-12 | — |
+| [T00-14 · Ambiente de testes rápido e estável](00-codebase/T00-14-ambiente-de-testes.md) | Ferramentas · Banco | T02-11, T04-09 | — |
 
 ## Etapa 1 · Domínio
 
