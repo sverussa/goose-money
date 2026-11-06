@@ -47,6 +47,17 @@ export default defineConfig({
                 globalSetup: ['./preparar.ts'],
               },
             },
+            {
+              // src/data do app contra o banco, com usuários dos utilitários de supabase/tests.
+              extends: './apps/app/vite.config.ts',
+              test: {
+                name: 'app-db',
+                root: './apps/app',
+                include: ['tests/db/**/*.test.ts'],
+                environment: 'node',
+                globalSetup: ['../../supabase/tests/preparar.ts'],
+              },
+            },
           ]),
     ],
     coverage: {
