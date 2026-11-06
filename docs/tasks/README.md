@@ -106,7 +106,7 @@ Sessão, leitura, mutações com Desfazer, conexão, confirmação automática e
 | ✅ [T03-03 · Consultas, "hoje" e Motor no app](03-dados-app/T03-03-consultas-motor.md) | Leitura | T03-02, T01-17 | — |
 | ✅ [T03-04 · Mutações, "Salvando…" e Desfazer](03-dados-app/T03-04-mutacoes-desfazer.md) | Escrita | T03-03, T01-22, T02-02 | — |
 | ✅ [T03-05 · Sem conexão](03-dados-app/T03-05-sem-conexao.md) | Conexão | T03-04 | — |
-| [T03-06 · Confirmação automática de recorrências](03-dados-app/T03-06-confirmacao-automatica.md) | Recorrências | T03-04, T01-13, T02-07 | — |
+| ✅ [T03-06 · Confirmação automática de recorrências](03-dados-app/T03-06-confirmacao-automatica.md) | Recorrências | T03-04, T01-13, T02-07 | — |
 | [T03-07 · Salvar e abrir arquivos (navegador e Tauri)](03-dados-app/T03-07-arquivos-plataforma.md) | Plataforma | T00-07 | — |
 | [T03-08 · Deep link e redefinição de senha](03-dados-app/T03-08-deep-link-senha.md) | Acesso · Plataforma | T03-01, T03-07 | — |
 
