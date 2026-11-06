@@ -10,6 +10,9 @@ import { gerarFatos, HOJE_SINTETICO as HOJE } from './sinteticos';
 
 /** Relógio de alta resolução do Vitest; o core não tem os tipos de DOM nem de Node. */
 declare const performance: { now(): number };
+declare const process: { env: Record<string, string | undefined> };
+/** A cobertura instrumenta o código e o deixa várias vezes mais lento: o tempo só vale sem ela. */
+const comCobertura = process.env.COBERTURA === '1';
 
 const c = competencia;
 describe('derivar', () => {
@@ -85,16 +88,19 @@ describe('derivar', () => {
     ]);
   });
 
-  it('9.3: 10 mil lançamentos, 3 cartões, 2 dívidas e 8 recorrências em menos de 50 ms', () => {
-    const grande = gerarFatos(10_000);
-    expect(grande.lancamentos).toHaveLength(10_000);
-    const tempos: number[] = [];
-    for (let k = 0; k < 5; k++) {
-      const inicio = performance.now();
-      derivar(grande, HOJE);
-      tempos.push(performance.now() - inicio);
-    }
-    // O menor tempo mede o código, não a disputa por CPU com outros testes em paralelo.
-    expect(Math.min(...tempos)).toBeLessThan(50);
-  });
+  it.skipIf(comCobertura)(
+    '9.3: 10 mil lançamentos, 3 cartões, 2 dívidas e 8 recorrências em menos de 50 ms',
+    () => {
+      const grande = gerarFatos(10_000);
+      expect(grande.lancamentos).toHaveLength(10_000);
+      const tempos: number[] = [];
+      for (let k = 0; k < 5; k++) {
+        const inicio = performance.now();
+        derivar(grande, HOJE);
+        tempos.push(performance.now() - inicio);
+      }
+      // O menor tempo mede o código, não a disputa por CPU com outros testes em paralelo.
+      expect(Math.min(...tempos)).toBeLessThan(50);
+    },
+  );
 });

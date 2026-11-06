@@ -9,6 +9,9 @@ import { gerarFatos, HOJE_SINTETICO } from './sinteticos';
 
 /** Relógio de alta resolução do Vitest; o core não tem os tipos de DOM nem de Node. */
 declare const performance: { now(): number };
+declare const process: { env: Record<string, string | undefined> };
+/** A cobertura instrumenta o código e o deixa várias vezes mais lento: o tempo só vale sem ela. */
+const comCobertura = process.env.COBERTURA === '1';
 
 const d = dataCivil;
 const c = competencia;
@@ -465,7 +468,7 @@ describe('previsaoDeQuitacao', () => {
 });
 
 describe('9.3: desempenho', () => {
-  it('projeção de 24 meses com 10 mil lançamentos em menos de 200 ms', () => {
+  it.skipIf(comCobertura)('projeção de 24 meses com 10 mil lançamentos em menos de 200 ms', () => {
     const derivado = derivar(gerarFatos(10_000), HOJE_SINTETICO);
     const tempos: number[] = [];
     for (let k = 0; k < 5; k++) {
