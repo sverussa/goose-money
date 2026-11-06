@@ -18,3 +18,11 @@ Casos que a spec não cobre ou em que o texto da tarefa diverge do `MODELO-DADOS
 3. `taxa_mensal` (`numeric`) chega do JSON como número e vira texto com até 15 dígitos significativos, sem notação científica (`1e-7` → `"0.0000001"`). Uma taxa com mais de 15 dígitos significativos perderia precisão na leitura (não acontece com taxa digitada). Na gravação ela vai como texto, sem perda.
 4. Todo número lido, salvo `taxa_mensal`, precisa ser inteiro seguro; senão `carregarTudo` falha com "tabela.coluna: valor não é um inteiro seguro".
 5. Os testes do app que dependem do banco ficam em `apps/app/tests/db`, num projeto Vitest próprio (`app-db`), fora do CI como o `db`; `pnpm test:db` roda os dois. `src/data/supabase.ts` usa o `localStorage` ao ser importado, que o Node não tem: os testes chamam as funções puras (`lerFatos`, `paraBanco`) com o cliente dos utilitários de `supabase/tests`.
+
+## T03-03
+1. O `QueryClient` com as opções desta tarefa já tinha entrado na T03-01 (decisão T03-01.2); aqui entram o `QueryClientProvider` em uso, os hooks e o relógio.
+2. `src/queries/relogio.ts` é o único módulo que lê o relógio: além de `useHoje`, tem `agoraIso()`, o instante das colunas de controle que os comandos do core pedem no `Contexto` (T03-04). O "hoje" também é conferido no evento `focus` da janela (cobre o computador que acorda depois da meia-noite).
+3. Com fatos em cache, uma recarga que falha continua mostrando os últimos fatos (o estado de erro só aparece sem nenhum dado); o banner de T03-05 avisa que podem estar desatualizados, como em 9.3.
+4. Hooks finos criados agora: `useBarraDeTotais`, `useIndicadoresDoPeriodo` e `useFaturas`. Os demais nascem com as telas que os usam.
+5. A página provisória (T03-01.1) mostra "hoje" e os indicadores da Barra em centavos, sem formatação, para o Playwright conferir a virada do dia e a recarga pelo foco com o relógio falso (`page.clock`). Sai com a T04-05/T04-06.
+6. Com `staleTime` de 30 s, voltar o foco só recarrega fatos com mais de 30 s; o teste avança o relógio 31 s antes de devolver o foco.
