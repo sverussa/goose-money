@@ -1,6 +1,8 @@
-import { somarMeses } from '@goose-money/core';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
+
+import { atalhoDaTela } from '@/app/casca/atalhos';
 
 import { useSlots } from '@/app/casca/useSlots';
 import { formatarMes } from '@/app/formatacao';
@@ -11,8 +13,22 @@ import { Button } from './ui/button';
 
 /** "◀ Novembro 2026 ▶" na top app bar das telas mensais; o mês fica na URL (`?mes=`). */
 export function MonthSelector() {
-  const [mes, setMes] = useMesDaUrl();
+  const [mes, deslocar] = useMesDaUrl();
   const { appBar } = useSlots();
+
+  // ← e → mudam o mês (4.1, item 9), fora dos campos e sem diálogo aberto. Antes da pintura:
+  // com o mês na tela, a tecla já vale.
+  useLayoutEffect(() => {
+    function aoTeclar(e: KeyboardEvent) {
+      if (!atalhoDaTela(e) || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+      e.preventDefault();
+      deslocar(e.key === 'ArrowLeft' ? -1 : 1);
+    }
+    window.addEventListener('keydown', aoTeclar);
+    return () => {
+      window.removeEventListener('keydown', aoTeclar);
+    };
+  }, [deslocar]);
   const seletor = (
     <div className="flex items-center gap-1">
       <Button
@@ -20,7 +36,7 @@ export function MonthSelector() {
         className="size-11"
         aria-label={mensagens.mes.anterior}
         onClick={() => {
-          setMes(somarMeses(mes, -1));
+          deslocar(-1);
         }}
       >
         <ChevronLeft />
@@ -33,7 +49,7 @@ export function MonthSelector() {
         className="size-11"
         aria-label={mensagens.mes.proximo}
         onClick={() => {
-          setMes(somarMeses(mes, 1));
+          deslocar(1);
         }}
       >
         <ChevronRight />

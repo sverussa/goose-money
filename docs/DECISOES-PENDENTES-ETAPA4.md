@@ -75,3 +75,13 @@ Escolhas feitas durante T04-01 a T04-09 em casos que a spec e o design não cobr
 7. O gráfico inteiro é uma imagem (`role="img"`) com o resumo no `aria-label` (total e maior valor de cada série); o ranking da rosca é visual.
 8. Cores das séries pelas chaves do tema (D77): `income`, `expense`, `categorica-N` → `cat-N`, `cartao-a`; categoria de sistema (cor nula) usa `cat-sistema`. Previsto: tracejado nas linhas e hachura `forecast` nas barras.
 9. Animações desligadas com `prefers-reduced-motion`.
+
+## T04-09
+
+1. Sem o formulário de lançamento (T05-02), a tecla `N`, a ação "Lançar" da busca e o futuro FAB abrem um diálogo provisório em `src/features/lancar/LancarDialog.tsx`; a T05-02 troca só esse arquivo. A casca expõe `useLancar()` para quem precisar abrir o formulário.
+2. `Ctrl + K` e `Cmd + K` funcionam nas duas plataformas (e também dentro de um campo); o rótulo mostra "⌘" no macOS e "Ctrl" nos outros.
+3. `N` e `←` `→` não valem num campo de texto nem com diálogo, menu ou popover aberto; `Shift+N` e combinações com modificador também não.
+4. A busca procura em lançamentos **e** compras no cartão (o usuário chama os dois de lançamento), pela descrição, sem acento nem caixa, a partir de 2 letras, até 8 resultados, os mais recentes primeiro. Itens sem descrição não aparecem.
+5. Ações da busca: "Lançar", "Nova conta" (`/contas?acao=nova`) e "Pagar fatura" (`/cartoes?acao=pagar`); as telas da etapa 5 leem `acao`. Escolher um lançamento leva a `/lancamentos?destaque=<id>` (D45, T05-07).
+6. A escolha na busca roda depois que a busca termina de fechar, para o diálogo de lançamento não disputar o foco com ela.
+7. Achado no teste: com teclas seguidas, o mês andava uma vez só (a navegação do React Router é uma transição e a função de `setSearchParams` não enfileira). O seletor agora parte do último mês pedido.
