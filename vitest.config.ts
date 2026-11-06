@@ -8,7 +8,19 @@ export default defineConfig({
           name: 'core',
           root: './packages/core',
           include: ['src/**/*.test.ts'],
+          exclude: ['src/motor/desempenho.test.ts'],
           environment: 'node',
+        },
+      },
+      {
+        // Tempos de 9.3 medidos sozinhos, depois dos outros projetos: em paralelo, a disputa
+        // de CPU com os demais workers (e o Supabase no Docker) estoura os limites.
+        test: {
+          name: 'desempenho',
+          root: './packages/core',
+          include: ['src/motor/desempenho.test.ts'],
+          environment: 'node',
+          sequence: { groupOrder: 1 },
         },
       },
       {
@@ -22,6 +34,20 @@ export default defineConfig({
           passWithNoTests: true,
         },
       },
+      // Testes de banco (T02-01): precisam do Supabase local, que o CI ainda não sobe (D29).
+      ...(process.env.CI
+        ? []
+        : [
+            {
+              test: {
+                name: 'db',
+                root: './supabase/tests',
+                include: ['**/*.test.ts'],
+                environment: 'node',
+                globalSetup: ['./preparar.ts'],
+              },
+            },
+          ]),
     ],
     coverage: {
       provider: 'v8',

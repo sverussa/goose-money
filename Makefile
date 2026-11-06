@@ -20,6 +20,7 @@ help: ## Lista os alvos
 setup: ## Instala as dependências e cria o .env a partir do .env.example
 	pnpm install
 	@test -f .env || { cp .env.example .env; echo "Criado .env a partir do .env.example. Preencha VITE_SUPABASE_ANON_KEY com make db-status."; }
+	@test -f supabase/tests/.env || { cp supabase/tests/.env.example supabase/tests/.env; echo "Criado supabase/tests/.env. Preencha as chaves com make db-status."; }
 
 dev: ## App web no navegador (Vite, porta PORTA_APP, padrão 1420)
 	pnpm dev
@@ -70,7 +71,7 @@ deploy-web: ## Gera o build de produção e envia para a VPS (D53); pede confirm
 db-eliminar-usuario: ## Apaga fisicamente os dados e a conta de um usuário (LGPD, D54); pede confirmação
 	@echo "Ainda não implementado: chega em T06-06 (privacidade e LGPD)."; exit 1
 
-test: ## Testes Vitest (os de dados exigem db-start e db-migrate)
+test: ## Testes Vitest, inclusive os de banco (exigem db-start e db-migrate)
 	pnpm test
 
 test-e2e: ## Testes Playwright + axe-core

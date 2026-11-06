@@ -1,0 +1,16 @@
+{
+  "name": "@goose-money/db-tests",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@goose-money/core": "workspace:*",
+    "@supabase/supabase-js": "2.118.0",
+    "@types/node": "26.6.6",
+    "postgres": "4.0.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.5"
+  }
+}
