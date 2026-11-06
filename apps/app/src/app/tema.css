@@ -13,6 +13,7 @@
 @theme static {
   --color-*: initial;
   --radius-*: initial;
+  --shadow-*: initial;
 
   --font-sans: 'Roboto Flex Variable', 'Roboto Flex', Roboto, system-ui, sans-serif;
 
@@ -83,6 +84,10 @@
   --radius-lg: 16px;
   --radius-xl: 28px;
   --radius-full: 9999px;
+
+  /* Elevação tonal; sombra só no FAB e no snackbar (DESIGN-HANDOFF 5) */
+  --shadow-fab: 0 3px 8px rgb(0 0 0 / 0.18);
+  --shadow-snackbar: 0 3px 8px rgb(0 0 0 / 0.25);
 
   /* Escala tipográfica M3 */
   --text-headline-lg: 2.25rem;
@@ -161,6 +166,20 @@
   --color-sidebar-accent-foreground: var(--color-on-secondary-container);
   --color-sidebar-border: var(--color-outline-variant);
   --color-sidebar-ring: var(--color-primary);
+}
+
+/* Alvo de toque de 48 dp (4.1) sem mudar o tamanho visível: uma área invisível centrada. */
+@utility alvo {
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, var(--spacing-alvo));
+    height: max(100%, var(--spacing-alvo));
+    transform: translate(-50%, -50%);
+  }
 }
 
 :root {

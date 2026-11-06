@@ -3,6 +3,7 @@ export const mensagens = {
   app: 'Goose Money',
   carregando: 'Carregando…',
   tentarDeNovo: 'Tentar de novo',
+  fechar: 'Fechar',
   confirmacaoAutomatica: {
     registrados: (n: number) =>
       n === 1
