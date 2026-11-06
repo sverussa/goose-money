@@ -171,6 +171,8 @@ additional_redirect_urls = [
   "http://localhost:1422/**",
   "http://localhost:1423/**",
   "http://localhost:1424/**",
+  # App desktop: links de redefinição de senha e de confirmação voltam por deep link (T03-08).
+  "goosemoney://**",
 ]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600

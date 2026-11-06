@@ -1,7 +1,8 @@
 import { type SubmitEvent, useState } from 'react';
-import { Navigate, useLocation } from 'react-router';
+import { Link, Navigate, useLocation } from 'react-router';
 
 import { Button } from '@/components/ui/button';
+import { mensagensAcesso } from '@/features/acesso/mensagens';
 
 import { mensagens } from './mensagens';
 import { useSessao } from './providers/useSessao';
@@ -53,6 +54,9 @@ export function LoginProvisorio() {
           {enviando ? m.entrando : m.entrar}
         </Button>
       </form>
+      <Link to="/esqueci-senha" className="text-primary underline-offset-4 hover:underline">
+        {mensagensAcesso.esqueciSenha}
+      </Link>
     </main>
   );
 }

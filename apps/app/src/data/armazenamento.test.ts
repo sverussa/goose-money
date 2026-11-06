@@ -39,4 +39,12 @@ describe('criarArmazenamentoSessao', () => {
     expect(local.getItem('token')).toBeNull();
     expect(sessao.getItem('token')).toBeNull();
   });
+
+  it('o verificador do PKCE fica sempre no localStorage, para o link abrir em outra aba', () => {
+    const local = memoria();
+    const sessao = memoria();
+    criarArmazenamentoSessao(local, sessao).setItem('sb-x-auth-token-code-verifier', 'v');
+    expect(local.getItem('sb-x-auth-token-code-verifier')).toBe('v');
+    expect(sessao.getItem('sb-x-auth-token-code-verifier')).toBeNull();
+  });
 });

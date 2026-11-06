@@ -1,10 +1,11 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Permissões mínimas da janela principal. O fs não tem escopo fixo: só alcança os caminhos que o usuário escolhe no diálogo de salvar ou abrir (T03-07).",
+  "description": "Permissões mínimas da janela principal. O fs não tem escopo fixo: só alcança os caminhos que o usuário escolhe no diálogo de salvar ou abrir (T03-07). deep-link: ler o link goosemoney:// que abriu o app (T03-08).",
   "windows": ["main"],
   "permissions": [
     "core:default",
+    "deep-link:default",
     "dialog:allow-save",
     "dialog:allow-open",
     "fs:allow-write-file",
