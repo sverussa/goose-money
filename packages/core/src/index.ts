@@ -3,3 +3,4 @@ export * from './dinheiro';
 export * from './datas';
 export * from './dividas';
 export * from './periodos';
+export * from './modelo';
