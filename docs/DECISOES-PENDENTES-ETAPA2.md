@@ -28,3 +28,10 @@ Casos que a spec não cobre ou em que o texto da tarefa diverge do `MODELO-DADOS
 7. Chaves estrangeiras compostas `deferrable initially deferred`, para o lote de `gravar` valer em qualquer ordem (importação, subcategoria antes da pai). Checklist do `supabase/flyway/sql/README.md` atualizada.
 8. Políticas `to authenticated` com `(select auth.uid())`, calculado uma vez por consulta.
 9. O passo `make db-reset` da tarefa não foi preciso. A V002–V004 aplicada só no banco local desta branch foi desfeita à mão (drop das tabelas e das linhas do histórico do Flyway) e reaplicada com a chave estrangeira adiada, antes do merge.
+
+## T02-04
+1. Sem colunas de origem (recorrência, ocorrência) no lançamento, como pede o texto da tarefa: a origem é derivada (MODELO-DADOS seção 5, D69). Ficam só os vínculos do modelo (`cartao_id`, `fatura_competencia`, `divida_id`, `parcela_divida_id`); as chaves estrangeiras de cartão e dívida chegam na V006 e na V009.
+2. D79 no banco: trigger recusa lançamento efetivado com data depois de hoje, com "hoje" no fuso `America/Sao_Paulo`. Quem estiver num fuso adiantado (ex.: Lisboa depois das 21h de Brasília) não grava efetivado com a própria data de hoje até virar o dia em Brasília (conservador). Só confere ao inserir ou quando data ou status mudam.
+3. Uma parcela de dívida tem no máximo um `pagamento_divida` ativo (índice único parcial), para não contar o pagamento duas vezes.
+4. O tipo da categoria (receita, despesa, `ajuste_saldo` no ajuste) não é conferido no banco; fica no core (`validarLancamento`), como as demais regras compostas (D36).
+5. Cada regra por tipo é um `check` com nome próprio (`lancamentos_destino`, `lancamentos_categoria`, `lancamentos_fatura`, `lancamentos_divida`, `lancamentos_previsto`, `lancamentos_valor`), para o app traduzir pelo nome.
