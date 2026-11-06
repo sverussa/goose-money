@@ -23,7 +23,47 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "categorias": {
+            "cartao_ciclos": {
+                  Row: {
+                    "cartao_id": string,"created_at": string,"created_by": string,"dia_fechamento": number,"dia_vencimento": number,"id": string,"is_deleted": boolean,"updated_at": string,"vigente_desde": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cartao_id": string,"created_at"?: string,"created_by"?: string,"dia_fechamento": number,"dia_vencimento": number,"id"?: string,"is_deleted"?: boolean,"updated_at"?: string,"vigente_desde": string
+                  }
+                  Update: {
+                    "cartao_id"?: string,"created_at"?: string,"created_by"?: string,"dia_fechamento"?: number,"dia_vencimento"?: number,"id"?: string,"is_deleted"?: boolean,"updated_at"?: string,"vigente_desde"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "cartao_ciclos_cartao_id_created_by_fkey"
+      columns: ["cartao_id","created_by"]
+isOneToOne: false
+      referencedRelation: "cartoes"
+      referencedColumns: ["id","created_by"]
+    }
+                  ]
+                },"cartoes": {
+                  Row: {
+                    "arquivado": boolean,"competencia_inicial": string,"conta_pagamento_id": string,"cor": string,"created_at": string,"created_by": string,"id": string,"instituicao": string | null,"is_deleted": boolean,"limite": number,"nome": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "arquivado"?: boolean,"competencia_inicial": string,"conta_pagamento_id": string,"cor": string,"created_at"?: string,"created_by"?: string,"id"?: string,"instituicao"?: string | null,"is_deleted"?: boolean,"limite": number,"nome": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "arquivado"?: boolean,"competencia_inicial"?: string,"conta_pagamento_id"?: string,"cor"?: string,"created_at"?: string,"created_by"?: string,"id"?: string,"instituicao"?: string | null,"is_deleted"?: boolean,"limite"?: number,"nome"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "cartoes_conta_pagamento_id_created_by_fkey"
+      columns: ["conta_pagamento_id","created_by"]
+isOneToOne: false
+      referencedRelation: "contas"
+      referencedColumns: ["id","created_by"]
+    }
+                  ]
+                },"categorias": {
                   Row: {
                     "categoria_pai_id": string | null,"cor": string | null,"created_at": string,"created_by": string,"icone": string,"id": string,"is_deleted": boolean,"nome": string,"sistema": string | null,"tipo": string,"updated_at": string
                   }
@@ -43,6 +83,32 @@ isOneToOne: false
       referencedColumns: ["id","created_by"]
     }
                   ]
+                },"compras": {
+                  Row: {
+                    "cancelada": boolean,"cartao_id": string,"categoria_id": string,"created_at": string,"created_by": string,"data": string,"descricao": string | null,"id": string,"is_deleted": boolean,"numero_parcelas": number,"observacao": string | null,"updated_at": string,"valor_total": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cancelada"?: boolean,"cartao_id": string,"categoria_id": string,"created_at"?: string,"created_by"?: string,"data": string,"descricao"?: string | null,"id"?: string,"is_deleted"?: boolean,"numero_parcelas"?: number,"observacao"?: string | null,"updated_at"?: string,"valor_total": number
+                  }
+                  Update: {
+                    "cancelada"?: boolean,"cartao_id"?: string,"categoria_id"?: string,"created_at"?: string,"created_by"?: string,"data"?: string,"descricao"?: string | null,"id"?: string,"is_deleted"?: boolean,"numero_parcelas"?: number,"observacao"?: string | null,"updated_at"?: string,"valor_total"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "compras_cartao_id_created_by_fkey"
+      columns: ["cartao_id","created_by"]
+isOneToOne: false
+      referencedRelation: "cartoes"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "compras_categoria_id_created_by_fkey"
+      columns: ["categoria_id","created_by"]
+isOneToOne: false
+      referencedRelation: "categorias"
+      referencedColumns: ["id","created_by"]
+    }
+                  ]
                 },"contas": {
                   Row: {
                     "arquivada": boolean,"cor": string,"created_at": string,"created_by": string,"data_saldo_inicial": string,"id": string,"incluir_no_total": boolean,"instituicao": string | null,"is_deleted": boolean,"nome": string,"saldo_inicial": number,"tipo": string,"updated_at": string
@@ -57,6 +123,38 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"itens_fatura": {
+                  Row: {
+                    "cartao_id": string,"categoria_id": string | null,"competencia": string,"compra_id": string | null,"created_at": string,"created_by": string,"data": string,"descricao": string | null,"id": string,"is_deleted": boolean,"tipo": string,"updated_at": string,"valor": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cartao_id": string,"categoria_id"?: string | null,"competencia": string,"compra_id"?: string | null,"created_at"?: string,"created_by"?: string,"data": string,"descricao"?: string | null,"id"?: string,"is_deleted"?: boolean,"tipo": string,"updated_at"?: string,"valor": number
+                  }
+                  Update: {
+                    "cartao_id"?: string,"categoria_id"?: string | null,"competencia"?: string,"compra_id"?: string | null,"created_at"?: string,"created_by"?: string,"data"?: string,"descricao"?: string | null,"id"?: string,"is_deleted"?: boolean,"tipo"?: string,"updated_at"?: string,"valor"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "itens_fatura_cartao_id_created_by_fkey"
+      columns: ["cartao_id","created_by"]
+isOneToOne: false
+      referencedRelation: "cartoes"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "itens_fatura_categoria_id_created_by_fkey"
+      columns: ["categoria_id","created_by"]
+isOneToOne: false
+      referencedRelation: "categorias"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "itens_fatura_compra_id_created_by_fkey"
+      columns: ["compra_id","created_by"]
+isOneToOne: false
+      referencedRelation: "compras"
+      referencedColumns: ["id","created_by"]
+    }
+                  ]
                 },"lancamentos": {
                   Row: {
                     "cartao_id": string | null,"categoria_id": string | null,"conta_destino_id": string | null,"conta_id": string,"created_at": string,"created_by": string,"data": string,"descricao": string | null,"divida_id": string | null,"fatura_competencia": string | null,"id": string,"is_deleted": boolean,"observacao": string | null,"parcela_divida_id": string | null,"status": string,"tipo": string,"updated_at": string,"valor": number
@@ -70,6 +168,12 @@ isOneToOne: false
                   }
                   Relationships: [
                     {
+      foreignKeyName: "lancamentos_cartao_id_created_by_fkey"
+      columns: ["cartao_id","created_by"]
+isOneToOne: false
+      referencedRelation: "cartoes"
+      referencedColumns: ["id","created_by"]
+    },{
       foreignKeyName: "lancamentos_categoria_id_created_by_fkey"
       columns: ["categoria_id","created_by"]
 isOneToOne: false
@@ -86,6 +190,26 @@ isOneToOne: false
       columns: ["conta_id","created_by"]
 isOneToOne: false
       referencedRelation: "contas"
+      referencedColumns: ["id","created_by"]
+    }
+                  ]
+                },"parcelas": {
+                  Row: {
+                    "competencia": string,"compra_id": string,"created_at": string,"created_by": string,"id": string,"is_deleted": boolean,"numero": number,"updated_at": string,"valor": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "competencia": string,"compra_id": string,"created_at"?: string,"created_by"?: string,"id"?: string,"is_deleted"?: boolean,"numero": number,"updated_at"?: string,"valor": number
+                  }
+                  Update: {
+                    "competencia"?: string,"compra_id"?: string,"created_at"?: string,"created_by"?: string,"id"?: string,"is_deleted"?: boolean,"numero"?: number,"updated_at"?: string,"valor"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "parcelas_compra_id_created_by_fkey"
+      columns: ["compra_id","created_by"]
+isOneToOne: false
+      referencedRelation: "compras"
       referencedColumns: ["id","created_by"]
     }
                   ]
