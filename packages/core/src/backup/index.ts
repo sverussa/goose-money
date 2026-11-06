@@ -159,7 +159,7 @@ const chave = (e: Entidade, x: Registro): string | null => {
 };
 
 /** Etapa 3: chaves únicas e invariantes das compras parceladas (3.6). */
-export function validarInvariantes(fatos: Fatos): ErroImportacao[] {
+export function validarInvariantesDosFatos(fatos: Fatos): ErroImportacao[] {
   const r = listas(fatos);
   const erros: ErroImportacao[] = [];
   const vistos = new Map<string, Id>();
@@ -316,7 +316,7 @@ export function planejarImportacao(arquivo: unknown, fatosAtuais: Fatos, modo: M
       : mesclar(e, de(atuais, e), de(novos, e), conflitos, porChave),
   );
   const resultado = paraFatos(porEntidade((e) => passos[e][1]) as unknown as Registros);
-  const erros = [...validarReferencias(resultado), ...validarInvariantes(resultado)];
+  const erros = [...validarReferencias(resultado), ...validarInvariantesDosFatos(resultado)];
   const entidades = porEntidade((e) => passos[e][0]) as Plano['entidades'];
   return { modo, valido: erros.length === 0, entidades, resultado, conflitos, erros };
 }

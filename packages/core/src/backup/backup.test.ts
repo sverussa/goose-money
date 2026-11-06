@@ -8,7 +8,7 @@ import {
   migrarBackup,
   planejarImportacao,
   relatorio,
-  validarInvariantes,
+  validarInvariantesDosFatos,
   validarReferencias,
 } from './index';
 
@@ -433,12 +433,12 @@ describe('etapa 2: integridade referencial', () => {
 
 describe('etapa 3: invariantes', () => {
   const daCompra = (c: Partial<Fatos['compras'][number]>, parcelas = fatos.parcelas) =>
-    validarInvariantes({ ...fatos, compras: [{ ...compra, ...c }], parcelas }).map(
+    validarInvariantesDosFatos({ ...fatos, compras: [{ ...compra, ...c }], parcelas }).map(
       (e) => e.mensagem,
     );
 
   it('3.6: soma, quantidade, numeração e ordem das competências', () => {
-    expect(validarInvariantes(fatos)).toEqual([]);
+    expect(validarInvariantesDosFatos(fatos)).toEqual([]);
     expect(daCompra({ valorTotal: centavos(100001) })).toEqual([
       'Soma das parcelas difere do valor total',
     ]);
@@ -486,16 +486,19 @@ describe('etapa 3: invariantes', () => {
       contas: [conta, { ...conta, id: id(96), arquivada: true }],
       cartoes: [cartao, { ...cartao, id: id(97), nome: 'CARTÃO A', arquivado: true }],
     };
-    expect(validarInvariantes(f)).toEqual([]);
+    expect(validarInvariantesDosFatos(f)).toEqual([]);
     expect(
-      validarInvariantes({ ...f, cartoes: [cartao, { ...cartao, id: id(97), nome: 'cartão a ' }] }),
+      validarInvariantesDosFatos({
+        ...f,
+        cartoes: [cartao, { ...cartao, id: id(97), nome: 'cartão a ' }],
+      }),
     ).toHaveLength(1);
   });
 
   it('o nome é único entre contas e cartões não arquivados juntos (D67)', () => {
     const cartao = fatos.cartoes[0] as Fatos['cartoes'][number];
     const comNome = (nome: string, arquivado = false) =>
-      validarInvariantes({ ...fatos, cartoes: [{ ...cartao, nome, arquivado }] });
+      validarInvariantesDosFatos({ ...fatos, cartoes: [{ ...cartao, nome, arquivado }] });
     expect(comNome('Conta corrente')).toEqual([
       {
         etapa: 'invariante',

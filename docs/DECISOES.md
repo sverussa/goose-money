@@ -196,8 +196,9 @@ Escolhas feitas ao escrever `docs/MODELO-DADOS.md`, aprovadas pelo Saulo na opç
 | D75 | **Transferência com `contaId` (origem) e `contaDestinoId`.** | Atende D32 sem uma terceira coluna de conta | 3.4 |
 | D76 | **Valores com sinal só onde o efeito varia:** `ItemFatura.valor` (efeito no saldo da fatura) e o `Lancamento` do tipo `ajuste`; os demais lançamentos são `> 0`. | O tipo já define o sentido dos outros | 3.3, 3.5 |
 | D77 | **Cor como chave de token do tema**, nunca hex; nula nas categorias de sistema. | Mesma regra de cores das telas | 4.3, 6.4, 6.5, 6.9 |
+| D78 | **Antecipar parcelas de cartão renumera as parcelas** pela competência depois de mover as k últimas para a fatura aberta; a compra termina mais cedo e o invariante 3 de 3.6 continua valendo. A gravação remove e reinsere as parcelas, por causa da chave única `(compra_id, numero)`. Respondida pelo Saulo em 05/11/2026 (T01-08). | Mantém as quatro invariantes de 3.6 sem exceção | 3.6 |
+| D79 | **Lançamento efetivado não pode ter data depois de hoje**; algo futuro é "Previsto". A regra fica no formulário e no `gravar(ops)`, fora do core, que segue a fórmula de 3.4. Respondida pelo Saulo em 05/11/2026 (T01-06). | Sem isso, o fechamento do mês corrente fica diferente do saldo de hoje | 3.1, 3.4, 7.3 |
 
 ## Em aberto
 
 - **Provedor da VPS e domínio do app web** (D53).
-- **Antecipar parcelas de cartão quebra o invariante 3 de 3.6** (competências em ordem), porque move as últimas parcelas para a fatura aberta. Opções: (A) renumerar as parcelas depois de antecipar; (B) o invariante vale só para as não antecipadas; (C) antecipar move as primeiras parcelas futuras. Resolver antes de T01-08.
