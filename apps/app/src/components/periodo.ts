@@ -8,8 +8,9 @@ import {
   periodoParaUrl,
   periodoPreset,
   type Preset,
+  somarMeses,
 } from '@goose-money/core';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { useHoje } from '@/queries/relogio';
@@ -32,22 +33,32 @@ export function periodoDaBusca(busca: URLSearchParams, padrao: () => Periodo): P
   }
 }
 
-/** Mês das telas mensais, guardado na URL. */
-export function useMesDaUrl(): [Competencia, (m: Competencia) => void] {
+/**
+ * Mês das telas mensais, guardado na URL. `deslocar` parte do último mês pedido, não do último
+ * render: a navegação do React Router é uma transição, e duas teclas seguidas (ou a tecla
+ * segurada) chegariam antes de a URL nova aparecer.
+ */
+export function useMesDaUrl(): [Competencia, (meses: number) => void] {
   const [busca, setBusca] = useSearchParams();
   const hoje = useHoje();
   const mes = mesDaUrl(busca, hoje);
-  const setMes = useCallback(
-    (m: Competencia) => {
+  const pedido = useRef(mes);
+  useLayoutEffect(() => {
+    pedido.current = mes;
+  }, [mes]);
+  const deslocar = useCallback(
+    (meses: number) => {
+      pedido.current = somarMeses(pedido.current, meses);
+      const alvo = pedido.current;
       setBusca((b) => {
         const nova = new URLSearchParams(b);
-        nova.set('mes', m);
+        nova.set('mes', alvo);
         return nova;
       });
     },
     [setBusca],
   );
-  return [mes, setMes];
+  return [mes, deslocar];
 }
 
 const chaveDoPeriodo = (chave: string) => `goose-money:periodo:${chave}`;

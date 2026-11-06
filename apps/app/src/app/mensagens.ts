@@ -76,6 +76,34 @@ export const mensagens = {
       `${serie}: total ${total}; maior valor ${maior} em ${onde}.`,
     resumoOculto: (series: string) => `Valores ocultos. Séries: ${series}.`,
   },
+  busca: {
+    abrir: 'Buscar',
+    titulo: 'Busca',
+    descricao: 'Busque telas, ações e lançamentos pela descrição.',
+    placeholder: 'Buscar telas, ações e lançamentos…',
+    nada: 'Nada encontrado.',
+    telas: 'Telas',
+    acoes: 'Ações',
+    lancamentos: 'Lançamentos',
+    semDescricao: 'Sem descrição',
+    novaConta: 'Nova conta',
+    pagarFatura: 'Pagar fatura',
+  },
+  atalhos: {
+    titulo: 'Atalhos de teclado',
+    descricao: 'Valem fora dos campos de texto.',
+    lista: [
+      ['N', 'Novo lançamento'],
+      ['{mod} K', 'Buscar'],
+      ['← →', 'Mês anterior e seguinte'],
+      ['Esc', 'Fechar diálogo ou busca'],
+      ['Enter', 'Salvar o formulário aberto'],
+    ],
+  },
+  lancar: {
+    titulo: 'Lançar',
+    provisorio: 'O formulário de lançamento ainda está em construção.',
+  },
   /** Microcopy de 4.3. */
   acoes: {
     lancar: 'Lançar',
