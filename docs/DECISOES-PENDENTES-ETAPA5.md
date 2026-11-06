@@ -17,3 +17,15 @@ Decisões tomadas durante as tarefas da etapa 5 (e da T00-14, que a prepara) em 
 4. O teste `tests/e2e/redefinir-senha.spec.ts` (T03-08), fora da pasta `acesso/`, foi ajustado para preencher o e-mail dentro do diálogo: com a tela nova, o login e o diálogo têm um campo "E-mail" cada.
 5. O teste de teclado usa `Option+Tab` no WebKit: no Safari do macOS, `Tab` só passa pelos campos de texto.
 6. Ambiente: `arquivos.spec.ts › abrir lê o arquivo escolhido` estourou o tempo uma vez no `make test-e2e-completo` e passou sozinho (`--last-failed`).
+
+## T05-02
+
+1. A categoria é um seletor com todas as categorias do tipo (subcategorias como "Pai › Filho", sem a de ajuste de saldo). A grade com as 8 mais usadas e "Ver todas" chega na T05-04.
+2. Os chips Compra no cartão, Transferência e Pagamento de fatura aparecem desabilitados até a T05-03.
+3. Sem nenhuma conta, o FAB (e a tecla N) abre o diálogo com o estado vazio "Para lançar, cadastre antes a sua primeira conta" e o botão "Cadastrar conta", que leva a `#/contas?nova=1`; a T05-08 abre o formulário de conta por esse parâmetro.
+4. Última conta usada: a do `localStorage` deste aparelho (como a tarefa pede); sem ela, a do lançamento mais recente (como o MODELO-DADOS diz); sem lançamentos, a primeira conta ativa.
+5. O snackbar mostra "Lançado · Desfazer" com a descrição do comando do core ("Lançado"). O design mostra também a descrição e o valor ("Lançado · Padaria São Jorge −R$ 15,90"); isso pede mudar a descrição do comando no core e ficou de fora.
+6. O FAB é desenhado pelo próprio `LancarDialog` (posição fixa, abre pelo `useLancar`) para não editar a casca. Fica estendido no topo da página e só com o ícone depois de rolar.
+7. Data efetivada no futuro: o erro do core aparece inline e o diálogo não fecha (o "Previsto" chega na T05-04).
+8. Fora da pasta da tarefa: `react-hook-form` 7.91.0 no `apps/app/package.json` (aprovado), a mesma dependência no `optimizeDeps` do `vite.config.ts` (regra da T00-14, para o Vite não recarregar no meio dos testes) e o nome do diálogo em `tests/e2e/atalhos.spec.ts` ("Lançar" passou a "Novo lançamento", o título do design).
+9. Ambiente: `arquivos.spec.ts › abrir lê o arquivo escolhido` estourou o tempo de novo no conjunto e passou sozinho.
