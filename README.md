@@ -88,7 +88,7 @@ O Supabase local usa as portas 54321 (API), 54322 (Postgres), 54323 (Studio) e 5
 GooseMoney/
 ├── apps/
 │   └── app/                 # front end: React, shadcn/ui, Tailwind, Vite
-│       ├── src/             # app/ (tema, env, sessão, rotas), data/ (Supabase), queries/ (TanStack Query),
+│       ├── src/             # app/ (tema, casca, env, sessão, rotas), data/ (Supabase), queries/ (TanStack Query),
 │       │                    # plataforma/ (Tauri: arquivos, deep link), features/ (telas), components/ (shadcn em ui/)
 │       ├── src-tauri/       # app desktop (Tauri 2: CSP e permissões)
 │       └── tests/           # e2e/ (Playwright + axe-core) e db/ (src/data contra o Supabase local)
@@ -103,6 +103,7 @@ GooseMoney/
 │   ├── DECISOES.md          # decisões de stack, arquitetura e casos não cobertos
 │   ├── DECISOES-REVISAO.md  # decisões da revisão da especificação
 │   ├── DESIGN-HANDOFF.md    # mapa telas → rotas → componentes
+│   ├── DECISOES-PENDENTES-ETAPA4.md # escolhas da etapa 4 à espera de aprovação
 │   ├── MODELO-DADOS.md      # entidades, campos e relações (contrato core ↔ banco)
 │   ├── StackShowCase.md     # stack de referência (Desktop UI Showcase), base da D20
 │   └── tasks/               # tarefas de implementação, uma por arquivo, por etapa

@@ -21,6 +21,26 @@ export const mensagens = {
     'Dezembro',
   ],
   mesesCurtos: ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'],
+  navegacao: {
+    menuPrincipal: 'Menu principal',
+    navegacaoPrincipal: 'Navegação principal',
+    subtitulo: 'Controle financeiro pessoal',
+    mais: 'Mais',
+    menuDoUsuario: 'Menu do usuário',
+    pendencias: (n: number) => (n === 1 ? '1 pendência' : `${String(n)} pendências`),
+    paginaProvisoria: 'Esta tela ainda está em construção.',
+    itens: {
+      painel: 'Painel',
+      lancamentos: 'Lançamentos',
+      contas: 'Contas',
+      cartoes: 'Cartões',
+      dividas: 'Dívidas',
+      rendas: 'Rendas fixas',
+      gastos: 'Gastos fixos',
+      projecoes: 'Projeções',
+      configuracoes: 'Configurações',
+    },
+  },
   /** Microcopy de 4.3. */
   acoes: {
     lancar: 'Lançar',
