@@ -60,7 +60,7 @@ Regras da seção 3 em `packages/core`, TypeScript puro e testado. Não depende 
 | ✅ [T01-04 · Períodos, granularidade e período anterior](01-dominio/T01-04-periodos.md) | Fundamentos | T01-03 | tomada |
 | ✅ [T01-05 · Tipos e schemas Zod das entidades](01-dominio/T01-05-tipos-schemas.md) | Modelo | T01-01, T01-02, T01-03 | — |
 | [T01-06 · Saldo de conta e extrato mensal](01-dominio/T01-06-saldo-extrato.md) | Contas | T01-05 | — |
-| [T01-07 · Ciclo do cartão e atribuição de compra à fatura](01-dominio/T01-07-ciclo-cartao.md) | Cartões | T01-05 | — |
+| ✅ [T01-07 · Ciclo do cartão e atribuição de compra à fatura](01-dominio/T01-07-ciclo-cartao.md) | Cartões | T01-05 | — |
 | [T01-08 · Compras parceladas: geração, invariantes e operações](01-dominio/T01-08-compras-parceladas.md) | Cartões | T01-02, T01-07 | — |
 | [T01-09 · Saldo da fatura, status, pagamentos e transporte](01-dominio/T01-09-fatura-pagamentos.md) | Cartões | T01-08 | tomada |
 | [T01-10 · Indicadores do cartão e cartão já em uso](01-dominio/T01-10-indicadores-cartao.md) | Cartões | T01-09 | — |
