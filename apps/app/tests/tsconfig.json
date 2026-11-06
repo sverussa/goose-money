@@ -4,6 +4,7 @@
     "lib": ["ES2023", "DOM"],
     "module": "ESNext",
     "types": ["node"],
+    "paths": { "@/*": ["../src/*"] },
     "noEmit": true
   },
   "include": ["**/*.ts"]

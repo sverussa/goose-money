@@ -26,3 +26,14 @@ Casos que a spec não cobre ou em que o texto da tarefa diverge do `MODELO-DADOS
 4. Hooks finos criados agora: `useBarraDeTotais`, `useIndicadoresDoPeriodo` e `useFaturas`. Os demais nascem com as telas que os usam.
 5. A página provisória (T03-01.1) mostra "hoje" e os indicadores da Barra em centavos, sem formatação, para o Playwright conferir a virada do dia e a recarga pelo foco com o relógio falso (`page.clock`). Sai com a T04-05/T04-06.
 6. Com `staleTime` de 30 s, voltar o foco só recarrega fatos com mais de 30 s; o teste avança o relógio 31 s antes de devolver o foco.
+
+## T03-04
+1. `src/data/gravacao.ts` tem a parte pura (ops, leitura e validação da resposta, aplicação no cache, mensagens de erro) e `src/data/gravar.ts` só chama o `gravar` do Supabase. As opções da mutação ficam em `src/queries/gravacao.ts`, sem React nem Supabase: o teste usa o `MutationObserver` do TanStack (o mesmo do `useMutation`) para conferir "Salvando…" (`isPending`), o cache intacto no erro e o Desfazer. O `useComando` só liga essas opções ao Sonner.
+2. As linhas devolvidas pelo `gravar` também são validadas pelos schemas do core (D42), como na carga; das excluídas basta o id.
+3. "Desfazer" grava as inversas do comando pelo mesmo caminho e mostra o snackbar "Desfeito", sem novo "Desfazer" (o spec não pede refazer).
+4. `useComando().executar(comando)` devolve `true`/`false` em vez de lançar: o formulário fecha só quando gravou; o erro já foi mostrado no snackbar.
+5. Mensagens de erro: unicidade (`23505`), referência (`23503`), registro não encontrado (`P0002`), regra (`23514`, `23502`, `P0001`), sem conexão (requisição sem resposta, `status 0`, ou navegador offline) e sessão expirada (`401`/`PGRST30x`). Erro de domínio (`ErroDeDominio`) mostra a mensagem do core. As telas podem trocar por mensagens por restrição (o `detail` traz o nome) quando precisarem.
+6. A Barra de antes de cada gravação (inclusive do Desfazer) fica em `src/queries/barraAnterior.ts` (`useBarraAnterior`), com um contador de versão para a T04-06 animar mesmo quando os valores repetem.
+7. Correção da T03-03: o `derivar` passou a ser feito uma vez para o app inteiro (`derivarUmaVez`, pela identidade dos fatos e pelo dia), em vez de uma vez por componente que usa `useDerivado` (D13).
+8. Sonner: `components/ui/sonner.tsx` escrito à mão, como o do shadcn mas sem `next-themes` (o tema escuro é da T04-02).
+9. **Verificação pendente (sem tela ainda):** o botão mostrando "Salvando…" e o snackbar com "Desfazer" na interface ficam para o Playwright da T05-02 (primeiro formulário). A lógica está testada no Node e contra o banco.
