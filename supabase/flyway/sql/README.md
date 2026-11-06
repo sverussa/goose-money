@@ -32,6 +32,9 @@ docker compose run --rm flyway migrate   # ou info, validate
    create trigger set_updated_at before update on public.<tabela>
      for each row execute function public.set_updated_at();
    ```
-2. `alter table public.<tabela> enable row level security;` e políticas de `select`, `insert` e `update` com `created_by = auth.uid()` (`with check` no `insert` e no `update`).
+2. `alter table public.<tabela> enable row level security;` e políticas de `select`, `insert` e `update` `to authenticated` com `created_by = (select auth.uid())` (`with check` no `insert` e no `update`; o `select` em volta de `auth.uid()` faz o Postgres calcular uma vez por consulta).
 3. `revoke delete on public.<tabela> from authenticated, anon;` e `revoke all on public.<tabela> from anon;`.
-4. Índices de unicidade parciais `where not is_deleted` e chaves estrangeiras `on delete restrict`.
+4. Índices de unicidade parciais `where not is_deleted` e chaves estrangeiras `on delete restrict`. Toda referência leva o dono junto (`unique (id, created_by)` na tabela e `foreign key (x_id, created_by) references t (id, created_by) on delete restrict deferrable initially deferred`, D71): adiada, para o lote de `gravar` valer em qualquer ordem.
+5. Acrescentar a tabela em `R__tabelas_de_negocio.sql` (lista de `gravar`, `carregar_tudo` e `apagar_tudo`) e rodar `make db-types`.
+
+Regras que dependem de outras linhas viram triggers. Erro de regra sai com `errcode = '23514'` e `constraint = '<nome>'`, para o app traduzir pelo nome; se a regra depende de várias linhas do mesmo lote, o trigger é `constraint trigger ... deferrable initially deferred` (o `gravar` roda as checagens adiadas no fim).

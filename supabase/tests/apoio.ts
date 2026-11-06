@@ -78,3 +78,36 @@ export async function numaTransacaoDesfeita(
     if (!(e instanceof Desfazer)) throw e;
   }
 }
+
+export interface Op {
+  tabela: string;
+  acao: 'inserir' | 'alterar';
+  id: string;
+  dados: Record<string, unknown>;
+}
+
+export const inserir = (tabela: string, dados: Record<string, unknown>, id = randomUUID()): Op => ({
+  tabela,
+  acao: 'inserir',
+  id,
+  dados,
+});
+export const alterar = (tabela: string, id: string, dados: Record<string, unknown>): Op => ({
+  tabela,
+  acao: 'alterar',
+  id,
+  dados,
+});
+
+/** `gravar(ops)` pela API, como o app. */
+export async function gravar(cliente: Cliente, ops: Op[]) {
+  const r = await cliente.rpc('gravar', { ops });
+  return { linhas: r.data as Record<string, Record<string, unknown>[]> | null, erro: r.error };
+}
+
+/** Grava e falha o teste se o banco recusar. */
+export async function gravarOk(cliente: Cliente, ops: Op[]) {
+  const { linhas, erro } = await gravar(cliente, ops);
+  if (erro) throw new Error(`gravar recusou: ${erro.code} ${erro.message} ${erro.details}`);
+  return linhas ?? {};
+}

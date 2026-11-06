@@ -17,3 +17,14 @@ Casos que a spec não cobre ou em que o texto da tarefa diverge do `MODELO-DADOS
 5. `alterar` só com colunas de controle (`id`, `created_at`, `created_by`, `updated_at`) não muda nada e devolve a linha.
 6. Erros de restrição saem com o mesmo código (`23505`, `23503`, `23514`, `23502`, `P0001`) e `detail` em JSON com `tabela`, `operacao` (posição na lista) e `restricao`. As checagens adiadas (T02-05, T02-06) rodam no fim da função com `set constraints all immediate`, com `tabela` e `operacao` nulos.
 7. O retorno traz a última versão de cada id, por tabela.
+
+## T02-03
+1. `categorias.sistema` é a chave de texto do modelo (D62: `a_classificar`, `juros_encargos`, `tarifas`, `ajuste_saldo`), não o booleano do texto da tarefa.
+2. Nome único de conta só dentro de `contas` (índice parcial `where not is_deleted and not arquivada`). A unicidade conjunta entre contas e cartões (D67, como o core confere no backup) fica no core: índice único não cruza tabelas.
+3. Nome único entre categorias irmãs do mesmo tipo (mesmo pai, ou ambas sem pai): "Outras" pode existir em receita e em despesa.
+4. Categoria de sistema: o trigger recusa mudar nome, tipo, ícone, cor, pai e `is_deleted`; nenhuma categoria muda o próprio `sistema`. Regravar com os mesmos valores passa (importação no modo Substituir).
+5. Um nível de subcategoria, filha com o tipo da pai e pai excluída sem as filhas: trigger adiado `categorias_um_nivel` (D35, D49).
+6. O banco também confere o formato da chave de cor (`^[a-z][a-z0-9-]*$`); categoria do usuário pode ficar sem cor, como no core.
+7. Chaves estrangeiras compostas `deferrable initially deferred`, para o lote de `gravar` valer em qualquer ordem (importação, subcategoria antes da pai). Checklist do `supabase/flyway/sql/README.md` atualizada.
+8. Políticas `to authenticated` com `(select auth.uid())`, calculado uma vez por consulta.
+9. O passo `make db-reset` da tarefa não foi preciso. A V002–V004 aplicada só no banco local desta branch foi desfeita à mão (drop das tabelas e das linhas do histórico do Flyway) e reaplicada com a chave estrangeira adiada, antes do merge.

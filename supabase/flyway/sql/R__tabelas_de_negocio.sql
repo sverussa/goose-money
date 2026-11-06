@@ -6,7 +6,7 @@ language sql
 immutable
 set search_path = ''
 as $$
-  select array[]::text[]
+  select array['categorias', 'contas', 'preferencias']
 $$;
 
 revoke all on function public.tabelas_de_negocio() from public, anon;
