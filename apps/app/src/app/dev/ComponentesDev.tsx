@@ -82,6 +82,7 @@ import { StatusChip } from '@/components/StatusChip';
 
 import { mensagens } from '../mensagens';
 import { usePrivacidade } from '../providers/usePrivacidade';
+import { GraficosDev } from './GraficosDev';
 import { SeletorDeTemaDev } from './SeletorDeTemaDev';
 
 // Textos de exemplo, só para revisão visual em desenvolvimento.
@@ -373,6 +374,10 @@ export function ComponentesDev() {
             </TableBody>
           </Table>
         </ScrollArea>
+      </Secao>
+
+      <Secao titulo="Gráficos">
+        <GraficosDev />
       </Secao>
 
       <Secao titulo="Snackbar (Sonner)">
