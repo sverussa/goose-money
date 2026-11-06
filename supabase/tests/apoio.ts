@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
 
 import { createClient } from '@supabase/supabase-js';
-import postgres from 'postgres';
+import postgres, { type TransactionSql } from 'postgres';
 
 // Utilitários dos testes de banco (T02-01). A chave service_role só existe aqui e em
 // supabase/tests/.env (PROMPT 12.1): nunca no app.
@@ -51,4 +51,30 @@ export async function criarUsuario(email = emailUnico()): Promise<Usuario> {
   const { error } = await cliente.auth.signInWithPassword({ email, password: senha });
   if (error) throw error;
   return { id: criado.data.user.id, cliente };
+}
+
+export type Sql = TransactionSql;
+class Desfazer extends Error {}
+
+/**
+ * Roda `preparar` como `postgres` e `f` como o usuário (papel `authenticated`, com o RLS), numa
+ * transação sempre desfeita: nada fica no banco e nenhum outro teste vê os objetos criados.
+ */
+export async function numaTransacaoDesfeita(
+  usuario: string,
+  preparar: (sql: Sql) => Promise<unknown>,
+  f: (sql: Sql) => Promise<void>,
+): Promise<void> {
+  try {
+    await sqlComoPostgres.begin(async (sql) => {
+      await preparar(sql);
+      const claims = JSON.stringify({ sub: usuario, role: 'authenticated' });
+      await sql`select set_config('request.jwt.claims', ${claims}, true)`;
+      await sql`set local role authenticated`;
+      await f(sql);
+      throw new Desfazer();
+    });
+  } catch (e) {
+    if (!(e instanceof Desfazer)) throw e;
+  }
 }

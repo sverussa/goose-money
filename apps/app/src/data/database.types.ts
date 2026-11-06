@@ -29,7 +29,12 @@ export type Database = {
             [_ in never]: never
           }
           Functions: {
-            [_ in never]: never
+            "gravar":
+{ Args: { "ops": Json }; Returns: Json
+                           },
+"tabelas_de_negocio":
+{ Args: Record<PropertyKey, never>; Returns: (string)[]
+                           }
           }
           Enums: {
             [_ in never]: never
