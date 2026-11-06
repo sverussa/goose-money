@@ -17,6 +17,7 @@
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run",
     "test:db": "vitest run --project db",
+    "test:db-reset": "sh supabase/tests/reset-e-validar.sh",
     "test:coverage": "COBERTURA=1 vitest run --coverage",
     "test:e2e": "pnpm --filter @goose-money/app test:e2e",
     "db:types": "supabase gen types typescript --local > apps/app/src/data/database.types.ts"
