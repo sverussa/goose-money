@@ -48,6 +48,9 @@ export interface Usuario {
   id: string;
   /** Cliente da API autenticado como o usuário, com a chave anon (como o app). */
   cliente: Cliente;
+  /** Para entrar pela tela nos testes do app (Playwright). */
+  email: string;
+  senha: string;
 }
 
 /** Cria o usuário pela API admin (service_role) e entra com ele. */
@@ -58,7 +61,7 @@ export async function criarUsuario(email = emailUnico()): Promise<Usuario> {
   const cliente = clienteAnonimo();
   const { error } = await cliente.auth.signInWithPassword({ email, password: senha });
   if (error) throw error;
-  return { id: criado.data.user.id, cliente };
+  return { id: criado.data.user.id, cliente, email, senha };
 }
 
 export type Sql = TransactionSql;
