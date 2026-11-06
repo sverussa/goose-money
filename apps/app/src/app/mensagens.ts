@@ -41,6 +41,28 @@ export const mensagens = {
       configuracoes: 'Configurações',
     },
   },
+  mes: { anterior: 'Mês anterior', proximo: 'Próximo mês' },
+  periodo: {
+    rotulo: 'Período',
+    presets: {
+      'este-mes': 'Este mês',
+      'mes-passado': 'Mês passado',
+      'ultimos-3-meses': 'Últimos 3 meses',
+      'ultimos-6-meses': 'Últimos 6 meses',
+      'ultimos-12-meses': 'Últimos 12 meses',
+      'este-ano': 'Este ano',
+    },
+    personalizado: 'Personalizado',
+    anterior: 'Período anterior',
+    proximo: 'Próximo período',
+    /** "01/09/2026 – 04/11/2026 · comparado a 01/06 – 04/08" (D37). */
+    descricao: (de: string, ate: string, antDe: string, antAte: string) =>
+      `${de} – ${ate} · comparado a ${antDe} – ${antAte}`,
+    de: 'De',
+    ate: 'Até',
+    aplicar: 'Aplicar',
+    invalido: 'A data final precisa ser igual ou posterior à inicial.',
+  },
   /** Microcopy de 4.3. */
   acoes: {
     lancar: 'Lançar',
