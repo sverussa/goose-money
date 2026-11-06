@@ -133,7 +133,7 @@ Uma tela ou diálogo por tarefa, na ordem do handoff.
 
 | Tarefa | Contexto | Depende de | Decisões |
 | --- | --- | --- | --- |
-| [T05-01 · Login](05-telas/T05-01-login.md) | Acesso | T03-01, T04-03 | — |
+| ✅ [T05-01 · Login](05-telas/T05-01-login.md) | Acesso | T03-01, T04-03 | — |
 | [T05-02 · Formulário de lançamento: base, despesa e receita](05-telas/T05-02-lancar-dialog-base.md) | Lançar | T04-06, T03-04 | — |
 | [T05-03 · Formulário de lançamento: compra no cartão, transferência e pagamento de fatura](05-telas/T05-03-lancar-demais-tipos.md) | Lançar | T05-02 | — |
 | [T05-04 · Formulário de lançamento: campos inteligentes e "Mais opções"](05-telas/T05-04-lancar-campos-inteligentes.md) | Lançar | T05-02 | — |
