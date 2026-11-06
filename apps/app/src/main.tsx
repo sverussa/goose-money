@@ -7,6 +7,7 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter, Route, Routes } from 'react-router';
 
 import { ConfiguracaoIncompleta } from '@/app/ConfiguracaoIncompleta';
+import { TemaDev } from '@/app/dev/TemaDev';
 import { resultadoEnv } from '@/app/env';
 import { InicioProvisorio } from '@/app/InicioProvisorio';
 import { LoginProvisorio } from '@/app/LoginProvisorio';
@@ -39,6 +40,7 @@ createRoot(raiz).render(
               <Route path="/login" element={<LoginProvisorio />} />
               <Route path="/esqueci-senha" element={<EsqueciSenha />} />
               <Route path="/redefinir-senha" element={<RedefinirSenha />} />
+              {import.meta.env.DEV && <Route path="/dev/tema" element={<TemaDev />} />}
               <Route element={<RotaProtegida />}>
                 {/* T04-05 cria as rotas do menu; até lá, toda rota autenticada é a provisória. */}
                 <Route path="*" element={<InicioProvisorio />} />

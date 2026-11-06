@@ -4,134 +4,184 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Provisório: os tokens completos de design/theme-tokens.ts chegam em T04-01;
-   as variáveis abaixo são as que o shadcn init gerou, com a cor primária do design. */
-@theme {
-  --font-sans: 'Roboto Flex Variable', Roboto, system-ui, sans-serif;
+/*
+ * Tokens de design/theme-tokens.ts (D17); tema.test.ts confere que os valores são os mesmos.
+ * `static` emite todas as variáveis no :root: o tema escuro (T04-02) troca as mesmas variáveis
+ * e os gráficos leem as cores por `var(--color-…)`.
+ * As cores e os raios padrão do Tailwind saem: componente só usa o que está aqui.
+ */
+@theme static {
+  --color-*: initial;
+  --radius-*: initial;
+
+  --font-sans: 'Roboto Flex Variable', 'Roboto Flex', Roboto, system-ui, sans-serif;
+
+  /* Papéis M3 (lightRoles) */
+  --color-primary: #1b6b5a;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #a6f2da;
+  --color-on-primary-container: #00201a;
+  --color-secondary-container: #cde8df;
+  --color-on-secondary-container: #072019;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #410002;
+  --color-surface: #f5fbf7;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eff5f1;
+  --color-surface-container: #e9efeb;
+  --color-surface-container-high: #e3eae6;
+  --color-surface-container-highest: #dee4e0;
+  --color-on-surface: #171d1b;
+  --color-on-surface-variant: #3f4945;
+  --color-outline: #6f7975;
+  --color-outline-variant: #bfc9c4;
+  --color-inverse-surface: #2c3230;
+  --color-inverse-on-surface: #ecf2ee;
+  --color-inverse-primary: #8ad5bf;
+  --color-scrim: #5e6562;
+
+  /* Semânticos (PROMPT 4.3): main, container e on-container */
+  --color-income: #14713a;
+  --color-income-container: #c8f0d2;
+  --color-on-income-container: #0b3d1f;
+  --color-expense: #b3261e;
+  --color-expense-container: #ffdad6;
+  --color-on-expense-container: #8c1d18;
+  --color-transfer: #48617a;
+  --color-transfer-container: #d3e4f5;
+  --color-on-transfer-container: #1d3246;
+  --color-forecast: #6b5778;
+  --color-forecast-container: #f2daff;
+  --color-on-forecast-container: #25132f;
+  --color-warning: #7a4f00;
+  --color-warning-container: #ffddb0;
+  --color-on-warning-container: #5c3b00;
+
+  /* Paleta categórica: a mesma categoria tem sempre a mesma cor */
+  --color-cat-1: #1b6b5a;
+  --color-cat-2: #3b6fb6;
+  --color-cat-3: #c26a12;
+  --color-cat-4: #8e5bc4;
+  --color-cat-5: #c2457a;
+  --color-cat-6: #6f8a1e;
+  --color-cat-7: #8d6e63;
+  --color-cat-8: #8a9490;
+  --color-cat-sistema: #5c6b7a;
+
+  /* Cores de exemplo dos cartões (no app, a cor é escolhida no cadastro) */
+  --color-cartao-a: #24364d;
+  --color-cartao-a-grafico: #24364d;
+  --color-cartao-b: #6b2e4f;
+  --color-cartao-b-grafico: #b0628c;
+
+  /* Formas M3: extra-small a extra-large */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* Escala tipográfica M3 */
+  --text-headline-lg: 2.25rem;
+  --text-headline-lg--line-height: 2.75rem;
+  --text-headline-lg--font-weight: 500;
+  --text-headline-md: 1.75rem;
+  --text-headline-md--line-height: 2.25rem;
+  --text-headline-md--font-weight: 500;
+  --text-title-lg: 1.375rem;
+  --text-title-lg--line-height: 1.75rem;
+  --text-title-lg--font-weight: 500;
+  --text-title-md: 1rem;
+  --text-title-md--line-height: 1.5rem;
+  --text-title-md--font-weight: 600;
+  --text-body-lg: 1rem;
+  --text-body-lg--line-height: 1.5rem;
+  --text-body-lg--font-weight: 400;
+  --text-body-md: 0.875rem;
+  --text-body-md--line-height: 1.25rem;
+  --text-body-md--font-weight: 400;
+  --text-label-lg: 0.875rem;
+  --text-label-lg--line-height: 1.25rem;
+  --text-label-lg--font-weight: 600;
+  --text-label-md: 0.75rem;
+  --text-label-md--line-height: 1rem;
+  --text-label-md--font-weight: 500;
+
+  /* Medidas de layout: w-drawer, h-app-bar, h-tab, min-h-item, min-h-alvo, max-w-conteudo,
+     p-pagina, p-card, gap-padrao */
+  --spacing-drawer: 260px;
+  --spacing-app-bar: 64px;
+  --spacing-tab: 48px;
+  --spacing-item: 56px;
+  --spacing-alvo: 48px;
+  --spacing-pagina: 24px;
+  --spacing-card: 20px;
+  --spacing-padrao: 16px;
+  --container-conteudo: 1280px;
+
+  /* Larguras M3: compact < 600, medium 600–839, expanded ≥ 840 */
+  --breakpoint-medium: 600px;
+  --breakpoint-expanded: 840px;
 }
 
+/* Nomes que os componentes do shadcn esperam, apontando para os papéis M3. */
 @theme inline {
   --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-foreground: var(--foreground);
-  --color-background: var(--background);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --color-background: var(--color-surface);
+  --color-foreground: var(--color-on-surface);
+  --color-card: var(--color-surface-container-lowest);
+  --color-card-foreground: var(--color-on-surface);
+  --color-popover: var(--color-surface-container);
+  --color-popover-foreground: var(--color-on-surface);
+  --color-primary-foreground: var(--color-on-primary);
+  --color-secondary: var(--color-secondary-container);
+  --color-secondary-foreground: var(--color-on-secondary-container);
+  --color-muted: var(--color-surface-container-high);
+  --color-muted-foreground: var(--color-on-surface-variant);
+  --color-accent: var(--color-surface-container-high);
+  --color-accent-foreground: var(--color-on-surface);
+  --color-destructive: var(--color-error);
+  --color-destructive-foreground: var(--color-on-error);
+  --color-border: var(--color-outline-variant);
+  --color-input: var(--color-outline);
+  --color-ring: var(--color-primary);
+  --color-chart-1: var(--color-cat-1);
+  --color-chart-2: var(--color-cat-2);
+  --color-chart-3: var(--color-cat-3);
+  --color-chart-4: var(--color-cat-4);
+  --color-chart-5: var(--color-cat-5);
+  --color-sidebar: var(--color-surface-container-low);
+  --color-sidebar-foreground: var(--color-on-surface-variant);
+  --color-sidebar-primary: var(--color-primary);
+  --color-sidebar-primary-foreground: var(--color-on-primary);
+  --color-sidebar-accent: var(--color-secondary-container);
+  --color-sidebar-accent-foreground: var(--color-on-secondary-container);
+  --color-sidebar-border: var(--color-outline-variant);
+  --color-sidebar-ring: var(--color-primary);
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: #1b6b5a;
-  --primary-foreground: #ffffff;
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* O shadcn calcula alguns raios a partir de --radius (12 dp, o raio médio). */
+  --radius: var(--radius-md);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
+  }
+  html {
+    @apply bg-background font-sans text-foreground;
   }
   body {
     @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
-  }
-  body {
     font-variant-numeric: tabular-nums;
+  }
+  /* Foco visível do design: 3 dp na cor primária, afastado 2 dp. */
+  :focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
   }
 }
