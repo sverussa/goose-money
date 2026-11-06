@@ -98,3 +98,4 @@ Escolhas feitas durante T04-01 a T04-09 em casos que a spec e o design não cobr
 8. No compact, o seletor de mês desce para uma linha própria na top app bar (o título, a busca, o olho e o menu não cabem com ele em 360 dp).
 9. A Barra expõe `data-hoje` (o "hoje" do app), que os testes de T03-03 usam no lugar do texto "Hoje:" da página provisória. Os testes de T03-03 a T03-06 passaram a esperar a Barra de verdade.
 10. A página `#/dev/casca` ganhou "Simular compra no cartão" (só em desenvolvimento), que grava pelo caminho normal (`useComando`), para testar o chip e o Desfazer antes do formulário de compra (T05-13).
+11. Achado no teste final: depois de clicar num indicador, o tooltip do próximo não abria (o Radix ficava preso na "área de passagem" do conteúdo). Os tooltips passaram a não receber o ponteiro (`disableHoverableContent`), como o tooltip simples do M3.
