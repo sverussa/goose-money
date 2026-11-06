@@ -1,9 +1,9 @@
-import { Navigate, Outlet, useLocation } from 'react-router';
+import { Navigate, useLocation } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { useConfirmacaoAutomatica } from '@/queries/useConfirmacaoAutomatica';
 
-import { BannerSemConexao } from './BannerSemConexao';
+import { AppShell } from './casca/AppShell';
 import { mensagens } from './mensagens';
 import { useSessao } from './providers/useSessao';
 import { urlDoLogin } from './rotas';
@@ -30,14 +30,8 @@ export function RotaProtegida() {
   return <AreaAutenticada />;
 }
 
-/** O que vale para toda tela autenticada até a casca (T04-05) assumir. */
+/** O que vale para toda tela autenticada: a confirmação automática (T03-06) e a casca. */
 function AreaAutenticada() {
   useConfirmacaoAutomatica();
-  return (
-    <>
-      {/* A casca (T04-05) põe o banner logo abaixo da top app bar. */}
-      <BannerSemConexao />
-      <Outlet />
-    </>
-  );
+  return <AppShell />;
 }

@@ -38,3 +38,17 @@ Escolhas feitas durante T04-01 a T04-09 em casos que a spec e o design não cobr
 5. Cores dos chips fora de `statusChips` do design: Vencida (fatura) igual a Vencido; Transportada, Anterior ao saldo inicial e Paga antes do cadastro em `surface-container` (neutro); Paga parcialmente em `transfer-container`.
 6. "Vence em breve" é o rótulo padrão do chip de vencimento próximo; a tela pode trocar o texto ("Vence amanhã") mantendo cor e ícone.
 7. Percentual negativo usa o mesmo "−" (U+2212) da moeda; a moeda curta dos eixos segue o Intl ("R$ 1,2 mil", "R$ 3,5 mi").
+
+## T04-05
+
+1. **Drawer e rail feitos à mão, sem o `Sidebar` do shadcn** (diverge de D17). O `Sidebar` traz colapso, cookie, atalho Ctrl+B e um modo ícone sem rótulo que não é o rail do M3; o design pede drawer fixo, rail com rótulo e navigation bar, que saem mais simples com links e classes de largura. O `sidebar.tsx` continua instalado (T04-03) e não é usado.
+2. As três navegações ficam no DOM e a largura escolhe qual aparece (`hidden` / `medium:` / `expanded:`), sem JavaScript para medir a tela.
+3. Páginas provisórias criadas já no lugar final, em `src/features/<funcionalidade>/<Nome>Pagina.tsx` (painel, lancamentos, contas, cartoes, dividas, rendas, gastos-fixos, configuracoes), para a etapa 5 trocar só o arquivo da página. Isso saiu da pasta da trilha U a pedido da própria tarefa.
+4. `/projecoes` redireciona para `/?aba=projecoes`; nessa aba o item ativo do menu é "Projeções", não "Painel". Rota desconhecida autenticada volta para `/`.
+5. "Mais" mostra a soma dos badges dos itens que ele abre (Rendas fixas e Gastos fixos).
+6. O badge é visual (`aria-hidden`); o leitor de tela ouve ", N pendências" no nome do link.
+7. O título da top app bar e da janela vem do item do menu da rota (`/contas/:id` mostra "Contas"); a tela de detalhe pode trocar depois.
+8. O rodapé do drawer mostra o e-mail do usuário (o design mostrava o nome de usuário, que não existe com o Supabase Auth). O menu do usuário na top app bar abre com a inicial do e-mail.
+9. O botão de busca entra na T04-09, junto com o atalho; a T04-05 não deixa um botão sem ação.
+10. A Barra de Totais provisória (indicadores em centavos) ocupa o lugar da Barra até a T04-06, para os testes das tarefas T03-03 a T03-06 continuarem valendo. A faixa "Sem conexão" fica fixa junto com a Barra.
+11. `cn()` (`src/lib/utils.ts`, fora da trilha U) passou a conhecer a escala tipográfica e as sombras do tema: sem isso o tailwind-merge descartava `text-label-md` ao lado de uma cor de texto.

@@ -13,7 +13,7 @@ export function BannerSemConexao() {
   return (
     <div
       role="status"
-      className="sticky top-0 z-10 flex items-start gap-2 bg-destructive/10 px-4 py-2 text-sm text-foreground"
+      className="flex items-start gap-2 bg-error-container text-on-error-container px-4 py-2 text-body-md"
     >
       <WifiOff aria-hidden className="mt-0.5 size-4 shrink-0" />
       <p>
