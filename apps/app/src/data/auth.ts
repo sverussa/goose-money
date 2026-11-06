@@ -67,7 +67,18 @@ export async function pedirRedefinicao(email: string, redirectTo: string): Promi
   if (error) throw error;
 }
 
-export async function redefinirSenha(nova: string): Promise<void> {
-  const { error } = await supabase.auth.updateUser({ password: nova });
-  if (error) throw error;
+/** Link do e-mail aberto pelo deep link do Tauri (T03-08): troca o `code` pela sessão. */
+export async function trocarCodigo(codigo: string): Promise<boolean> {
+  const { error } = await supabase.auth.exchangeCodeForSession(codigo);
+  return !error;
+}
+
+/** Grava a senha nova. Devolve o código do erro do Auth (`same_password`, `weak_password`…). */
+export async function redefinirSenha(nova: string): Promise<string | null> {
+  try {
+    const { error } = await supabase.auth.updateUser({ password: nova });
+    return error ? (error.code ?? 'erro') : null;
+  } catch {
+    return 'sem_conexao';
+  }
 }

@@ -88,9 +88,10 @@ O Supabase local usa as portas 54321 (API), 54322 (Postgres), 54323 (Studio) e 5
 GooseMoney/
 ├── apps/
 │   └── app/                 # front end: React, shadcn/ui, Tailwind, Vite
-│       ├── src/             # app/ (tema, env, sessão, rotas), data/ (Supabase), queries/ (TanStack Query), components/ui/ (shadcn)
+│       ├── src/             # app/ (tema, env, sessão, rotas), data/ (Supabase), queries/ (TanStack Query),
+│       │                    # plataforma/ (Tauri: arquivos, deep link), features/ (telas), components/ (shadcn em ui/)
 │       ├── src-tauri/       # app desktop (Tauri 2: CSP e permissões)
-│       └── tests/e2e/       # Playwright + axe-core
+│       └── tests/           # e2e/ (Playwright + axe-core) e db/ (src/data contra o Supabase local)
 ├── packages/
 │   └── core/                # domínio e Motor, TypeScript puro (sem React, rede ou DOM)
 ├── supabase/
