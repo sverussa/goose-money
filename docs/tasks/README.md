@@ -116,7 +116,7 @@ Tokens, temas, componentes base e a estrutura comum das telas.
 
 | Tarefa | Contexto | Depende de | Decisões |
 | --- | --- | --- | --- |
-| [T04-01 · Tokens do tema claro](04-tema-casca/T04-01-tokens-tema-claro.md) | Tema | T00-04 | — |
+| ✅ [T04-01 · Tokens do tema claro](04-tema-casca/T04-01-tokens-tema-claro.md) | Tema | T00-04 | — |
 | [T04-02 · Tema escuro e seletor de tema](04-tema-casca/T04-02-tema-escuro.md) | Tema | T04-01 | tomada |
 | [T04-03 · Componentes base do shadcn ajustados ao design](04-tema-casca/T04-03-componentes-shadcn-base.md) | Design system | T04-01 | — |
 | [T04-04 · `MoneyText`, `StatusChip`, formatação e mensagens](04-tema-casca/T04-04-moneytext-statuschip-mensagens.md) | Componentes do app | T04-03 | — |
