@@ -396,6 +396,9 @@ isOneToOne: false
             "gravar":
 { Args: { "ops": Json }; Returns: Json
                            },
+"inicializar_usuario":
+{ Args: Record<PropertyKey, never>; Returns: undefined
+                           },
 "tabelas_de_negocio":
 { Args: Record<PropertyKey, never>; Returns: (string)[]
                            }
