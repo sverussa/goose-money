@@ -68,7 +68,7 @@ Regras da seção 3 em `packages/core`, TypeScript puro e testado. Não depende 
 | ✅ [T01-12 · Dívidas: parcela informada, amortização e saldo devedor](01-dominio/T01-12-dividas-operacoes.md) | Dívidas | T01-11 | — |
 | ✅ [T01-13 · Recorrências: versões, previsão, status e pendentes](01-dominio/T01-13-recorrencias.md) | Recorrências | T01-05, T01-07 | — |
 | ✅ [T01-14 · Reconhecimento de receitas e despesas](01-dominio/T01-14-reconhecimento.md) | Motor | T01-06, T01-10, T01-12, T01-13 | — |
-| [T01-15 · Derivação única dos fatos](01-dominio/T01-15-derivacao-unica.md) | Motor | T01-06, T01-10, T01-12, T01-13 | — |
+| ✅ [T01-15 · Derivação única dos fatos](01-dominio/T01-15-derivacao-unica.md) | Motor | T01-06, T01-10, T01-12, T01-13 | — |
 | [T01-16 · Projeção: `projetarFluxo`, simulador e quitação](01-dominio/T01-16-projetar-fluxo.md) | Motor | T01-15 | — |
 | [T01-17 · Indicadores canônicos](01-dominio/T01-17-indicadores-canonicos.md) | Motor | T01-14, T01-16 | — |
 | [T01-18 · Efeitos na Barra de Totais e desempenho](01-dominio/T01-18-efeitos-barra-desempenho.md) | Motor | T01-17 | — |
