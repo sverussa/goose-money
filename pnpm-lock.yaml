@@ -208,6 +208,9 @@ importers:
       '@goose-money/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@material/material-color-utilities':
+        specifier: 0.4.0
+        version: 0.4.0
       '@supabase/supabase-js':
         specifier: 2.118.0
         version: 2.118.0
@@ -595,6 +598,9 @@ packages:
 
   '@keyv/serialize@1.1.1':
     resolution: {integrity: sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==}
+
+  '@material/material-color-utilities@0.4.0':
+    resolution: {integrity: sha512-dlq6VExJReb8dhjj3a/yTigr3ncNwoFmL5Iy2ENtbDX03EmNeOEdZ+vsaGrj7RTuO+mB7L58II4LCsl4NpM8uw==}
 
   '@modelcontextprotocol/core@2.4.0':
     resolution: {integrity: sha512-z8QBKqdfXLPzkLQuG4xp8hrVEMm1PZ1IgxMN2sMbJiFiAKOWXnAzogXn2W4aqIBlP1ea6U5yiqVquvUNM1Cj6Q==}
@@ -3615,6 +3621,8 @@ snapshots:
       keyv: 5.6.0
 
   '@keyv/serialize@1.1.1': {}
+
+  '@material/material-color-utilities@0.4.0': {}
 
   '@modelcontextprotocol/core@2.4.0':
     dependencies:

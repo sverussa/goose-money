@@ -1,5 +1,7 @@
 import { Button } from '@/components/ui/button';
 
+import { type Tema, useTema } from '../providers/useTema';
+
 const papeis = [
   'primary',
   'on-primary',
@@ -74,9 +76,24 @@ function Cores({ titulo, nomes }: { titulo: string; nomes: string[] }) {
 
 /** Revisão visual do tema (só em desenvolvimento, `#/dev/tema`). */
 export function TemaDev() {
+  const { tema, setTema } = useTema();
   return (
     <main className="mx-auto flex max-w-conteudo flex-col gap-6 p-pagina">
       <h1 className="text-headline-md">Tema</h1>
+      <div role="group" aria-label="Tema" className="flex gap-2">
+        {(['claro', 'escuro', 'sistema'] as Tema[]).map((t) => (
+          <Button
+            key={t}
+            variant={t === tema ? 'default' : 'outline'}
+            aria-pressed={t === tema}
+            onClick={() => {
+              setTema(t);
+            }}
+          >
+            {t}
+          </Button>
+        ))}
+      </div>
       <Cores titulo="Papéis M3" nomes={papeis} />
       <Cores titulo="Semânticos" nomes={semanticos} />
       <Cores titulo="Categorias" nomes={categoricas} />
