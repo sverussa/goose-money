@@ -1,7 +1,14 @@
 import { randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
 
-import { dataCivil, type DataCivil } from '@goose-money/core';
+import {
+  type Acoes,
+  dataCivil,
+  type DataCivil,
+  type Fatos,
+  type Plano,
+  type Preferencias,
+} from '@goose-money/core';
 import { createClient } from '@supabase/supabase-js';
 import postgres, { type TransactionSql } from 'postgres';
 
@@ -138,3 +145,39 @@ export const opsDosFatos = (fatos: Record<string, unknown>): Op[] =>
       Array.isArray(registros) ? (registros as object[]) : registros ? [registros] : [],
     ),
   );
+
+const paraCamel = (s: string) => s.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
+
+/** Resultado de `carregar_tudo()` como os `Fatos` do core (o que `src/data` fará no app, T03-02). */
+export function fatosDe(tudo: Record<string, Record<string, unknown>[]>): Fatos {
+  const fatos = Object.fromEntries(
+    Object.entries(tudo).map(([tabela, linhas]) => [
+      paraCamel(tabela),
+      linhas.map((l) =>
+        Object.fromEntries(
+          Object.entries(l).map(([k, v]) => [
+            paraCamel(k),
+            // numeric vem como número no JSON; o core lê a taxa como texto (decimal.js).
+            k === 'taxa_mensal' && v !== null ? String(v as number) : v,
+          ]),
+        ),
+      ),
+    ]),
+  ) as unknown as Fatos & { preferencias: Preferencias[] };
+  return { ...fatos, preferencias: fatos.preferencias[0] ?? null };
+}
+
+/** Plano de importação do core (T01-20) como um lote de `gravar`: exclusões primeiro, para o nome
+ * de um registro excluído ficar livre para o do arquivo (índices únicos não são adiados). */
+export function opsDoPlano(plano: Plano): Op[] {
+  const acoes = Object.entries(plano.entidades) as [string, Acoes<{ id: string }>][];
+  return [
+    ...acoes.flatMap(([e, a]) =>
+      a.excluir.map((id) => alterar(paraSnake(e), id, { is_deleted: true })),
+    ),
+    ...acoes.flatMap(([e, a]) =>
+      opsDe(e, a.atualizados).map((op) => ({ ...op, acao: 'alterar' as const })),
+    ),
+    ...acoes.flatMap(([e, a]) => opsDe(e, a.novos)),
+  ];
+}
