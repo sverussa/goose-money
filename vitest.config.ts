@@ -1,5 +1,8 @@
 import { defineConfig } from 'vitest/config';
 
+// Testes de tempo do banco: rodam sozinhos, no fim (T00-14).
+const TEMPO_DB = ['carregar-tudo.test.ts', 'massa.test.ts'];
+
 export default defineConfig({
   test: {
     projects: [
@@ -43,8 +46,22 @@ export default defineConfig({
                 name: 'db',
                 root: './supabase/tests',
                 include: ['**/*.test.ts'],
+                exclude: ['**/node_modules/**', ...TEMPO_DB],
                 environment: 'node',
                 globalSetup: ['./preparar.ts'],
+              },
+            },
+            {
+              // Tempos do banco (9.3) depois de todos os outros, como o `desempenho` (T00-14).
+              test: {
+                name: 'db-tempo',
+                root: './supabase/tests',
+                include: TEMPO_DB,
+                environment: 'node',
+                globalSetup: ['./preparar.ts'],
+                sequence: { groupOrder: 3 },
+                // Um arquivo por vez: os dois medem tempo e disputariam o banco entre si.
+                fileParallelism: false,
               },
             },
             {

@@ -97,7 +97,7 @@ GooseMoney/
 ├── supabase/
 │   ├── config.toml          # Supabase local (portas, Auth, Mailpit)
 │   ├── flyway/sql/          # migrações Flyway (V###__, R__) e checklist de tabela nova
-│   └── tests/               # testes de banco (Vitest no Supabase local; .env com a service_role)
+│   └── tests/               # testes de banco (Vitest no Supabase local; .env com a service_role) e limpar.ts (make db-limpar-testes)
 ├── docs/
 │   ├── PROMPT.md            # especificação do produto (fonte da verdade)
 │   ├── DECISOES.md          # decisões de stack, arquitetura e casos não cobertos

@@ -144,6 +144,7 @@ As worktrees separam o código, mas Docker, portas e o banco local são da máqu
 | --- | --- |
 | **Supabase local** (portas 54321 a 54324) | Até o fim da fase 2, só a trilha B usa. Migrações de uma branch aplicadas no banco de todos quebrariam o Flyway das outras (versões e checksums diferentes). Da fase 3 em diante, o esquema está estável: uma instância única, com as migrações da `main`, usada por todos. Cada teste cria usuários com e-mail único (T02-01), então os testes não se enxergam |
 | **Migração nova fora da trilha B** | Não. O agente pede ao coordenador, que abre uma tarefa da trilha B |
+| **Usuários de teste** | O Vitest e o Playwright apagam, antes de rodar, os usuários `@teste.local` criados há mais de 1 hora e as linhas deles (`make db-limpar-testes` faz o mesmo à mão). O limite de 1 hora protege as rodadas em andamento nas outras worktrees; nunca apague usuário mais novo que isso |
 | **`make db-reset`** | Só o coordenador, avisando antes, porque derruba os testes que estiverem rodando |
 | **Porta do app** | Cada worktree usa a sua `PORTA_APP`, de 1421 a 1424 (ajuste A3). A 1420 fica para quem estiver rodando o Tauri. O Supabase local só aceita redirecionamento de login para essas portas |
 | **Playwright** | Sempre com a porta da própria worktree. Nunca confiar em `reuseExistingServer` sem a porta própria |
@@ -152,7 +153,7 @@ As worktrees separam o código, mas Docker, portas e o banco local são da máqu
 ## Regras de merge
 
 - **Ordem:** o coordenador só mergeia uma tarefa depois de todas as dependências dela. Na dúvida, a mais antiga da fila primeiro.
-- **Antes do PR:** `git rebase main`, depois `make check` (formatação, lint, tipos, testes). Na trilha B e nas telas, também os testes de banco e o Playwright da tarefa.
+- **Antes do PR e do merge:** `git rebase main`, depois `make check` (formatação, lint, tipos, testes) e, só quando ele terminar, `make test-e2e-completo` (Chromium e WebKit). Nunca os dois ao mesmo tempo. No dia a dia, `make test-e2e` roda só o Chromium.
 - **`pnpm-lock.yaml`:** nunca resolver o conflito à mão. Fica a versão da `main` e roda `pnpm install`, que regenera o lockfile com as dependências das duas branches.
 - **Tipos gerados do banco:** no conflito, roda `make db-types` de novo depois do rebase.
 - **Migrações Flyway:** os números V001 a V010 já estão reservados nas tarefas. Migração fora do plano pega o próximo número livre na hora do PR. Migração `V` mergeada nunca é editada. Nos repetíveis (`R__gravar.sql`, lista de tabelas), o conflito é textual: fica a união das duas listas.

@@ -16,10 +16,12 @@
     "format:check": "prettier --check .",
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run",
-    "test:db": "vitest run --project db --project app-db",
+    "test:db": "vitest run --project db --project app-db --project db-tempo",
     "test:db-reset": "sh supabase/tests/reset-e-validar.sh",
     "test:coverage": "COBERTURA=1 vitest run --coverage",
     "test:e2e": "pnpm --filter @goose-money/app test:e2e",
+    "test:e2e-completo": "E2E_COMPLETO=1 pnpm --filter @goose-money/app test:e2e",
+    "db:limpar-testes": "node supabase/tests/limpar.ts",
     "db:types": "supabase gen types typescript --local > apps/app/src/data/database.types.ts"
   },
   "devDependencies": {

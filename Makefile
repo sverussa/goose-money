@@ -11,7 +11,8 @@ DOCKER_OK = @docker info >/dev/null 2>&1 || { echo "O Docker não está rodando.
 .DEFAULT_GOAL := help
 
 .PHONY: help setup dev dev-desktop db-start db-stop db-status db-migrate db-info db-validate \
-	db-reset db-migrate-prod db-types deploy-web db-eliminar-usuario test test-e2e lint format \
+	db-reset db-migrate-prod db-types db-limpar-testes deploy-web db-eliminar-usuario test test-e2e \
+	test-e2e-completo lint format \
 	format-check typecheck check build build-desktop
 
 help: ## Lista os alvos
@@ -65,6 +66,9 @@ db-migrate-prod: ## Aplica as migrações em produção com .env.producao; pede 
 db-types: ## Gera os tipos do banco local em apps/app/src/data/database.types.ts
 	pnpm db:types
 
+db-limpar-testes: ## Apaga os usuários de teste (@teste.local) com mais de 1 hora e os dados deles
+	pnpm db:limpar-testes
+
 deploy-web: ## Gera o build de produção e envia para a VPS (D53); pede confirmação
 	@echo "Ainda não implementado: chega em T06-05 (produção)."; exit 1
 
@@ -74,8 +78,11 @@ db-eliminar-usuario: ## Apaga fisicamente os dados e a conta de um usuário (LGP
 test: ## Testes Vitest, inclusive os de banco (exigem db-start e db-migrate)
 	pnpm test
 
-test-e2e: ## Testes Playwright + axe-core
+test-e2e: ## Testes Playwright + axe-core, só no Chromium (dia a dia)
 	pnpm test:e2e
+
+test-e2e-completo: ## Testes Playwright + axe-core no Chromium e no WebKit; rodar antes do merge
+	pnpm test:e2e-completo
 
 lint: ## ESLint
 	pnpm lint
