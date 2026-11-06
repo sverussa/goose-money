@@ -41,7 +41,7 @@ Run `make` to list every target. Each target only calls `pnpm`, `docker compose`
 | `make db-reset`                                       | Recreate the local database and migrate (asks to type `RESET`)                                                         |
 | `make db-migrate-prod`                                | Migrate production with `.env.producao` (asks to type `PRODUCAO`)                                                      |
 | `make db-types`                                       | Generate `apps/app/src/data/database.types.ts` from the local database                                                 |
-| `make test`                                           | Vitest (core and app); `pnpm test:coverage` enforces 90% lines and branches in core                                    |
+| `make test`                                           | Vitest (core, app and database, `pnpm test:db` alone); coverage: `pnpm test:coverage`                                  |
 | `make test-e2e`                                       | Playwright + axe-core (Chromium and WebKit)                                                                            |
 | `make lint` / `format` / `format-check` / `typecheck` | ESLint (with layer boundary rules), Prettier, `tsc` in every package                                                   |
 | `make check`                                          | `format-check` + `lint` + `typecheck` + `test` + `db-validate`; run before every PR (needs the local Supabase running) |

@@ -71,9 +71,9 @@ A ideia é que registrar uma despesa leve segundos e que, com o tempo, o app mos
 ### Primeira vez
 
 ```bash
-make setup        # instala as dependências e cria o .env a partir do .env.example
+make setup        # instala as dependências e cria o .env e o supabase/tests/.env
 make db-start     # sobe o Supabase local em Docker
-make db-status    # mostra a chave anon: copie para VITE_SUPABASE_ANON_KEY no .env
+make db-status    # chaves: a anon vai no .env e no supabase/tests/.env; a service_role só no segundo
 make db-migrate   # aplica as migrações Flyway
 make dev          # app web em http://localhost:1420
 ```
@@ -95,7 +95,8 @@ GooseMoney/
 │   └── core/                # domínio e Motor, TypeScript puro (sem React, rede ou DOM)
 ├── supabase/
 │   ├── config.toml          # Supabase local (portas, Auth, Mailpit)
-│   └── flyway/sql/          # migrações Flyway (V###__, R__) e checklist de tabela nova
+│   ├── flyway/sql/          # migrações Flyway (V###__, R__) e checklist de tabela nova
+│   └── tests/               # testes de banco (Vitest no Supabase local; .env com a service_role)
 ├── docs/
 │   ├── PROMPT.md            # especificação do produto (fonte da verdade)
 │   ├── DECISOES.md          # decisões de stack, arquitetura e casos não cobertos
@@ -117,7 +118,7 @@ GooseMoney/
 ├── pnpm-lock.yaml
 ├── tsconfig.base.json       # opções do TypeScript usadas por todos os pacotes
 ├── eslint.config.js         # lint e regras de fronteira entre camadas
-├── vitest.config.ts         # testes unitários (core e app) e cobertura do core
+├── vitest.config.ts         # testes (core, desempenho, app e banco) e cobertura do core
 ├── .prettierrc, .prettierignore
 ├── .nvmrc
 ├── CLAUDE.md

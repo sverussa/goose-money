@@ -1,6 +1,7 @@
 packages:
   - 'packages/*'
   - 'apps/*'
+  - 'supabase/tests'
 
 # D5: só versões publicadas há pelo menos 7 dias (em minutos)
 minimumReleaseAge: 10080
