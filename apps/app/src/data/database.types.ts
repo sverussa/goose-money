@@ -57,6 +57,38 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"lancamentos": {
+                  Row: {
+                    "cartao_id": string | null,"categoria_id": string | null,"conta_destino_id": string | null,"conta_id": string,"created_at": string,"created_by": string,"data": string,"descricao": string | null,"divida_id": string | null,"fatura_competencia": string | null,"id": string,"is_deleted": boolean,"observacao": string | null,"parcela_divida_id": string | null,"status": string,"tipo": string,"updated_at": string,"valor": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cartao_id"?: string | null,"categoria_id"?: string | null,"conta_destino_id"?: string | null,"conta_id": string,"created_at"?: string,"created_by"?: string,"data": string,"descricao"?: string | null,"divida_id"?: string | null,"fatura_competencia"?: string | null,"id"?: string,"is_deleted"?: boolean,"observacao"?: string | null,"parcela_divida_id"?: string | null,"status"?: string,"tipo": string,"updated_at"?: string,"valor": number
+                  }
+                  Update: {
+                    "cartao_id"?: string | null,"categoria_id"?: string | null,"conta_destino_id"?: string | null,"conta_id"?: string,"created_at"?: string,"created_by"?: string,"data"?: string,"descricao"?: string | null,"divida_id"?: string | null,"fatura_competencia"?: string | null,"id"?: string,"is_deleted"?: boolean,"observacao"?: string | null,"parcela_divida_id"?: string | null,"status"?: string,"tipo"?: string,"updated_at"?: string,"valor"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "lancamentos_categoria_id_created_by_fkey"
+      columns: ["categoria_id","created_by"]
+isOneToOne: false
+      referencedRelation: "categorias"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "lancamentos_conta_destino_id_created_by_fkey"
+      columns: ["conta_destino_id","created_by"]
+isOneToOne: false
+      referencedRelation: "contas"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "lancamentos_conta_id_created_by_fkey"
+      columns: ["conta_id","created_by"]
+isOneToOne: false
+      referencedRelation: "contas"
+      referencedColumns: ["id","created_by"]
+    }
+                  ]
                 },"preferencias": {
                   Row: {
                     "created_at": string,"created_by": string,"horizonte_padrao": number,"id": string,"is_deleted": boolean,"limite_alerta": number,"ocultar_valores_ao_abrir": boolean,"updated_at": string
