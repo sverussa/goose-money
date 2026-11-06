@@ -55,7 +55,7 @@ Regras da seção 3 em `packages/core`, TypeScript puro e testado. Não depende 
 | Tarefa | Contexto | Depende de | Decisões |
 | --- | --- | --- | --- |
 | ✅ [T01-01 · Modelo de dados](01-dominio/T01-01-modelo-de-dados.md) | Modelo | — | tomada |
-| [T01-02 · Dinheiro: centavos, Decimal e rateios](01-dominio/T01-02-dinheiro.md) | Fundamentos | T00-02 | — |
+| ✅ [T01-02 · Dinheiro: centavos, Decimal e rateios](01-dominio/T01-02-dinheiro.md) | Fundamentos | T00-02 | — |
 | [T01-03 · Datas civis e competências](01-dominio/T01-03-datas-competencias.md) | Fundamentos | T00-02 | — |
 | [T01-04 · Períodos, granularidade e período anterior](01-dominio/T01-04-periodos.md) | Fundamentos | T01-03 | tomada |
 | [T01-05 · Tipos e schemas Zod das entidades](01-dominio/T01-05-tipos-schemas.md) | Modelo | T01-01, T01-02, T01-03 | — |
