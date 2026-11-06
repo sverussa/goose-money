@@ -63,7 +63,7 @@ Regras da seção 3 em `packages/core`, TypeScript puro e testado. Não depende 
 | ✅ [T01-07 · Ciclo do cartão e atribuição de compra à fatura](01-dominio/T01-07-ciclo-cartao.md) | Cartões | T01-05 | — |
 | ✅ [T01-08 · Compras parceladas: geração, invariantes e operações](01-dominio/T01-08-compras-parceladas.md) | Cartões | T01-02, T01-07 | — |
 | ✅ [T01-09 · Saldo da fatura, status, pagamentos e transporte](01-dominio/T01-09-fatura-pagamentos.md) | Cartões | T01-08 | tomada |
-| [T01-10 · Indicadores do cartão e cartão já em uso](01-dominio/T01-10-indicadores-cartao.md) | Cartões | T01-09 | — |
+| ✅ [T01-10 · Indicadores do cartão e cartão já em uso](01-dominio/T01-10-indicadores-cartao.md) | Cartões | T01-09 | — |
 | ✅ [T01-11 · Dívidas: tabelas Price, SAC e taxa zero](01-dominio/T01-11-dividas-tabelas.md) | Dívidas | T01-02, T01-03 | — |
 | ✅ [T01-12 · Dívidas: parcela informada, amortização e saldo devedor](01-dominio/T01-12-dividas-operacoes.md) | Dívidas | T01-11 | — |
 | ✅ [T01-13 · Recorrências: versões, previsão, status e pendentes](01-dominio/T01-13-recorrencias.md) | Recorrências | T01-05, T01-07 | — |
