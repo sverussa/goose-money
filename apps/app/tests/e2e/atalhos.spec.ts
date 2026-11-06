@@ -20,7 +20,7 @@ async function entrar(page: Page, u: Usuario, rota = '/') {
   await expect(page.getByRole('button', { name: /^Buscar/ })).toBeVisible();
 }
 
-const lancar = (page: Page) => page.getByRole('dialog', { name: 'Lançar' });
+const lancar = (page: Page) => page.getByRole('dialog', { name: 'Novo lançamento' });
 const busca = (page: Page) => page.getByRole('dialog', { name: 'Busca' });
 
 test('N abre o formulário em qualquer tela e Esc fecha', async ({ page }) => {

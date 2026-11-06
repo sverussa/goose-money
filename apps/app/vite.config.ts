@@ -29,6 +29,7 @@ export default defineConfig({
       'recharts',
       'html-to-image',
       'radix-ui',
+      'react-hook-form',
     ],
   },
   preview: { port: porta, strictPort: true },
