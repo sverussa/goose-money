@@ -8,7 +8,7 @@ set search_path = ''
 as $$
   select array['categorias', 'contas', 'preferencias', 'lancamentos',
     'cartoes', 'cartao_ciclos', 'compras', 'parcelas', 'itens_fatura',
-    'dividas', 'parcelas_divida']
+    'dividas', 'parcelas_divida', 'recorrencias', 'recorrencia_versoes', 'ocorrencias']
 $$;
 
 revoke all on function public.tabelas_de_negocio() from public, anon;
