@@ -44,3 +44,11 @@ Casos que a spec não cobre ou em que o texto da tarefa diverge do `MODELO-DADOS
 5. Trigger adiado `cartoes_conta_pagamento` dos dois lados: gravar um cartão ativo com conta arquivada, excluída ou fora do total é recusado, e também tirar do total, arquivar ou excluir a conta de pagamento de um cartão ativo.
 6. Não conferidos no banco (ficam no core, D36): categoria do encargo ser `juros_encargos` ou `tarifas`; item de fatura com compra de outro cartão; excluir a compra levar os itens de fatura dela.
 7. A V007 aplicada só no banco local desta branch tinha um erro no trigger; foi desfeita à mão (drop e histórico do Flyway da V007 e V008) e reaplicada corrigida, antes do merge.
+
+## T02-06
+1. Sem as colunas "saldo devedor após", "status pago" e "lançamento de pagamento" em `parcelas_divida`, citadas no texto da tarefa: são derivadas (MODELO-DADOS 3.10). O pagamento é o lançamento `pagamento_divida` que aponta para a parcela. A coluna do sistema é `sistema_amortizacao`, como no modelo.
+2. `taxa_mensal` é `numeric` sem escala fixa (o modelo), e não `numeric(12,8)`: não arredonda a taxa digitada. Nula só na parcela informada.
+3. Invariante adiada `dividas_amortizacoes_conferem`: amortizações das parcelas ativas + lançamentos `amortizacao` ativos = valor contratado (equivale a saldo devedor final zero, D3). Dívida excluída não pode ficar com parcelas ativas. A numeração e a quantidade de parcelas ficam no core (amortizar e "reduzir prazo" mudam a quantidade).
+4. "Parcela paga" para o trigger `parcelas_divida_paga_imutavel` = `paga_antes_do_cadastro` ou com `pagamento_divida` ativo; o trigger recusa mudar valor, juros ou amortização (excluir a parcela continua possível, para excluir a dívida sem pagamentos).
+5. O pagamento aponta para uma parcela da mesma dívida (chave estrangeira `(parcela_divida_id, divida_id, created_by)`).
+6. Não conferido no banco (core): parcela `paga_antes_do_cadastro` com `pagamento_divida`.
