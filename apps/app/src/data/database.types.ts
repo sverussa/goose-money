@@ -123,6 +123,32 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"dividas": {
+                  Row: {
+                    "categoria_id": string | null,"conta_debito_id": string,"created_at": string,"created_by": string,"credor": string,"data_contratacao": string,"data_primeira_parcela": string,"destino_do_valor": string,"id": string,"is_deleted": boolean,"numero_parcelas": number,"sistema_amortizacao": string,"taxa_mensal": number | null,"tipo": string,"updated_at": string,"valor_contratado": number,"valor_parcela_informada": number | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "categoria_id"?: string | null,"conta_debito_id": string,"created_at"?: string,"created_by"?: string,"credor": string,"data_contratacao": string,"data_primeira_parcela": string,"destino_do_valor": string,"id"?: string,"is_deleted"?: boolean,"numero_parcelas": number,"sistema_amortizacao": string,"taxa_mensal"?: number | null,"tipo": string,"updated_at"?: string,"valor_contratado": number,"valor_parcela_informada"?: number | null
+                  }
+                  Update: {
+                    "categoria_id"?: string | null,"conta_debito_id"?: string,"created_at"?: string,"created_by"?: string,"credor"?: string,"data_contratacao"?: string,"data_primeira_parcela"?: string,"destino_do_valor"?: string,"id"?: string,"is_deleted"?: boolean,"numero_parcelas"?: number,"sistema_amortizacao"?: string,"taxa_mensal"?: number | null,"tipo"?: string,"updated_at"?: string,"valor_contratado"?: number,"valor_parcela_informada"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "dividas_categoria_id_created_by_fkey"
+      columns: ["categoria_id","created_by"]
+isOneToOne: false
+      referencedRelation: "categorias"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "dividas_conta_debito_id_created_by_fkey"
+      columns: ["conta_debito_id","created_by"]
+isOneToOne: false
+      referencedRelation: "contas"
+      referencedColumns: ["id","created_by"]
+    }
+                  ]
                 },"itens_fatura": {
                   Row: {
                     "cartao_id": string,"categoria_id": string | null,"competencia": string,"compra_id": string | null,"created_at": string,"created_by": string,"data": string,"descricao": string | null,"id": string,"is_deleted": boolean,"tipo": string,"updated_at": string,"valor": number
@@ -191,6 +217,18 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "contas"
       referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "lancamentos_divida_id_created_by_fkey"
+      columns: ["divida_id","created_by"]
+isOneToOne: false
+      referencedRelation: "dividas"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "lancamentos_parcela_divida_id_divida_id_created_by_fkey"
+      columns: ["parcela_divida_id","divida_id","created_by"]
+isOneToOne: false
+      referencedRelation: "parcelas_divida"
+      referencedColumns: ["id","divida_id","created_by"]
     }
                   ]
                 },"parcelas": {
@@ -210,6 +248,26 @@ isOneToOne: false
       columns: ["compra_id","created_by"]
 isOneToOne: false
       referencedRelation: "compras"
+      referencedColumns: ["id","created_by"]
+    }
+                  ]
+                },"parcelas_divida": {
+                  Row: {
+                    "amortizacao": number,"created_at": string,"created_by": string,"divida_id": string,"id": string,"is_deleted": boolean,"juros": number,"numero": number,"paga_antes_do_cadastro": boolean,"updated_at": string,"valor": number,"vencimento": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amortizacao": number,"created_at"?: string,"created_by"?: string,"divida_id": string,"id"?: string,"is_deleted"?: boolean,"juros": number,"numero": number,"paga_antes_do_cadastro"?: boolean,"updated_at"?: string,"valor": number,"vencimento": string
+                  }
+                  Update: {
+                    "amortizacao"?: number,"created_at"?: string,"created_by"?: string,"divida_id"?: string,"id"?: string,"is_deleted"?: boolean,"juros"?: number,"numero"?: number,"paga_antes_do_cadastro"?: boolean,"updated_at"?: string,"valor"?: number,"vencimento"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "parcelas_divida_divida_id_created_by_fkey"
+      columns: ["divida_id","created_by"]
+isOneToOne: false
+      referencedRelation: "dividas"
       referencedColumns: ["id","created_by"]
     }
                   ]

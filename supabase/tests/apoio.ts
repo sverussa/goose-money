@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
 
+import { dataCivil, type DataCivil } from '@goose-money/core';
 import { createClient } from '@supabase/supabase-js';
 import postgres, { type TransactionSql } from 'postgres';
 
@@ -86,7 +87,11 @@ export interface Op {
   dados: Record<string, unknown>;
 }
 
-export const inserir = (tabela: string, dados: Record<string, unknown>, id = randomUUID()): Op => ({
+export const inserir = (
+  tabela: string,
+  dados: Record<string, unknown>,
+  id: string = randomUUID(),
+): Op => ({
   tabela,
   acao: 'inserir',
   id,
@@ -111,3 +116,16 @@ export async function gravarOk(cliente: Cliente, ops: Op[]) {
   if (erro) throw new Error(`gravar recusou: ${erro.code} ${erro.message} ${erro.details}`);
   return linhas ?? {};
 }
+
+/** "Hoje" do produto, no fuso de Brasília (D79), como texto `AAAA-MM-DD`. */
+export const hojeEmBrasilia = (): DataCivil =>
+  dataCivil(new Date().toLocaleDateString('sv-SE', { timeZone: 'America/Sao_Paulo' }));
+
+const paraSnake = (s: string) => s.replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`);
+
+/** Registros do domínio (camelCase, como o core os gera) como inserções de `gravar`. */
+export const opsDe = (entidade: string, registros: readonly object[]): Op[] =>
+  registros.map((r) => {
+    const dados = Object.fromEntries(Object.entries(r).map(([k, v]) => [paraSnake(k), v]));
+    return inserir(paraSnake(entidade), dados, String(dados.id));
+  });
