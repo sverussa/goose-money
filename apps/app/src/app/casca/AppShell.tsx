@@ -1,5 +1,5 @@
 import { badges, type Badges } from '@goose-money/core';
-import { Suspense, useMemo } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router';
 
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ import { useSessao } from '../providers/useSessao';
 import { BarraProvisoria } from './BarraProvisoria';
 import { itemAtivo } from './navegacao';
 import { BarraDeNavegacao, MenuLateral, MenuRail } from './Menus';
+import { ContextoSlots } from './useSlots';
 
 /** Badges do menu, direto do core (T01-21). */
 function useBadges(): Badges | null {
@@ -65,6 +66,9 @@ export function AppShell() {
   const b = useBadges();
   const { pathname, search } = useLocation();
   const titulo = itemAtivo(pathname, search)?.rotulo ?? mensagens.app;
+  const [appBar, setAppBar] = useState<HTMLElement | null>(null);
+  const [cabecalho, setCabecalho] = useState<HTMLElement | null>(null);
+  const slots = useMemo(() => ({ appBar, cabecalho }), [appBar, cabecalho]);
 
   return (
     <div className="min-h-dvh bg-surface text-on-surface expanded:flex">
@@ -74,7 +78,8 @@ export function AppShell() {
       <div className="flex min-w-0 flex-1 flex-col pb-20 medium:pb-0 medium:pl-20 expanded:pl-0">
         <header className="flex min-h-app-bar items-center gap-1 py-2 pr-2 pl-4 medium:gap-3 medium:px-6">
           <h1 className="flex-1 truncate text-title-lg">{titulo}</h1>
-          {/* Seletor de mês (T04-07) e busca (T04-09) entram aqui. */}
+          {/* Seletor de mês das telas mensais (T04-07); a busca entra na T04-09. */}
+          <div ref={setAppBar} className="contents" />
           <MenuDoUsuario />
         </header>
         <div className="sticky top-0 z-20">
@@ -82,6 +87,7 @@ export function AppShell() {
           <BannerSemConexao />
           <BarraProvisoria />
           {/* Cabeçalho de contexto do módulo (T04-07), fixo junto com a Barra. */}
+          <div ref={setCabecalho} />
         </div>
         <main className="mx-auto w-full max-w-conteudo flex-1 px-4 py-5 medium:px-6">
           <Suspense
@@ -91,7 +97,9 @@ export function AppShell() {
               </p>
             }
           >
-            <Outlet />
+            <ContextoSlots value={slots}>
+              <Outlet />
+            </ContextoSlots>
           </Suspense>
         </main>
         {/* FAB "+ Lançar" (T05-02), acima da navigation bar no compact. */}

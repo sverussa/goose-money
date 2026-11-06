@@ -4,6 +4,7 @@ import { Navigate, Route, Routes } from 'react-router';
 import { EsqueciSenha } from '@/features/acesso/EsqueciSenha';
 import { RedefinirSenha } from '@/features/acesso/RedefinirSenha';
 
+import { CascaDev } from './dev/CascaDev';
 import { ComponentesDev } from './dev/ComponentesDev';
 import { TemaDev } from './dev/TemaDev';
 import { LoginProvisorio } from './LoginProvisorio';
@@ -64,6 +65,7 @@ export function RotasDoApp() {
         {/* Atalho para a aba Projeções do Painel (5.1). */}
         <Route path="projecoes" element={<Navigate to="/?aba=projecoes" replace />} />
         <Route path="configuracoes" element={<Configuracoes />} />
+        {import.meta.env.DEV && <Route path="dev/casca" element={<CascaDev />} />}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

@@ -52,3 +52,14 @@ Escolhas feitas durante T04-01 a T04-09 em casos que a spec e o design não cobr
 9. O botão de busca entra na T04-09, junto com o atalho; a T04-05 não deixa um botão sem ação.
 10. A Barra de Totais provisória (indicadores em centavos) ocupa o lugar da Barra até a T04-06, para os testes das tarefas T03-03 a T03-06 continuarem valendo. A faixa "Sem conexão" fica fixa junto com a Barra.
 11. `cn()` (`src/lib/utils.ts`, fora da trilha U) passou a conhecer a escala tipográfica e as sombras do tema: sem isso o tailwind-merge descartava `text-label-md` ao lado de uma cor de texto.
+
+## T04-07
+
+1. `MonthSelector` e `ContextHeader` entram na casca por portal: a casca tem um lugar na top app bar e outro logo abaixo da Barra, no mesmo bloco fixo, então o cabeçalho de contexto acompanha a Barra ao rolar sem medir alturas. Fora da casca, os dois ficam no próprio lugar.
+2. `ContextHeader` exige um `rotulo` (região nomeada para o leitor de tela, pedido do axe).
+3. Período padrão do `PeriodPicker`, que a spec não define: **Últimos 3 meses**, como no design; cada tela pode passar outro.
+4. "Lembrado por aba" = por tela (`chave`: visão geral, saldos, lançamentos) e por aba do navegador (`sessionStorage`): sem `de`/`ate` na URL, vale o último período escolhido naquela tela; a URL só recebe `de`/`ate` quando o usuário escolhe.
+5. O texto de comparação mostra o período anterior em `dd/mm` sem o ano ("comparado a 01/06 – 04/08", como na tarefa), não o "mai–jul" do design.
+6. "Personalizado" abre um popover com dois campos de data nativos (`type="date"`) e "Aplicar"; data final antes da inicial mostra erro e não aplica. Depois de deslocar com as setas, o chip ativo passa a ser "Personalizado" quando o período não coincide com nenhum atalho.
+7. Mês inválido na URL (`?mes=2026-13`) e período inválido (`?de=2026-02-30`) voltam ao padrão em silêncio, sem mensagem.
+8. `EstadoDaCarga` cobre carregando (esqueleto) e erro ("Tentar de novo") de qualquer consulta; o estado vazio de cada tela usa `EmptyState`.
