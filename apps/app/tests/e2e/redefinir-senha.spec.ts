@@ -39,11 +39,11 @@ test('pedir, seguir o link, definir a senha nova e entrar com ela', async ({ pag
   const u = await criarUsuario();
   await page.goto('/#/login');
   await page.getByRole('link', { name: 'Esqueci a senha' }).click();
-  // O login também tem "E-mail": espera a outra tela antes de preencher.
-  await expect(page.getByRole('heading', { name: 'Esqueci a senha' })).toBeVisible();
-  await page.getByLabel('E-mail').fill(u.email);
-  await page.getByRole('button', { name: 'Enviar link' }).click();
-  await expect(page.getByRole('status')).toHaveText(
+  // O link abre um diálogo sobre o login (T05-01), que também tem "E-mail".
+  const dialogo = page.getByRole('dialog', { name: 'Esqueci a senha' });
+  await dialogo.getByLabel('E-mail').fill(u.email);
+  await dialogo.getByRole('button', { name: 'Enviar link' }).click();
+  await expect(dialogo.getByRole('status')).toHaveText(
     'Se o e-mail estiver cadastrado, você vai receber um link para criar uma senha nova.',
   );
 

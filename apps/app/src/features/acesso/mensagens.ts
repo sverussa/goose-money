@@ -1,9 +1,15 @@
-/** Textos de "Esqueci a senha" e "Nova senha" (D10). */
+/** Textos do login, de "Esqueci a senha" e de "Nova senha" (D10). */
 
 /** Mínimo do Supabase Auth (`minimum_password_length`, D28). */
 export const SENHA_MINIMA = 8;
 
 export const mensagensAcesso = {
+  login: {
+    apoio: 'Entre para ver quanto você tem, quanto deve e quanto vai sobrar.',
+    mostrarSenha: 'Mostrar senha',
+    ocultarSenha: 'Ocultar senha',
+    manterConectado: 'Manter conectado neste dispositivo',
+  },
   esqueciSenha: 'Esqueci a senha',
   voltarAoLogin: 'Voltar para o login',
   esqueci: {
