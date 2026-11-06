@@ -101,7 +101,7 @@ Sessão, leitura, mutações com Desfazer, conexão, confirmação automática e
 
 | Tarefa | Contexto | Depende de | Decisões |
 | --- | --- | --- | --- |
-| [T03-01 · Sessão, rotas protegidas e saída](03-dados-app/T03-01-sessao-rotas-protegidas.md) | Acesso | T00-11, T02-08 | — |
+| ✅ [T03-01 · Sessão, rotas protegidas e saída](03-dados-app/T03-01-sessao-rotas-protegidas.md) | Acesso | T00-11, T02-08 | — |
 | [T03-02 · Mapeamento banco ↔ domínio e `carregarTudo`](03-dados-app/T03-02-mapeamento-carregar.md) | Leitura | T02-09, T01-05 | tomada |
 | [T03-03 · Consultas, "hoje" e Motor no app](03-dados-app/T03-03-consultas-motor.md) | Leitura | T03-02, T01-17 | — |
 | [T03-04 · Mutações, "Salvando…" e Desfazer](03-dados-app/T03-04-mutacoes-desfazer.md) | Escrita | T03-03, T01-22, T02-02 | — |
