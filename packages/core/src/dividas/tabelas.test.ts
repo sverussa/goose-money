@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { dataCivil } from '../datas';
 import { centavos, D, somar } from '../dinheiro';
-import { type LinhaTabela, tabelaPrice, tabelaSac } from './tabelas';
+import { type LinhaTabela, tabelaParcelaInformada, tabelaPrice, tabelaSac } from './tabelas';
 
 const c = centavos;
 const d = dataCivil;
@@ -98,6 +98,39 @@ describe('tabelaSac', () => {
       [33_333, 0],
       [33_334, 0],
     ]);
+  });
+});
+
+describe('tabelaParcelaInformada', () => {
+  it('R$ 300,00 × 12 com R$ 4.800,00 contratado é rejeitada (11.5)', () => {
+    expect(() => tabelaParcelaInformada(c(480_000), c(30_000), 12, d('2027-01-05'))).toThrow(
+      new RangeError('As parcelas somam menos que o valor contratado'),
+    );
+  });
+
+  it('R$ 450,00 × 12 com R$ 4.800,00 contratado: taxa implícita perto de 1,86% a.m. (11.5)', () => {
+    const t = tabelaParcelaInformada(c(480_000), c(45_000), 12, d('2027-01-05'));
+    expect(t.taxa.toDecimalPlaces(4).toString()).toBe('0.0186');
+    expect(t.linhas).toHaveLength(12);
+    t.linhas.slice(0, 11).forEach((l) => {
+      expect(l.valor).toBe(45_000);
+    });
+    conferir(t.linhas, 480_000);
+    expect(t.diferencaUltima).toBe((t.linhas[11]?.valor ?? 0) - 45_000);
+    expect(Math.abs(t.diferencaUltima)).toBeLessThan(12); // só arredondamento de juros
+  });
+
+  it('PMT × n = PV dá taxa zero e parcelas iguais', () => {
+    const t = tabelaParcelaInformada(c(120_000), c(10_000), 12, d('2027-01-05'));
+    expect(t.taxa.isZero()).toBe(true);
+    expect(t.linhas.every((l) => l.valor === 10_000 && l.juros === 0)).toBe(true);
+    expect(t.diferencaUltima).toBe(0);
+    conferir(t.linhas, 120_000);
+  });
+
+  it('rejeita parcela não positiva e n inválido', () => {
+    expect(() => tabelaParcelaInformada(c(100), c(0), 2, d('2027-01-05'))).toThrow(RangeError);
+    expect(() => tabelaParcelaInformada(c(100), c(100), 0, d('2027-01-05'))).toThrow(RangeError);
   });
 });
 
