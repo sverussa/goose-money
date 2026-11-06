@@ -13,6 +13,7 @@ import { type Centavos, centavos, mais, somar } from '../dinheiro';
 import type { Cartao, Id } from '../modelo';
 import { faturaDoGastoNoCartao, ocorrenciasDoMes } from '../recorrencias';
 import type { Derivado } from './derivar';
+import { saldoEmContas } from './indicadores';
 import { ddmm, juntar } from './reconhecimento';
 
 /** PROMPT 3.9: a única função de previsão. A Barra e a aba Projeções leem daqui. */
@@ -290,11 +291,7 @@ export function projetarFluxo(
 ): Projecao {
   const { fatos, hoje } = derivado;
   if (ate < hoje) throw new RangeError(`Projeção termina antes de hoje: ${ate}`);
-  const inicial = somar(
-    fatos.contas
-      .filter((c) => c.incluirNoTotal && !c.arquivada)
-      .map((c) => derivado.saldos.get(c.id)?.atual ?? centavos(0)),
-  );
+  const inicial = saldoEmContas(derivado);
   const { itens, fora } = pendentes(derivado, ate);
   const principal = meses(itens, inicial, hoje, ate);
   const limite = fatos.preferencias?.limiteAlerta ?? 0;
@@ -337,3 +334,15 @@ export function previsaoDeQuitacao(derivado: Derivado): {
   const porData = <T extends { data: DataCivil }>(a: T, b: T) => a.data.localeCompare(b.data);
   return { dividas: dividas.sort(porData), compras: [...compras.values()].sort(porData) };
 }
+
+/** **Previsto até o fim do mês** (3.10): saldo final do mês corrente na projeção. */
+export const previstoAteOFimDoMes = (derivado: Derivado): Centavos =>
+  (projetarFluxo(derivado, ultimaData(competenciaDe(derivado.hoje))).meses[0] as MesProjetado)
+    .saldoFinal;
+
+/** Cor do **Previsto** na Barra (5.3): `error` negativo, `warning` abaixo do limite de alerta. */
+export const estadoDoPrevisto = (
+  valor: Centavos,
+  limiteAlerta: Centavos,
+): 'normal' | 'warning' | 'error' =>
+  valor < 0 ? 'error' : valor < limiteAlerta ? 'warning' : 'normal';
