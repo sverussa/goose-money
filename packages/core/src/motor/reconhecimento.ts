@@ -1,9 +1,10 @@
-import { montarFaturas, type StatusFatura } from '../cartoes';
+import type { StatusFatura } from '../cartoes';
 import type { DataCivil } from '../datas';
 import { type Centavos, somar } from '../dinheiro';
-import { despesaDaParcela, statusParcela } from '../dividas';
-import type { Categoria, Compra, Divida, Fatos, Id } from '../modelo';
+import { despesaDaParcela } from '../dividas';
+import type { Categoria, Compra, Divida, Id } from '../modelo';
 import type { Periodo } from '../periodos';
+import type { Derivado } from './derivar';
 
 /**
  * PROMPT 3.3: as únicas funções que dizem o que é receita e despesa. Resultado, KPIs, todo
@@ -65,11 +66,13 @@ const estadoDaFatura = (s: StatusFatura): EstadoDoItem =>
 
 const rotuloDoItemFatura = { estorno: 'Estorno', ajuste_compra: 'Ajuste de compra' } as const;
 
-/** Todos os itens reconhecidos, de qualquer data, conforme a tabela de 3.3. */
-function reconhecidos(fatos: Fatos, hoje: DataCivil): ItemReconhecido[] {
-  const categorias = new Map(fatos.categorias.map((c) => [c.id, c]));
-  const compras = new Map(fatos.compras.map((c) => [c.id, c]));
-  const dividas = new Map(fatos.dividas.map((d) => [d.id, d]));
+/**
+ * Todos os itens reconhecidos, de qualquer data, conforme a tabela de 3.3, em ordem de data.
+ * Interno ao Motor: `derivar` guarda o resultado em `Derivado.reconhecidos`.
+ */
+export function itensReconhecidos(base: Omit<Derivado, 'reconhecidos'>): ItemReconhecido[] {
+  const { fatos, porId } = base;
+  const { categorias, compras, dividas } = porId;
   const categoria = (id: Id): Categoria => obter(categorias, id, 'Categoria');
   const daRecorrencia = new Set(fatos.ocorrencias.flatMap((o) => [o.lancamentoId, o.compraId]));
   const itens: ItemReconhecido[] = [];
@@ -120,7 +123,7 @@ function reconhecidos(fatos: Fatos, hoje: DataCivil): ItemReconhecido[] {
   // fatura). `montarFaturas` já deixa fora as parcelas "Paga antes do cadastro"; o saldo
   // anterior ao cadastro, o transportado e o crédito de pagamento nunca são despesa.
   for (const cartao of fatos.cartoes)
-    for (const f of montarFaturas(fatos, cartao.id, hoje))
+    for (const f of base.faturas.get(cartao.id) ?? [])
       for (const i of f.itens) {
         const comum = {
           tipo: 'despesa',
@@ -164,9 +167,6 @@ function reconhecidos(fatos: Fatos, hoje: DataCivil): ItemReconhecido[] {
       }
 
   // Dívidas: só os juros se creditado em conta, a parcela se pago a terceiro (`despesaDaParcela`).
-  const pagas = new Set(fatos.lancamentos.map((l) => l.parcelaDividaId));
-  const quantas = new Map<Id, number>();
-  for (const p of fatos.parcelasDivida) quantas.set(p.dividaId, (quantas.get(p.dividaId) ?? 0) + 1);
   let juros: Categoria | undefined;
   const categoriaDaDivida = (d: Divida): Id => {
     if (d.categoriaId !== null) return d.categoriaId;
@@ -174,73 +174,68 @@ function reconhecidos(fatos: Fatos, hoje: DataCivil): ItemReconhecido[] {
     if (!juros) throw new RangeError('Categoria "Juros e encargos" inexistente');
     return juros.id;
   };
-  for (const p of fatos.parcelasDivida) {
-    const divida = obter(dividas, p.dividaId, 'Dívida');
-    const calculo = { ...p, paga: pagas.has(p.id) };
-    const valor = despesaDaParcela(divida, calculo);
-    if (valor === 0) continue; // "Paga antes do cadastro" ou parcela sem juros
-    const status = statusParcela(calculo, hoje);
-    incluir(categoriaDaDivida(divida), {
-      tipo: 'despesa',
-      data: p.vencimento,
-      valor,
-      origem: 'divida',
-      contaId: divida.contaDebitoId,
-      cartaoId: null,
-      registro: { entidade: 'parcelaDivida', id: p.id },
-      texto: juntar(
-        divida.credor,
-        `${String(p.numero)}/${String(quantas.get(p.dividaId))}`,
-        divida.destinoDoValor === 'creditado_em_conta' ? 'juros' : null,
-      ),
-      estado: status === 'paga' ? 'liquidado' : status === 'vencida' ? 'vencido' : 'a_pagar',
-    });
-  }
-  return itens;
+  for (const { divida, parcelas } of base.dividas.values())
+    for (const p of parcelas) {
+      const valor = despesaDaParcela(divida, p);
+      if (valor === 0) continue; // "Paga antes do cadastro" ou parcela sem juros
+      incluir(categoriaDaDivida(divida), {
+        tipo: 'despesa',
+        data: p.vencimento,
+        valor,
+        origem: 'divida',
+        contaId: divida.contaDebitoId,
+        cartaoId: null,
+        registro: { entidade: 'parcelaDivida', id: p.id },
+        texto: juntar(
+          divida.credor,
+          `${String(p.numero)}/${String(parcelas.length)}`,
+          divida.destinoDoValor === 'creditado_em_conta' ? 'juros' : null,
+        ),
+        estado: p.status === 'paga' ? 'liquidado' : p.status === 'vencida' ? 'vencido' : 'a_pagar',
+      });
+    }
+  return itens.sort(
+    (a, b) => a.data.localeCompare(b.data) || a.registro.id.localeCompare(b.registro.id),
+  );
 }
 
 function filtrar(
   tipo: ItemReconhecido['tipo'],
-  fatos: Fatos,
+  derivado: Pick<Derivado, 'reconhecidos'>,
   periodo: Periodo,
   filtros: FiltrosDeReconhecimento,
-  hoje: DataCivil,
 ): ItemReconhecido[] {
   if (filtros.tipo !== undefined && filtros.tipo !== tipo) return [];
   const { contaId, cartaoId, categorias, origens } = filtros;
   const busca = normalizar(filtros.busca?.trim() ?? '');
-  return reconhecidos(fatos, hoje)
-    .filter(
-      (i) =>
-        i.tipo === tipo &&
-        i.data >= periodo.de &&
-        i.data <= periodo.ate &&
-        (contaId === undefined || i.contaId === contaId) &&
-        (cartaoId === undefined || i.cartaoId === cartaoId) &&
-        (categorias === undefined ||
-          categorias.includes(i.categoriaId) ||
-          categorias.includes(i.categoriaPaiId)) &&
-        (origens === undefined || origens.includes(i.origem)) &&
-        normalizar(i.texto).includes(busca),
-    )
-    .sort((a, b) => a.data.localeCompare(b.data) || a.registro.id.localeCompare(b.registro.id));
+  return derivado.reconhecidos.filter(
+    (i) =>
+      i.tipo === tipo &&
+      i.data >= periodo.de &&
+      i.data <= periodo.ate &&
+      (contaId === undefined || i.contaId === contaId) &&
+      (cartaoId === undefined || i.cartaoId === cartaoId) &&
+      (categorias === undefined ||
+        categorias.includes(i.categoriaId) ||
+        categorias.includes(i.categoriaPaiId)) &&
+      (origens === undefined || origens.includes(i.origem)) &&
+      normalizar(i.texto).includes(busca),
+  );
 }
 
 /** Receitas com data de competência no período, filtradas (3.3, 6.3), em ordem de data. */
 export const receitasReconhecidas = (
-  fatos: Fatos,
+  derivado: Pick<Derivado, 'reconhecidos'>,
   periodo: Periodo,
   filtros: FiltrosDeReconhecimento,
-  hoje: DataCivil,
-): ItemReconhecido[] => filtrar('receita', fatos, periodo, filtros, hoje);
+): ItemReconhecido[] => filtrar('receita', derivado, periodo, filtros);
 
 /** Despesas com data de competência no período, filtradas (3.3, 6.3), em ordem de data. */
 export const despesasReconhecidas = (
-  fatos: Fatos,
+  derivado: Pick<Derivado, 'reconhecidos'>,
   periodo: Periodo,
   filtros: FiltrosDeReconhecimento,
-  hoje: DataCivil,
-): ItemReconhecido[] => filtrar('despesa', fatos, periodo, filtros, hoje);
+): ItemReconhecido[] => filtrar('despesa', derivado, periodo, filtros);
 
 /** Total dos itens: a soma que todo cabeçalho, KPI e ponto de gráfico mostra. */
 export const somarItens = (itens: readonly ItemReconhecido[]): Centavos =>

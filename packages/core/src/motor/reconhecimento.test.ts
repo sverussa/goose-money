@@ -22,6 +22,7 @@ import {
   type ParcelaDivida,
 } from '../modelo';
 import { periodo, type Periodo } from '../periodos';
+import { derivar } from './derivar';
 import {
   despesasReconhecidas,
   type FiltrosDeReconhecimento,
@@ -255,9 +256,9 @@ function divida(
 }
 
 const despesas = (p: Periodo = tudo, filtros: FiltrosDeReconhecimento = {}) =>
-  despesasReconhecidas(f, p, filtros, HOJE);
+  despesasReconhecidas(derivar(f, HOJE), p, filtros);
 const receitas = (p: Periodo = tudo, filtros: FiltrosDeReconhecimento = {}) =>
-  receitasReconhecidas(f, p, filtros, HOJE);
+  receitasReconhecidas(derivar(f, HOJE), p, filtros);
 const totalDespesas = (p?: Periodo, filtros?: FiltrosDeReconhecimento) =>
   somarItens(despesas(p, filtros));
 const totalReceitas = (p?: Periodo, filtros?: FiltrosDeReconhecimento) =>
