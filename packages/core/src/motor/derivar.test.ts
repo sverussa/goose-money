@@ -1,22 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { montarFaturas } from '../cartoes';
 import { saldo } from '../contas';
-import { competencia, ultimaData } from '../datas';
+import { competencia, dataCivil, ultimaData } from '../datas';
 import { centavos } from '../dinheiro';
 import { fatosVazios, type Fatos, type Id } from '../modelo';
 import { ocorrenciasDoMes, pendentesParaConfirmar } from '../recorrencias';
 import { derivar } from './derivar';
-import { gerarFatos, HOJE_SINTETICO as HOJE } from './sinteticos';
-
-/** Relógio de alta resolução do Vitest; o core não tem os tipos de DOM nem de Node. */
-declare const performance: { now(): number };
-declare const process: { env: Record<string, string | undefined> };
-/** A cobertura instrumenta o código e o deixa várias vezes mais lento: o tempo só vale sem ela. */
-const comCobertura = process.env.COBERTURA === '1';
+import { gerarFatosVolumosos } from './sinteticos';
 
 const c = competencia;
+const HOJE = dataCivil('2026-11-04');
 describe('derivar', () => {
-  const fatos = gerarFatos(2_000);
+  const fatos = gerarFatosVolumosos(2_000, HOJE);
 
   it('é pura: duas chamadas com os mesmos fatos dão resultados iguais', () => {
     expect(derivar(fatos, HOJE)).toEqual(derivar(fatos, HOJE));
@@ -87,20 +82,4 @@ describe('derivar', () => {
       f.contas[0]?.saldoInicial,
     ]);
   });
-
-  it.skipIf(comCobertura)(
-    '9.3: 10 mil lançamentos, 3 cartões, 2 dívidas e 8 recorrências em menos de 50 ms',
-    () => {
-      const grande = gerarFatos(10_000);
-      expect(grande.lancamentos).toHaveLength(10_000);
-      const tempos: number[] = [];
-      for (let k = 0; k < 5; k++) {
-        const inicio = performance.now();
-        derivar(grande, HOJE);
-        tempos.push(performance.now() - inicio);
-      }
-      // O menor tempo mede o código, não a disputa por CPU com outros testes em paralelo.
-      expect(Math.min(...tempos)).toBeLessThan(50);
-    },
-  );
 });

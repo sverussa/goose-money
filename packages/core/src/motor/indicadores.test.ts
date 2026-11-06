@@ -32,7 +32,7 @@ import {
   variacao,
 } from './indicadores';
 import { estadoDoPrevisto, previstoAteOFimDoMes } from './projecao';
-import { gerarFatos, HOJE_SINTETICO } from './sinteticos';
+import { gerarFatosVolumosos } from './sinteticos';
 
 const d = dataCivil;
 const c = competencia;
@@ -503,8 +503,9 @@ describe('11.7: nenhum NaN ou Infinity', () => {
 
   it('para fatos gerados e vazios, em datas e períodos variados', () => {
     const casos: [Fatos, string][] = [
-      [gerarFatos(300), HOJE_SINTETICO],
-      [gerarFatos(300), '2025-03-31'],
+      [gerarFatosVolumosos(300, HOJE), '2026-11-04'],
+      [gerarFatosVolumosos(300, HOJE), '2025-03-31'],
+      [gerarFatosVolumosos(300, d('2025-03-31')), '2025-03-31'],
       [fatosVazios(), '2026-02-28'],
     ];
     for (const [fatos, hoje] of casos) {

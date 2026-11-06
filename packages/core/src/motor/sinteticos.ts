@@ -1,16 +1,18 @@
 import { gerarParcelas } from '../cartoes';
-import { competencia, competenciaDe, dataCivil, diaNoMes, somarMeses } from '../datas';
+import {
+  competenciaDe,
+  diaNoMes,
+  somarMeses,
+  ultimaData,
+  type Competencia,
+  type DataCivil,
+} from '../datas';
 import { centavos, D } from '../dinheiro';
 import { tabelaPrice } from '../dividas';
 import { fatosVazios, type Fatos, type Id, type Lancamento } from '../modelo';
 
 /** Fatos sintéticos para os testes de desempenho de 9.3 (só os testes importam este arquivo). */
 
-const c = competencia;
-const d = dataCivil;
-/** O "hoje" dos fatos sintéticos. */
-export const HOJE_SINTETICO = d('2026-11-04');
-const HOJE = HOJE_SINTETICO;
 let seq = 1;
 const novoId = (): Id => `00000000-0000-4000-8000-${String(seq++).padStart(12, '0')}`;
 const controle = {
@@ -30,10 +32,13 @@ function aleatorio(semente: number) {
 }
 
 /**
- * `lancamentos` lançamentos de 24 meses até hoje, 3 cartões com compras parceladas,
+ * `lancamentos` lançamentos nos 24 meses até `hoje` (o mês de `hoje` e os 24 anteriores), 3 cartões com compras parceladas,
  * 2 dívidas (uma com parcela paga e amortização) e 8 recorrências com ocorrências confirmadas.
  */
-export function gerarFatos(lancamentos: number): Fatos {
+export function gerarFatosVolumosos(lancamentos: number, hoje: DataCivil): Fatos {
+  /** Primeiro mês com lançamentos; as demais datas são relativas a ele. */
+  const base = somarMeses(competenciaDe(hoje), -24);
+  const mes = (k: number): Competencia => somarMeses(base, k);
   const sorteio = aleatorio(42);
   const f = fatosVazios();
   const cat = (
@@ -69,7 +74,7 @@ export function gerarFatos(lancamentos: number): Fatos {
       instituicao: null,
       tipo: 'corrente',
       saldoInicial: centavos(100_000 * (k + 1)),
-      dataSaldoInicial: d(k === 2 ? '2025-06-15' : '2024-10-31'),
+      dataSaldoInicial: k === 2 ? diaNoMes(mes(7), 15) : ultimaData(mes(-1)),
       cor: 'conta',
       incluirNoTotal: k !== 1,
       arquivada: false,
@@ -78,9 +83,9 @@ export function gerarFatos(lancamentos: number): Fatos {
   });
   const conta = () => contas[sorteio(contas.length)] as Id;
   const dia = () => {
-    const m = somarMeses(c('2024-11'), sorteio(25));
+    const m = mes(sorteio(25));
     const data = diaNoMes(m, 1 + sorteio(28));
-    return data > HOJE ? HOJE : data;
+    return data > hoje ? hoje : data;
   };
   const lancar = (l: Partial<Lancamento> & Pick<Lancamento, 'tipo' | 'valor'>) => {
     const lanc: Lancamento = {
@@ -117,14 +122,14 @@ export function gerarFatos(lancamentos: number): Fatos {
       cor: 'cartao',
       limite: centavos(2_000_000),
       contaPagamentoId: contas[0] as Id,
-      competenciaInicial: c('2025-01'),
+      competenciaInicial: mes(2),
       arquivado: false,
     });
     f.cartaoCiclos.push({
       ...controle,
       id: novoId(),
       cartaoId: id,
-      vigenteDesde: c('2024-01'),
+      vigenteDesde: mes(-10),
       diaFechamento: fecha as number,
       diaVencimento: vence as number,
     });
@@ -158,17 +163,17 @@ export function gerarFatos(lancamentos: number): Fatos {
       tipo: destino === 'creditado_em_conta' ? 'emprestimo' : 'financiamento',
       credor: destino,
       valorContratado: pv,
-      dataContratacao: d('2025-01-10'),
+      dataContratacao: diaNoMes(mes(2), 10),
       destinoDoValor: destino,
       sistemaAmortizacao: 'price',
       taxaMensal: '0.0149',
       valorParcelaInformada: null,
       numeroParcelas: 48,
-      dataPrimeiraParcela: d('2025-02-10'),
+      dataPrimeiraParcela: diaNoMes(mes(3), 10),
       contaDebitoId: contas[0] as Id,
       categoriaId: destino === 'pago_a_terceiro' ? veiculo : null,
     });
-    for (const l of tabelaPrice(pv, new D('0.0149'), 48, d('2025-02-10')))
+    for (const l of tabelaPrice(pv, new D('0.0149'), 48, diaNoMes(mes(3), 10)))
       f.parcelasDivida.push({
         ...controle,
         id: novoId(),
@@ -204,7 +209,7 @@ export function gerarFatos(lancamentos: number): Fatos {
       id,
       natureza: renda ? 'renda' : 'gasto',
       descricao: `Recorrência ${String(k)}`,
-      competenciaInicio: c('2025-01'),
+      competenciaInicio: mes(2),
       competenciaFim: null,
       autoConfirmar: k % 2 === 0,
       ativa: true,
@@ -213,7 +218,7 @@ export function gerarFatos(lancamentos: number): Fatos {
       ...controle,
       id: novoId(),
       recorrenciaId: id,
-      vigenteDesde: c('2025-01'),
+      vigenteDesde: mes(2),
       valor: centavos(10_000 + k * 1_000),
       dia: 5 + k,
       formaPagamento: noCartao ? 'cartao' : 'conta',
@@ -222,7 +227,7 @@ export function gerarFatos(lancamentos: number): Fatos {
       categoriaId: renda ? salario : (despesas[0] as Id),
     });
     if (noCartao) continue;
-    for (let m = c('2025-01'); m < c('2026-10'); m = somarMeses(m, 1)) {
+    for (let m = mes(2); m < mes(23); m = somarMeses(m, 1)) {
       const data = diaNoMes(m, 5 + k);
       const l = lancar({
         tipo: renda ? 'receita' : 'despesa',

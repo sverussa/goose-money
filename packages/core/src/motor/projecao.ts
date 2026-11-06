@@ -11,9 +11,10 @@ import {
 } from '../datas';
 import { type Centavos, centavos, mais, somar } from '../dinheiro';
 import type { Cartao, Id } from '../modelo';
-import { faturaDoGastoNoCartao, ocorrenciasDoMes } from '../recorrencias';
+import { faturaDoGastoNoCartao } from '../recorrencias';
 import type { Derivado } from './derivar';
 import { saldoEmContas } from './indicadores';
+import { ocorrenciasAte } from './ocorrencias';
 import { ddmm, juntar } from './reconhecimento';
 
 /** PROMPT 3.9: a única função de previsão. A Barra e a aba Projeções leem daqui. */
@@ -143,35 +144,30 @@ function pendentes(derivado: Derivado, ate: DataCivil) {
   }
 
   // Recorrências não confirmadas nem ignoradas, desde o início (vencidas e atrasadas também).
-  const atual = competenciaDe(hoje);
-  const inicio = fatos.recorrencias
-    .filter((r) => r.ativa)
-    .reduce((a, r) => (r.competenciaInicio < a ? r.competenciaInicio : a), atual);
-  for (let m = inicio; m <= competenciaDe(ate); m = somarMeses(m, 1))
-    for (const o of m === atual ? derivado.ocorrenciasDoMes : ocorrenciasDoMes(fatos, m, hoje)) {
-      if (o.status === 'confirmada' || o.status === 'ignorada') continue;
-      const { descricao } = o.recorrencia;
-      const ref = {
-        entidade: 'ocorrencia',
-        recorrenciaId: o.recorrenciaId,
-        competencia: o.competencia,
-      } as const;
-      const base = { data: o.data, valor: o.valor, texto: descricao, ref, fatura: null };
-      if (o.recorrencia.natureza === 'gasto' && o.cartaoId !== null) {
-        // Gasto fixo no cartão: só dentro da fatura em que cai, nunca em "Gastos fixos em conta".
-        const cartao = cartaoDe(derivado, o.cartaoId);
-        if (incluida(cartao.contaPagamentoId))
-          itens.push(
-            naFatura(derivado, cartao, faturaDoGastoNoCartao(fatos, o) as Competencia, {
-              ...base,
-              texto: juntar(descricao, cartao.nome),
-            }),
-          );
-      } else if (incluida(o.contaId)) {
-        if (o.recorrencia.natureza === 'gasto') itens.push({ ...base, grupo: 'gastosFixosConta' });
-        else (o.status === 'atrasada' ? fora : itens).push({ ...base, grupo: 'rendas' });
-      }
+  for (const o of ocorrenciasAte(derivado, ate)) {
+    if (o.status === 'confirmada' || o.status === 'ignorada') continue;
+    const { descricao } = o.recorrencia;
+    const ref = {
+      entidade: 'ocorrencia',
+      recorrenciaId: o.recorrenciaId,
+      competencia: o.competencia,
+    } as const;
+    const base = { data: o.data, valor: o.valor, texto: descricao, ref, fatura: null };
+    if (o.recorrencia.natureza === 'gasto' && o.cartaoId !== null) {
+      // Gasto fixo no cartão: só dentro da fatura em que cai, nunca em "Gastos fixos em conta".
+      const cartao = cartaoDe(derivado, o.cartaoId);
+      if (incluida(cartao.contaPagamentoId))
+        itens.push(
+          naFatura(derivado, cartao, faturaDoGastoNoCartao(fatos, o) as Competencia, {
+            ...base,
+            texto: juntar(descricao, cartao.nome),
+          }),
+        );
+    } else if (incluida(o.contaId)) {
+      if (o.recorrencia.natureza === 'gasto') itens.push({ ...base, grupo: 'gastosFixosConta' });
+      else (o.status === 'atrasada' ? fora : itens).push({ ...base, grupo: 'rendas' });
     }
+  }
 
   // Faturas com saldo (paga e transportada têm saldo zero); vencidas entram no mês corrente.
   for (const [cartaoId, faturas] of derivado.faturas) {
