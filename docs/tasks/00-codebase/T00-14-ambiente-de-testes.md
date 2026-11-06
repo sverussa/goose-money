@@ -93,3 +93,26 @@ Fazer `make check` e `make test-e2e` levarem o mesmo tempo na décima rodada que
 - [ ] Com o cache do Vite apagado, `make test-e2e` passa sem recarga de página.
 - [ ] `make test-e2e-completo` passa em Chromium e WebKit.
 - [ ] Tabela de tempos antes e depois no resumo da tarefa.
+
+## Decisões e medições
+
+Medido em 06/11/2026, num Mac de 8 núcleos e 8 GB, com o Supabase local compartilhado.
+
+**`explain` de `carregar_tudo`** como o usuário de teste com 10 mil lançamentos, num banco de 67 mil (antes) e de 224 mil lançamentos (depois): `Seq Scan` em `contas`, `cartoes`, `compras`, `itens_fatura` e `dividas`; `recorrencias` varria inteiro o índice `(id, created_by)`. A V012 cria `<tabela>_por_dono` nessas seis. As outras já tinham índice começando por `created_by` com `not is_deleted`. A chamada inteira caiu de 543 ms para 281 ms; o resto é o `jsonb_agg` dos 10 mil lançamentos.
+
+**A causa principal da falha de tempo** não era o banco: era a disputa de CPU. O teste "10 mil lançamentos em menos de 1 s" levava 3,2 s no `make check` e passava sozinho. Ele e o `massa.test.ts` foram para o projeto `db-tempo`, depois de todos os outros e um arquivo por vez (`fileParallelism: false`), porque os dois juntos ainda estouravam o limite.
+
+**Limpeza:** a ordem inversa de `tabelas_de_negocio()` não basta. A lista não está em ordem de dependência (`lancamentos` aponta para `parcelas_divida`) e `on delete restrict` é checado na hora, mesmo com a chave adiável. O script desliga os gatilhos só nas tabelas de negócio (`set local session_replication_role = replica`) e os religa antes de apagar de `auth.users`, para o `on delete cascade` do Auth levar sessões e identidades. Como toda chave leva o dono junto (D71), não sobra referência solta. Na primeira rodada saíram 365 usuários em 1,5 s.
+
+**Serviços desligados** no `config.toml`: `realtime`, `storage`, `edge_runtime` e `analytics` (o `vector` sai junto). Nenhum aparece no código do app nem dos testes. Os containers caíram de 12 para 7.
+
+| Medida | Antes | Depois (rodadas 1 / 2 / 3) |
+| --- | --- | --- |
+| `make check` | 31,8 s, **1 falha** (tempo de `carregar_tudo`) | 33,1 / 32,1 / 32,4 s, sem falhas |
+| `make test-e2e` | 134,6 s (Chromium e WebKit, 128 testes) | 54,4 / 55,1 / 54,1 s (Chromium, 64 testes) |
+| `make test-e2e-completo` | — | 103,7 s (Chromium e WebKit, 128 testes) |
+| Carga máxima da máquina no e2e | 17,6 | 7,9 |
+| Recargas do Vite com o cache apagado | — | 0 |
+| `carregar_tudo` (10 mil lançamentos) | 543 ms | 281 ms |
+
+Recomendação para a máquina (fora do repositório): Docker Desktop com 4 CPUs e 6 GB.

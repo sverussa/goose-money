@@ -81,6 +81,8 @@ describe('carregar_tudo()', () => {
       select ${a.id}, 'despesa', date '2026-01-01' + (i % 300), 100 + i, ${String(conta?.id)},
         (select id from public.categorias where created_by = ${a.id} and sistema = 'a_classificar')
       from generate_series(1, 10000) i`;
+    // Estatísticas novas logo depois da carga, para o plano usar os índices (T00-14).
+    await sqlComoPostgres.unsafe(`analyze ${TABELAS.map((t) => `public.${t}`).join(', ')}`);
     await carregar(a.cliente); // aquece a conexão e o plano
     const inicio = performance.now();
     const tudo = await carregar(a.cliente);

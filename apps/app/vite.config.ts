@@ -16,5 +16,20 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   server: { port: porta, strictPort: true },
+  // Pré-otimizadas na partida: descobertas no primeiro uso, faziam o Vite recarregar a página no
+  // meio dos testes (T00-14).
+  optimizeDeps: {
+    include: [
+      '@tauri-apps/api',
+      '@tauri-apps/plugin-deep-link',
+      '@tauri-apps/plugin-dialog',
+      '@tauri-apps/plugin-fs',
+      'cmdk',
+      'vaul',
+      'recharts',
+      'html-to-image',
+      'radix-ui',
+    ],
+  },
   preview: { port: porta, strictPort: true },
 });

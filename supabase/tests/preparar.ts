@@ -1,4 +1,7 @@
-// Antes dos testes de banco: sem o Supabase local, para com uma mensagem clara.
+import { limparUsuariosDeTeste } from './limpar';
+
+// Antes dos testes de banco: sem o Supabase local, para com uma mensagem clara. Depois, apaga os
+// usuários de teste de rodadas antigas, para o banco não crescer a cada rodada (T00-14).
 export default async function preparar(): Promise<void> {
   const arquivo = new URL('.env', import.meta.url);
   try {
@@ -15,4 +18,5 @@ export default async function preparar(): Promise<void> {
     console.error('\nSupabase local desligado: rode make db-start e make db-migrate.\n');
     throw new Error('Supabase local desligado: rode make db-start e make db-migrate.');
   }
+  await limparUsuariosDeTeste();
 }

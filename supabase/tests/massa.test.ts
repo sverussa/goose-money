@@ -87,6 +87,7 @@ beforeAll(async () => {
   a = await criarUsuario();
   // Dados de exemplo: o app gera com gerarSeed e grava num comando (T05-29, D50).
   await gravarOk(a.cliente, opsDosFatos(gerarSeed(hoje, a.id)));
+  await sqlComoPostgres`analyze public.lancamentos, public.compras, public.parcelas`;
 });
 
 describe('apagar tudo e importar', () => {
@@ -198,5 +199,6 @@ describe('limite de uma chamada', () => {
     const ms = performance.now() - inicio;
     expect(r.lancamentos).toHaveLength(10_000);
     expect(ms).toBeLessThan(8000); // statement_timeout do papel authenticated no Supabase
+    await sqlComoPostgres`analyze public.lancamentos`; // estatísticas depois da carga (T00-14)
   }, 30_000);
 });

@@ -30,22 +30,24 @@ Database rules (D22–D24, `docs/PROMPT.md` 9.4 and 12):
 
 Run `make` to list every target. Each target only calls `pnpm`, `docker compose` or `pnpm exec supabase`; the logic lives in the root `package.json` scripts. The Makefile loads `.env` (copied from `.env.example` by `make setup`).
 
-| Target                                                | What it does                                                                                                           |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `make setup`                                          | `pnpm install` and create `.env` from `.env.example`                                                                   |
-| `make dev`                                            | Web app with Vite on `PORTA_APP` (default 1420; each worktree uses its own, 1421 to 1424)                              |
-| `make dev-desktop`                                    | Tauri app in development (always port 1420)                                                                            |
-| `make build` / `make build-desktop`                   | Web build / Tauri bundle (`.app`, `.dmg`)                                                                              |
-| `make db-start` / `db-stop` / `db-status`             | Local Supabase in Docker; `db-status` shows the anon key                                                               |
-| `make db-migrate` / `db-info` / `db-validate`         | Flyway migrate, info and validate on the local database                                                                |
-| `make db-reset`                                       | Recreate the local database and migrate (asks to type `RESET`)                                                         |
-| `make db-migrate-prod`                                | Migrate production with `.env.producao` (asks to type `PRODUCAO`)                                                      |
-| `make db-types`                                       | Generate `apps/app/src/data/database.types.ts` from the local database                                                 |
-| `make test`                                           | Vitest (core, app and database, `pnpm test:db` alone); coverage: `pnpm test:coverage`                                  |
-| `make test-e2e`                                       | Playwright + axe-core (Chromium and WebKit)                                                                            |
-| `make lint` / `format` / `format-check` / `typecheck` | ESLint (with layer boundary rules), Prettier, `tsc` in every package                                                   |
-| `make check`                                          | `format-check` + `lint` + `typecheck` + `test` + `db-validate`; run before every PR (needs the local Supabase running) |
-| `make deploy-web` / `db-eliminar-usuario`             | Not implemented yet (T06-05, T06-06)                                                                                   |
+| Target                                                | What it does                                                                                                                                          |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `make setup`                                          | `pnpm install` and create `.env` from `.env.example`                                                                                                  |
+| `make dev`                                            | Web app with Vite on `PORTA_APP` (default 1420; each worktree uses its own, 1421 to 1424)                                                             |
+| `make dev-desktop`                                    | Tauri app in development (always port 1420)                                                                                                           |
+| `make build` / `make build-desktop`                   | Web build / Tauri bundle (`.app`, `.dmg`)                                                                                                             |
+| `make db-start` / `db-stop` / `db-status`             | Local Supabase in Docker; `db-status` shows the anon key                                                                                              |
+| `make db-migrate` / `db-info` / `db-validate`         | Flyway migrate, info and validate on the local database                                                                                               |
+| `make db-reset`                                       | Recreate the local database and migrate (asks to type `RESET`)                                                                                        |
+| `make db-migrate-prod`                                | Migrate production with `.env.producao` (asks to type `PRODUCAO`)                                                                                     |
+| `make db-types`                                       | Generate `apps/app/src/data/database.types.ts` from the local database                                                                                |
+| `make test`                                           | Vitest (core, app and database, `pnpm test:db` alone); coverage: `pnpm test:coverage`                                                                 |
+| `make test-e2e`                                       | Playwright + axe-core, Chromium only, 2 workers (day to day)                                                                                          |
+| `make test-e2e-completo`                              | Playwright + axe-core in Chromium and WebKit; run before every merge                                                                                  |
+| `make db-limpar-testes`                               | Delete the `@teste.local` users older than 1 hour and their rows (also runs before Vitest and Playwright)                                             |
+| `make lint` / `format` / `format-check` / `typecheck` | ESLint (with layer boundary rules), Prettier, `tsc` in every package                                                                                  |
+| `make check`                                          | `format-check` + `lint` + `typecheck` + `test` + `db-validate`; run before every PR, then `make test-e2e-completo` (needs the local Supabase running) |
+| `make deploy-web` / `db-eliminar-usuario`             | Not implemented yet (T06-05, T06-06)                                                                                                                  |
 
 Single package: `pnpm --filter @goose-money/core test`, `pnpm --filter @goose-money/app typecheck`. Single test file: `pnpm exec vitest run packages/core/src/index.test.ts`.
 
