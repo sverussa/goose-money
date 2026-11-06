@@ -32,7 +32,7 @@ Decisões tomadas fora do texto original do `PROMPT.md`, em casos não cobertos 
 | D37 | **"Últimos N meses" incluem o mês corrente até hoje** (com hoje em 04/11, "Últimos 3 meses" = 01/09 a 04/11). O período anterior corta no mesmo dia (01/06 a 04/08). Diverge do design, que mostra os meses completos anteriores. | Mostrar os dados mais recentes | 8.2, 3.10 |
 | D38 | **Transporte de saldo e crédito de pagamento da fatura derivados** no Motor, sem gravar nada. | Funciona com o app fechado e não fica inconsistente | 3.5 |
 | D39 | **Inicialização do usuário chamada pelo app** depois do login e da confirmação do cadastro, com função idempotente. | Não mexe no schema `auth` do Supabase | 6.9, 12.2 |
-| D40 | **Usuário novo recebe as 8 categorias da paleta do design**, além das de sistema. | Começar a lançar sem configurar nada | 6.9, 4.3 |
+| D40 | **Usuário novo recebe as 8 categorias de despesa da paleta do design e a categoria de receita "Renda"**, além das de sistema. "Renda" usa a cor de "Outras" (a paleta tem 8 cores). A de receita foi incluída pelo Saulo em 06/11/2026 (T01-19): sem ela, salário e freelance não tinham categoria. | Começar a lançar sem configurar nada | 6.9, 4.3 |
 | D41 | **Leitura por uma função `carregar_tudo()`** que devolve um único JSON. Revê o item "Leitura" dos detalhes de D18. | Uma requisição, sem o limite de 1.000 linhas por página | 9.3 |
 | D42 | **Dados do banco validados com Zod sempre**, também em produção. | Dado corrompido não chega ao Motor | 9 |
 | D43 | **Tema escuro gerado em execução** com `@material/material-color-utilities` a partir da semente; o claro continua estático, vindo do design. | Permitir trocar a cor semente no futuro | 4.3, 6.9 |

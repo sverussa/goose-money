@@ -60,7 +60,7 @@ describe('gerarSeed', () => {
     ).toBe(Object.values(SEED).flat().length);
   });
 
-  it('categorias de sistema e as 8 padrão da paleta (D40)', () => {
+  it('categorias de sistema, as 8 de despesa da paleta e Renda (D40)', () => {
     const iniciais = categoriasIniciais({
       agora: '2026-11-04T12:00:00Z',
       usuario: USUARIO,
@@ -81,7 +81,9 @@ describe('gerarSeed', () => {
       ['Assinaturas', 'categorica-6'],
       ['Lazer', 'categorica-7'],
       ['Outras', 'categorica-8'],
+      ['Renda', 'categorica-8'],
     ]);
+    expect(porNome(iniciais, 'Renda').tipo).toBe('receita');
   });
 });
 

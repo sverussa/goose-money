@@ -14,7 +14,7 @@ Garantir que todo usuário tenha as categorias de sistema e uma linha de prefer�
 
 - Função `R__inicializar_usuario.sql`: `public.inicializar_usuario() returns void`, `security invoker`, **idempotente** (pode rodar várias vezes sem duplicar):
   - cria as categorias de sistema "A classificar", "Juros e encargos", "Tarifas", "Ajuste de saldo" (`sistema = true`)
-  - cria as 8 categorias padrão da paleta do design: Moradia, Transporte, Alimentação, Compras, Saúde e bem-estar, Assinaturas, Lazer, Outras, cada uma com sua cor fixa (D40)
+  - cria as 8 categorias padrão de despesa da paleta do design: Moradia, Transporte, Alimentação, Compras, Saúde e bem-estar, Assinaturas, Lazer, Outras, cada uma com sua cor fixa, e a categoria de receita "Renda", com a cor de "Outras" (D40). A lista, os ícones e as cores estão em `categoriasIniciais` de `packages/core/src/seed/`
   - cria a linha de `preferencias` com os padrões (limite de alerta R$ 500,00, horizonte padrão 12 meses, ocultar valores ao abrir desligado, tema "sistema")
 - Disparo: o app chama `inicializar_usuario()` logo depois do login e da confirmação do cadastro (T05-30), antes de carregar os dados (D39). Nada no schema `auth`.
 - Testes: usuário novo fica com as categorias e preferências; rodar duas vezes não duplica.
@@ -39,4 +39,4 @@ Dados de exemplo (T02-10, T05-29).
 Respondidas pelo Saulo em 05/11/2026, ambas na opção A.
 
 - **D1. Disparo** (D39): o app chama a função depois do login.
-- **D2. Categorias padrão** (D40): as 8 da paleta do design.
+- **D2. Categorias padrão** (D40): as 8 de despesa da paleta do design e "Renda" (receita).

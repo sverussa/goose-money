@@ -7,7 +7,6 @@ import {
   type Contexto,
   contratarDivida,
   criarCartao,
-  criarCategoria,
   criarConta,
   criarRecorrencia,
   lancar,
@@ -51,7 +50,7 @@ export const geradorDeIds = (criadoPor: Id, inicio = 1): (() => Id) => {
 };
 
 type Inicial = [nome: string, tipo: TipoCategoria, icone: string, sistema: CategoriaSistema | null];
-/** As 4 de sistema (MODELO-DADOS 3.1) e as 8 padrão da paleta, na ordem das cores (D40, T02-08). */
+/** As 4 de sistema (MODELO-DADOS 3.1), as 8 de despesa da paleta, na ordem das cores, e "Renda" (D40, T02-08). */
 const INICIAIS: Inicial[] = [
   ['A classificar', 'ambos', 'circle-help', 'a_classificar'],
   ['Juros e encargos', 'despesa', 'percent', 'juros_encargos'],
@@ -65,7 +64,10 @@ const INICIAIS: Inicial[] = [
   ['Assinaturas', 'despesa', 'repeat', null],
   ['Lazer', 'despesa', 'party-popper', null],
   ['Outras', 'despesa', 'ellipsis', null],
+  ['Renda', 'receita', 'banknote', null],
 ];
+/** A paleta tem 8 cores; "Renda" usa a de "Outras", que nunca aparece com ela num gráfico de despesas. */
+const corDe = (i: number) => `categorica-${String(Math.min(i, 8))}`;
 
 /** Categorias de um usuário novo (D39, D40); a inicialização do banco é a T02-08. */
 export function categoriasIniciais(ctx: Omit<Contexto, 'hoje'>): Categoria[] {
@@ -79,7 +81,7 @@ export function categoriasIniciais(ctx: Omit<Contexto, 'hoje'>): Categoria[] {
     nome,
     tipo,
     icone,
-    cor: sistema === null ? `categorica-${String(++cor)}` : null,
+    cor: sistema === null ? corDe(++cor) : null,
     categoriaPaiId: null,
     sistema,
   }));
@@ -116,16 +118,6 @@ export function gerarSeed(hoje: DataCivil, criadoPor: Id): Fatos {
       limiteAlerta: r$(500),
       horizontePadrao: 12,
       ocultarValoresAoAbrir: false,
-    }),
-  );
-  // Categoria de receita: as 8 padrão são todas de despesa (Decisão do T01-19).
-  fazer((x) =>
-    criarCategoria(x, ctx(), {
-      nome: 'Renda',
-      tipo: 'receita',
-      icone: 'banknote',
-      cor: 'categorica-8',
-      categoriaPaiId: null,
     }),
   );
 
