@@ -57,3 +57,11 @@ Casos que a spec não cobre ou em que o texto da tarefa diverge do `MODELO-DADOS
 1. Retrato da ocorrência no banco, igual ao core: confirmada exige valor, data, categoria e exatamente um par (conta + lançamento) ou (cartão + compra); ignorada tem o retrato todo nulo (`ocorrencias_retrato`).
 2. Não conferidos no banco (core, D36): renda só com forma de pagamento "conta"; excluir a recorrência levar versões e ocorrências; excluir o lançamento ou a compra de uma ocorrência levar a ocorrência (D68).
 3. O teste de concorrência usa duas sessões do mesmo usuário gravando a mesma confirmação ao mesmo tempo: uma grava, a outra recebe `23505` e o lote dela (com a receita) é desfeito inteiro.
+
+## T02-08
+1. Idempotência: as categorias de sistema que faltarem são criadas a cada chamada; as 9 categorias padrão e as preferências, só quando o usuário ainda não tem preferências (primeiro acesso). Assim, uma categoria padrão excluída pelo usuário não volta no próximo login.
+2. Duas chamadas ao mesmo tempo (duas abas) não duplicam: trava consultiva por usuário durante a transação.
+3. Categoria padrão com nome já usado (por exemplo, backup importado antes da inicialização) não é criada: fica a do usuário.
+4. Sem tema nas preferências (D64: fica no `localStorage`).
+5. As categorias ficam escritas no SQL (o banco não importa o core); um teste compara nome, tipo, ícone, cor e chave de sistema com `categoriasIniciais` do core.
+6. A chamada pelo app fica nas tarefas que já a preveem: T03-01 (depois do login) e T05-30 (depois da confirmação do cadastro).
