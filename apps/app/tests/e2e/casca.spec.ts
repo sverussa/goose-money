@@ -58,7 +58,10 @@ for (const l of larguras) {
           l.nome === 'compact' &&
           !['Painel', 'Lançamentos', 'Contas', 'Cartões'].includes(rotulo)
         ) {
-          await page.getByRole('button', { name: /^Mais/ }).click();
+          await page
+            .getByRole('navigation', { name: 'Navegação principal' })
+            .getByRole('button', { name: /^Mais/ })
+            .click();
           await page.getByRole('dialog').getByRole('link', { name: rotulo }).click();
         } else {
           await page

@@ -104,6 +104,33 @@ export const mensagens = {
     titulo: 'Lançar',
     provisorio: 'O formulário de lançamento ainda está em construção.',
   },
+  /** Barra de Totais (5.3): rótulo e a frase do tooltip de cada indicador. */
+  barra: {
+    rotulo: 'Barra de Totais',
+    saldoEmContas: {
+      rotulo: 'Saldo em contas',
+      dica: 'Soma do saldo de hoje das contas incluídas no total.',
+    },
+    previstoAteOFimDoMes: {
+      rotulo: 'Previsto até o fim do mês',
+      dica: (ate: string) =>
+        `Saldo em contas + o que ainda vai entrar − o que ainda vai sair até ${ate}.`,
+    },
+    aPagarNosCartoes: {
+      rotulo: 'A pagar nos cartões',
+      dica: 'Faturas vencidas, fechadas e abertas de todos os cartões.',
+    },
+    resultadoDoMes: {
+      rotulo: 'Resultado do mês',
+      dica: (mes: string) => `Receitas − despesas reconhecidas em ${mes}, por competência.`,
+    },
+    patrimonioLiquido: {
+      rotulo: 'Patrimônio líquido',
+      dica: 'Saldo em todas as contas − obrigações de cartão − saldo devedor de dívidas.',
+    },
+    mais: 'Mais 3 indicadores',
+    menos: 'Menos',
+  },
   /** Microcopy de 4.3. */
   acoes: {
     lancar: 'Lançar',

@@ -1,4 +1,4 @@
-import { centavos } from '@goose-money/core';
+import { centavos, novaCompra } from '@goose-money/core';
 import { Landmark } from 'lucide-react';
 
 import { ContextHeader } from '@/components/ContextHeader';
@@ -7,12 +7,48 @@ import { MonthSelector } from '@/components/MonthSelector';
 import { usePeriodoDaUrl } from '@/components/periodo';
 import { PeriodPicker } from '@/components/PeriodPicker';
 import { Button } from '@/components/ui/button';
+import { useFatos } from '@/queries/fatos';
+import { useComando, useContexto } from '@/queries/useComando';
 
 // Valores de exemplo, só para revisão visual em desenvolvimento (`#/dev/casca`, dentro da casca).
+/** Uma compra à vista de R$ 89,90 no primeiro cartão, pelo caminho normal de gravação (T03-04). */
+function SimularCompra() {
+  const fatos = useFatos();
+  const contexto = useContexto();
+  const { executar, salvando } = useComando();
+  if (fatos.estado !== 'pronto') return null;
+  const cartao = fatos.dados.cartoes.find((c) => !c.arquivado);
+  const categoria = fatos.dados.categorias.find((c) => c.tipo === 'despesa' && c.sistema === null);
+  if (!cartao || !categoria) return null;
+  return (
+    <Button
+      variant="outlined"
+      disabled={salvando}
+      onClick={() => {
+        const ctx = contexto();
+        void executar(
+          novaCompra(fatos.dados, ctx, {
+            cartaoId: cartao.id,
+            data: ctx.hoje,
+            descricao: 'Compra de teste',
+            categoriaId: categoria.id,
+            observacao: null,
+            valorTotal: centavos(8990),
+            numeroParcelas: 1,
+          }),
+        );
+      }}
+    >
+      Simular compra no cartão
+    </Button>
+  );
+}
+
 export function CascaDev() {
   const [periodo, setPeriodo] = usePeriodoDaUrl('dev', 'ultimos-3-meses');
   return (
     <div className="flex flex-col gap-6">
+      <SimularCompra />
       <MonthSelector />
       <ContextHeader
         rotulo="Totais do mês"

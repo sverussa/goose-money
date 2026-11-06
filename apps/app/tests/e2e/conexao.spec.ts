@@ -11,7 +11,7 @@ async function entrar(page: Page) {
   await page.getByLabel('E-mail').fill(u.email);
   await page.getByLabel('Senha', { exact: true }).fill(u.senha);
   await page.getByRole('button', { name: 'Entrar' }).click();
-  await expect(page.getByLabel('Barra de Totais (centavos)')).toBeVisible();
+  await expect(page.getByRole('link', { name: /^Saldo em contas/ })).toBeVisible();
 }
 
 const banner = (page: Page) => page.getByRole('status').filter({ hasText: 'Sem conexão' });
