@@ -46,8 +46,8 @@ export interface FiltrosDeReconhecimento {
   busca?: string;
 }
 
-const ddmm = (d: DataCivil) => `${d.slice(8)}/${d.slice(5, 7)}`;
-const juntar = (...partes: (string | null | undefined)[]) =>
+export const ddmm = (d: DataCivil) => `${d.slice(8)}/${d.slice(5, 7)}`;
+export const juntar = (...partes: (string | null | undefined)[]) =>
   partes.filter((p) => p?.trim()).join(' · ');
 const normalizar = (s: string) =>
   s

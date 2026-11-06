@@ -1,4 +1,5 @@
 export * from './derivar';
+export * from './projecao';
 export {
   despesasReconhecidas,
   type EstadoDoItem,
