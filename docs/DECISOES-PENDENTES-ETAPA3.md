@@ -11,3 +11,10 @@ Casos que a spec não cobre ou em que o texto da tarefa diverge do `MODELO-DADOS
 6. `?voltar=` só aceita rota interna (começa com `/`, sem `//` e sem `/login`); qualquer outro valor volta para `/`, para o link de login não levar a outro site.
 7. `criarUsuario` (`supabase/tests/apoio.ts`) passou a devolver também e-mail e senha, para o Playwright entrar pela tela. A `service_role` continua só no código de teste e em `supabase/tests/.env`.
 8. "Fechar e reabrir o navegador" é testado abrindo uma aba nova no mesmo contexto: ela começa com o `sessionStorage` vazio e o mesmo `localStorage`, como o navegador reaberto.
+
+## T03-02
+1. Um mapeamento só, por convenção de nomes (tabela e coluna são o nome do domínio em `snake_case`), em vez de um `deBanco`/`paraBanco` escrito à mão por tabela. A checagem de tipos (`Confere` em `mapeamento.ts`) compara, tabela por tabela, as colunas de `database.types.ts` com os campos do core: coluna ou tabela nova de um lado só quebra o `tsc` (conferido acrescentando uma coluna aos tipos gerados).
+2. `paraBanco` não manda `id`, `created_at`, `updated_at` e `created_by` (o `gravar` os preenche) e manda `is_deleted`. Por isso a ida e volta é `deBanco(paraBanco(x) + colunas de controle do banco) = x`.
+3. `taxa_mensal` (`numeric`) chega do JSON como número e vira texto com até 15 dígitos significativos, sem notação científica (`1e-7` → `"0.0000001"`). Uma taxa com mais de 15 dígitos significativos perderia precisão na leitura (não acontece com taxa digitada). Na gravação ela vai como texto, sem perda.
+4. Todo número lido, salvo `taxa_mensal`, precisa ser inteiro seguro; senão `carregarTudo` falha com "tabela.coluna: valor não é um inteiro seguro".
+5. Os testes do app que dependem do banco ficam em `apps/app/tests/db`, num projeto Vitest próprio (`app-db`), fora do CI como o `db`; `pnpm test:db` roda os dois. `src/data/supabase.ts` usa o `localStorage` ao ser importado, que o Node não tem: os testes chamam as funções puras (`lerFatos`, `paraBanco`) com o cliente dos utilitários de `supabase/tests`.
