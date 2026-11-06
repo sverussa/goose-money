@@ -37,3 +37,12 @@ Casos que a spec não cobre ou em que o texto da tarefa diverge do `MODELO-DADOS
 7. Correção da T03-03: o `derivar` passou a ser feito uma vez para o app inteiro (`derivarUmaVez`, pela identidade dos fatos e pelo dia), em vez de uma vez por componente que usa `useDerivado` (D13).
 8. Sonner: `components/ui/sonner.tsx` escrito à mão, como o do shadcn mas sem `next-themes` (o tema escuro é da T04-02).
 9. **Verificação pendente (sem tela ainda):** o botão mostrando "Salvando…" e o snackbar com "Desfazer" na interface ficam para o Playwright da T05-02 (primeiro formulário). A lógica está testada no Node e contra o banco.
+
+## T03-05
+1. A conexão (`src/data/conexao.ts`) é o `fetch` do próprio cliente Supabase (`global.fetch`): toda chamada sem resposta (inclusive do Auth) liga o "sem conexão", e qualquer resposta HTTP o desliga. Com o navegador dizendo "online" mas a chamada falhando, uma sonda a `auth/v1/health` tenta de novo a cada 15 s até haver resposta. Requisição cancelada (`AbortError`) não conta.
+2. O `onlineManager` do TanStack Query segue a mesma conexão: consultas pausam sem rede e retomam quando ela volta.
+3. `refetchOnReconnect: 'always'` em vez de `true`: com `true` e `staleTime` de 30 s, voltar a rede logo depois de uma carga não recarregava, e o critério pede recarregar ao voltar (outro aparelho pode ter gravado no intervalo).
+4. Mutações com `networkMode: 'always'`: sem isso o TanStack deixaria a gravação offline pausada em silêncio ("Salvando…" sem fim). Agora ela falha na hora com "Sem conexão: tente de novo quando a internet voltar", sem chamar o banco.
+5. O banner fica, por enquanto, no topo das rotas autenticadas (`RotaProtegida`); a T04-05 o põe logo abaixo da top app bar. Não aparece no login, que tem a própria mensagem.
+6. `BotaoSalvar` (`src/components`): "Salvando…" durante a gravação e desabilitado sem conexão, com a explicação no `title` até o `Tooltip` da T04-03.
+7. **Verificação pendente (sem tela ainda):** "Salvar fica desabilitado offline" na interface fica para o Playwright da T05-02, primeiro formulário a usar o `BotaoSalvar`. O banner, a recarga ao voltar e a recusa da gravação offline estão testados.
