@@ -74,7 +74,7 @@ Regras da seção 3 em `packages/core`, TypeScript puro e testado. Não depende 
 | [T01-18 · Efeitos na Barra de Totais e desempenho](01-dominio/T01-18-efeitos-barra-desempenho.md) | Motor | T01-17 | — |
 | [T01-19 · Gerador de dados de exemplo](01-dominio/T01-19-seed-dados-exemplo.md) | Seed | T01-17 | — |
 | ✅ [T01-20 · Backup: envelope, validação e relatório](01-dominio/T01-20-backup-validacao.md) | Backup | T01-05 | — |
-| [T01-21 · Pendências e badges do menu](01-dominio/T01-21-pendencias-badges.md) | Motor | T01-15 | — |
+| ✅ [T01-21 · Pendências e badges do menu](01-dominio/T01-21-pendencias-badges.md) | Motor | T01-15 | — |
 | ✅ [T01-22 · Comandos: mudanças e inversas](01-dominio/T01-22-comandos-mudancas.md) | Comandos | T01-08, T01-09, T01-12, T01-13 | — |
 
 ## Etapa 2 · Banco
