@@ -2,6 +2,7 @@ import type { DataCivil } from '../datas';
 import { D, type Centavos } from '../dinheiro';
 import {
   amortizarExtraordinario,
+  parcelasPagasPor,
   type LinhaTabela,
   tabelaParcelaInformada,
   tabelaPrice,
@@ -34,9 +35,7 @@ export function parcelasDaDivida(
   fatos: Fatos,
   dividaId: Id,
 ): (ParcelaDivida & { paga: boolean })[] {
-  const pagas = new Set(
-    fatos.lancamentos.filter((l) => l.tipo === 'pagamento_divida').map((l) => l.parcelaDividaId),
-  );
+  const pagas = parcelasPagasPor(fatos.lancamentos);
   return fatos.parcelasDivida
     .filter((p) => p.dividaId === dividaId)
     .map((p) => ({ ...p, paga: pagas.has(p.id) }));

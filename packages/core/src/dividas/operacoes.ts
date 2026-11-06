@@ -1,8 +1,14 @@
 import type Decimal from 'decimal.js';
 import type { DataCivil } from '../datas';
 import { type Centavos, centavos, D, menos, somar } from '../dinheiro';
-import type { Divida, ParcelaDivida } from '../modelo';
+import type { Divida, Lancamento, ParcelaDivida } from '../modelo';
 import { gerar, type LinhaTabela, tabelaPrice, tabelaSac, taxaImplicita } from './tabelas';
+
+/** Ids das parcelas de dívida com `pagamento_divida` (paga = tem pagamento não excluído). */
+export const parcelasPagasPor = (
+  lancamentos: readonly Lancamento[],
+): Set<Lancamento['parcelaDividaId']> =>
+  new Set(lancamentos.filter((l) => l.tipo === 'pagamento_divida').map((l) => l.parcelaDividaId));
 
 /** Campos de `Divida` usados no cálculo. */
 export type DividaCalculo = Pick<

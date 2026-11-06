@@ -2,7 +2,7 @@ import { type Fatura, montarFaturas } from '../cartoes';
 import { anteriorAoSaldoInicial, movimentosDeCaixa, saldo } from '../contas';
 import { competenciaDe, somarMeses, ultimaData, type Competencia, type DataCivil } from '../datas';
 import { type Centavos, mais } from '../dinheiro';
-import { resumoDaDivida, statusParcela, type StatusParcela } from '../dividas';
+import { parcelasPagasPor, resumoDaDivida, statusParcela, type StatusParcela } from '../dividas';
 import type {
   Cartao,
   CartaoCiclo,
@@ -110,7 +110,7 @@ export function derivar(fatos: Fatos, hoje: DataCivil): Derivado {
   const inicio = fatos.contas
     .map((c) => competenciaDe(c.dataSaldoInicial))
     .reduce<Competencia>((a, m) => (m < a ? m : a), competenciaDe(hoje));
-  const pagas = new Set(fatos.lancamentos.map((l) => l.parcelaDividaId));
+  const pagas = parcelasPagasPor(fatos.lancamentos);
   const amortizacoes = agrupar(
     fatos.lancamentos.filter((l) => l.tipo === 'amortizacao'),
     (l) => l.dividaId as Id,
