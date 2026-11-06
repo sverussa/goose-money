@@ -3,6 +3,9 @@ export const mensagens = {
   app: 'Goose Money',
   carregando: 'Carregando…',
   tentarDeNovo: 'Tentar de novo',
+  carga: {
+    erro: 'Não foi possível carregar os seus dados.',
+  },
   sessao: {
     entrar: 'Entrar',
     entrando: 'Entrando…',
