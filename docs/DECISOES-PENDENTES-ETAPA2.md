@@ -65,3 +65,8 @@ Casos que a spec não cobre ou em que o texto da tarefa diverge do `MODELO-DADOS
 4. Sem tema nas preferências (D64: fica no `localStorage`).
 5. As categorias ficam escritas no SQL (o banco não importa o core); um teste compara nome, tipo, ícone, cor e chave de sistema com `categoriasIniciais` do core.
 6. A chamada pelo app fica nas tarefas que já a preveem: T03-01 (depois do login) e T05-30 (depois da confirmação do cadastro).
+
+## T02-09
+1. As chaves do JSON são os nomes das tabelas (`snake_case`, ex.: `parcelas_divida`) e as linhas vêm com as colunas do banco; o mapeamento para os `Fatos` do core fica em `src/data` (T03-02). `preferencias` também vem como lista.
+2. Além do RLS, a função filtra `created_by = auth.uid()`: usa os índices e não devolve dados de todos se for chamada por um papel que ignora o RLS.
+3. O teste de volume grava o seed completo por `gravar` e acrescenta 10 mil lançamentos direto no banco; mede só a chamada pela API (com a conexão aquecida).
