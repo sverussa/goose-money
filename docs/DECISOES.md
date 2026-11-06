@@ -171,6 +171,33 @@ Caso encontrado em T00-09. O `revoke execute on functions from anon` por schema,
 
 Caso encontrado em T00-07. O pnpm aplica a D5 sozinho (`minimumReleaseAge`), o Cargo não. Os crates diretos (`tauri`, `tauri-build`) ficam fixos com `=`, o `Cargo.lock` é versionado, e as datas dos crates do lock são conferidas no crates.io sempre que ele muda. Na T00-07, 20 crates indiretos com menos de 7 dias voltaram para a versão anterior com `cargo update --precise`. Sem ferramenta extra (como `cargo-deny`) por enquanto. **Precisa da sua validação.**
 
+### D59 a D77 · Modelo de dados (T01-01, 05/11/2026)
+
+Escolhas feitas ao escrever `docs/MODELO-DADOS.md`, aprovadas pelo Saulo na opção recomendada.
+
+| # | Decisão | Motivo | Seções |
+| --- | --- | --- | --- |
+| D59 | **Alocação de pagamento sem tabela:** campos `cartaoId` e `faturaCompetencia` no lançamento `pagamento_fatura`. | Um pagamento vai para uma fatura só; o excedente é derivado (D38) | 3.5 |
+| D60 | **"Paga antes do cadastro" da parcela de cartão derivada:** `competencia` < `competenciaInicial` do cartão, sem coluna. Na parcela de dívida é coluna (passo 4 do cadastro). | As duas competências nunca mudam depois de gravadas | 3.5, 3.7 |
+| D61 | **Campo `Cartao.competenciaInicial`:** a fatura aberta na data do cadastro, primeira fatura controlada. | Necessário para "Cartão cadastrado já em uso" | 3.5 |
+| D62 | **Categoria de sistema por chave** (`sistema`: `a_classificar`, `juros_encargos`, `tarifas`, `ajuste_saldo`; nula nas do usuário), no lugar de um booleano. | O core acha as categorias pela chave, nunca pelo nome | 3.3, 6.9 |
+| D63 | **Tipo de categoria `ambos`**, só para "A classificar" e "Ajuste de saldo". | As duas valem para receitas e despesas; evita duas "A classificar" | 6.9, 7.2 |
+| D64 | **Tema fora de `Preferencias`**, no `localStorage`, como manda D20 (a tarefa o listava na tabela). | O tema é do aparelho | 6.9 |
+| D65 | **Horizonte padrão da projeção: 12 meses.** | A spec não define | 6.2 |
+| D66 | **Categoria da dívida obrigatória só com `pago_a_terceiro`**, padrão "A classificar". O stepper de 6.6 ganha o campo no passo 2. | 3.3 usa a "categoria da dívida", que o stepper não pede | 3.3, 6.6 |
+| D67 | **Nome único entre contas e cartões não arquivados**, sem diferenciar maiúsculas e espaços nas pontas. Desarquivar com nome repetido é rejeitado até renomear. | Segue "ativos" de 6.4, 6.5 e 9.4 | 6.4, 6.5, 9.4 |
+| D68 | **Exclusões em conjunto além de 9.4:** cartão leva os ciclos; recorrência leva as ocorrências (os lançamentos ficam, com origem manual); excluir o lançamento ou a compra de uma ocorrência exclui a ocorrência, que volta a ser prevista. | Conservador: o gasto volta a pesar na projeção | 3.8, 9.4 |
+| D69 | **Origem do lançamento com precedência** recorrência > dívida > cartão > manual, derivada, sem coluna. | Cada item tem uma origem só no filtro de 6.3 | 6.3 |
+| D70 | **Antecipação de parcelas de dívida gravada como `amortizacao`.** | 3.7 trata as duas do mesmo jeito | 3.7 |
+| D71 | **Chaves estrangeiras compostas com `created_by`** (`(x_id, created_by) references t (id, created_by)`). | A checagem de chave estrangeira ignora o RLS; sem isso, um usuário apontaria para o id de outro | 9.4 |
+| D72 | **Ids gerados no core**; o `default gen_random_uuid()` só vale para inserts diretos. | Compra e parcelas se referenciam na mesma chamada de `gravar(ops)`; a importação regrava pelo mesmo id | 2.1, 9.2 |
+| D73 | **Enumerações como `text` com `check`**, não `enum` do Postgres. | Acrescentar um valor fica simples | 9.4 |
+| D74 | **Competência como texto `AAAA-MM`** no domínio e no banco, com `check` de formato. | Sem conversão em `src/data`; a ordem do texto é a cronológica | 3.2, 3.5 |
+| D75 | **Transferência com `contaId` (origem) e `contaDestinoId`.** | Atende D32 sem uma terceira coluna de conta | 3.4 |
+| D76 | **Valores com sinal só onde o efeito varia:** `ItemFatura.valor` (efeito no saldo da fatura) e o `Lancamento` do tipo `ajuste`; os demais lançamentos são `> 0`. | O tipo já define o sentido dos outros | 3.3, 3.5 |
+| D77 | **Cor como chave de token do tema**, nunca hex; nula nas categorias de sistema. | Mesma regra de cores das telas | 4.3, 6.4, 6.5, 6.9 |
+
 ## Em aberto
 
 - **Provedor da VPS e domínio do app web** (D53).
+- **Antecipar parcelas de cartão quebra o invariante 3 de 3.6** (competências em ordem), porque move as últimas parcelas para a fatura aberta. Opções: (A) renumerar as parcelas depois de antecipar; (B) o invariante vale só para as não antecipadas; (C) antecipar move as primeiras parcelas futuras. Resolver antes de T01-08.

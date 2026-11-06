@@ -4,7 +4,7 @@ Lista única das entidades gravadas do Goose Money: campos, tipos, obrigatorieda
 
 Fontes: `PROMPT.md` 2.1, 3, 6, 7, 9.1, 9.4 e 11; `DECISOES.md` D3, D20, D21, D22, D25 e D32 a D35. Em conflito, vale `PROMPT.md` seção 3.
 
-**Status:** aguardando aprovação do Saulo. Depois de aprovado, só muda por PR do coordenador (`docs/tasks/tasks-agents-estrategies.md`).
+**Status:** aprovado pelo Saulo em 05/11/2026; escolhas registradas em `DECISOES.md` (D59 a D77). Só muda por PR do coordenador (`docs/tasks/tasks-agents-estrategies.md`).
 
 ## 1. Convenções
 
