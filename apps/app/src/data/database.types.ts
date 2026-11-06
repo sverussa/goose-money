@@ -23,7 +23,55 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            [_ in never]: never
+            "categorias": {
+                  Row: {
+                    "categoria_pai_id": string | null,"cor": string | null,"created_at": string,"created_by": string,"icone": string,"id": string,"is_deleted": boolean,"nome": string,"sistema": string | null,"tipo": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "categoria_pai_id"?: string | null,"cor"?: string | null,"created_at"?: string,"created_by"?: string,"icone": string,"id"?: string,"is_deleted"?: boolean,"nome": string,"sistema"?: string | null,"tipo": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "categoria_pai_id"?: string | null,"cor"?: string | null,"created_at"?: string,"created_by"?: string,"icone"?: string,"id"?: string,"is_deleted"?: boolean,"nome"?: string,"sistema"?: string | null,"tipo"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "categorias_categoria_pai_id_created_by_fkey"
+      columns: ["categoria_pai_id","created_by"]
+isOneToOne: false
+      referencedRelation: "categorias"
+      referencedColumns: ["id","created_by"]
+    }
+                  ]
+                },"contas": {
+                  Row: {
+                    "arquivada": boolean,"cor": string,"created_at": string,"created_by": string,"data_saldo_inicial": string,"id": string,"incluir_no_total": boolean,"instituicao": string | null,"is_deleted": boolean,"nome": string,"saldo_inicial": number,"tipo": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "arquivada"?: boolean,"cor": string,"created_at"?: string,"created_by"?: string,"data_saldo_inicial": string,"id"?: string,"incluir_no_total"?: boolean,"instituicao"?: string | null,"is_deleted"?: boolean,"nome": string,"saldo_inicial": number,"tipo": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "arquivada"?: boolean,"cor"?: string,"created_at"?: string,"created_by"?: string,"data_saldo_inicial"?: string,"id"?: string,"incluir_no_total"?: boolean,"instituicao"?: string | null,"is_deleted"?: boolean,"nome"?: string,"saldo_inicial"?: number,"tipo"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"preferencias": {
+                  Row: {
+                    "created_at": string,"created_by": string,"horizonte_padrao": number,"id": string,"is_deleted": boolean,"limite_alerta": number,"ocultar_valores_ao_abrir": boolean,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string,"horizonte_padrao"?: number,"id"?: string,"is_deleted"?: boolean,"limite_alerta"?: number,"ocultar_valores_ao_abrir"?: boolean,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string,"horizonte_padrao"?: number,"id"?: string,"is_deleted"?: boolean,"limite_alerta"?: number,"ocultar_valores_ao_abrir"?: boolean,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                }
           }
           Views: {
             [_ in never]: never
