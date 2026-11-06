@@ -13,7 +13,9 @@ import { InicioProvisorio } from '@/app/InicioProvisorio';
 import { LoginProvisorio } from '@/app/LoginProvisorio';
 import { OuvinteDeLinks } from '@/app/OuvinteDeLinks';
 import { SessaoProvider } from '@/app/providers/sessao';
+import { TemaProvider } from '@/app/providers/tema';
 import { RotaProtegida } from '@/app/RotaProtegida';
+import { aplicarTemaEscuro } from '@/app/tema/gerarTemaEscuro';
 import { Toaster } from '@/components/ui/sonner';
 import { EsqueciSenha } from '@/features/acesso/EsqueciSenha';
 import { RedefinirSenha } from '@/features/acesso/RedefinirSenha';
@@ -26,32 +28,36 @@ const rotaComErro = retornoComErro(window.location.search);
 if (rotaComErro)
   window.history.replaceState(null, '', `${window.location.pathname}#/${rotaComErro}?invalido=1`);
 
+aplicarTemaEscuro();
+
 const raiz = document.getElementById('root');
 if (!raiz) throw new Error('Elemento #root não encontrado');
 
 createRoot(raiz).render(
   <StrictMode>
-    {resultadoEnv.ok ? (
-      <QueryClientProvider client={clienteDeConsultas}>
-        <HashRouter>
-          <SessaoProvider>
-            <OuvinteDeLinks />
-            <Routes>
-              <Route path="/login" element={<LoginProvisorio />} />
-              <Route path="/esqueci-senha" element={<EsqueciSenha />} />
-              <Route path="/redefinir-senha" element={<RedefinirSenha />} />
-              {import.meta.env.DEV && <Route path="/dev/tema" element={<TemaDev />} />}
-              <Route element={<RotaProtegida />}>
-                {/* T04-05 cria as rotas do menu; até lá, toda rota autenticada é a provisória. */}
-                <Route path="*" element={<InicioProvisorio />} />
-              </Route>
-            </Routes>
-          </SessaoProvider>
-        </HashRouter>
-        <Toaster />
-      </QueryClientProvider>
-    ) : (
-      <ConfiguracaoIncompleta variaveis={resultadoEnv.invalidas} />
-    )}
+    <TemaProvider>
+      {resultadoEnv.ok ? (
+        <QueryClientProvider client={clienteDeConsultas}>
+          <HashRouter>
+            <SessaoProvider>
+              <OuvinteDeLinks />
+              <Routes>
+                <Route path="/login" element={<LoginProvisorio />} />
+                <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+                <Route path="/redefinir-senha" element={<RedefinirSenha />} />
+                {import.meta.env.DEV && <Route path="/dev/tema" element={<TemaDev />} />}
+                <Route element={<RotaProtegida />}>
+                  {/* T04-05 cria as rotas do menu; até lá, toda rota autenticada é a provisória. */}
+                  <Route path="*" element={<InicioProvisorio />} />
+                </Route>
+              </Routes>
+            </SessaoProvider>
+          </HashRouter>
+          <Toaster />
+        </QueryClientProvider>
+      ) : (
+        <ConfiguracaoIncompleta variaveis={resultadoEnv.invalidas} />
+      )}
+    </TemaProvider>
   </StrictMode>,
 );
