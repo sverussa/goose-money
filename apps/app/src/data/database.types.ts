@@ -231,6 +231,56 @@ isOneToOne: false
       referencedColumns: ["id","divida_id","created_by"]
     }
                   ]
+                },"ocorrencias": {
+                  Row: {
+                    "cartao_id": string | null,"categoria_id": string | null,"competencia": string,"compra_id": string | null,"conta_id": string | null,"created_at": string,"created_by": string,"data": string | null,"id": string,"is_deleted": boolean,"lancamento_id": string | null,"recorrencia_id": string,"situacao": string,"updated_at": string,"valor": number | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cartao_id"?: string | null,"categoria_id"?: string | null,"competencia": string,"compra_id"?: string | null,"conta_id"?: string | null,"created_at"?: string,"created_by"?: string,"data"?: string | null,"id"?: string,"is_deleted"?: boolean,"lancamento_id"?: string | null,"recorrencia_id": string,"situacao": string,"updated_at"?: string,"valor"?: number | null
+                  }
+                  Update: {
+                    "cartao_id"?: string | null,"categoria_id"?: string | null,"competencia"?: string,"compra_id"?: string | null,"conta_id"?: string | null,"created_at"?: string,"created_by"?: string,"data"?: string | null,"id"?: string,"is_deleted"?: boolean,"lancamento_id"?: string | null,"recorrencia_id"?: string,"situacao"?: string,"updated_at"?: string,"valor"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "ocorrencias_cartao_id_created_by_fkey"
+      columns: ["cartao_id","created_by"]
+isOneToOne: false
+      referencedRelation: "cartoes"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "ocorrencias_categoria_id_created_by_fkey"
+      columns: ["categoria_id","created_by"]
+isOneToOne: false
+      referencedRelation: "categorias"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "ocorrencias_compra_id_created_by_fkey"
+      columns: ["compra_id","created_by"]
+isOneToOne: false
+      referencedRelation: "compras"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "ocorrencias_conta_id_created_by_fkey"
+      columns: ["conta_id","created_by"]
+isOneToOne: false
+      referencedRelation: "contas"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "ocorrencias_lancamento_id_created_by_fkey"
+      columns: ["lancamento_id","created_by"]
+isOneToOne: false
+      referencedRelation: "lancamentos"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "ocorrencias_recorrencia_id_created_by_fkey"
+      columns: ["recorrencia_id","created_by"]
+isOneToOne: false
+      referencedRelation: "recorrencias"
+      referencedColumns: ["id","created_by"]
+    }
+                  ]
                 },"parcelas": {
                   Row: {
                     "competencia": string,"compra_id": string,"created_at": string,"created_by": string,"id": string,"is_deleted": boolean,"numero": number,"updated_at": string,"valor": number
@@ -281,6 +331,58 @@ isOneToOne: false
                   }
                   Update: {
                     "created_at"?: string,"created_by"?: string,"horizonte_padrao"?: number,"id"?: string,"is_deleted"?: boolean,"limite_alerta"?: number,"ocultar_valores_ao_abrir"?: boolean,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"recorrencia_versoes": {
+                  Row: {
+                    "cartao_id": string | null,"categoria_id": string,"conta_id": string | null,"created_at": string,"created_by": string,"dia": number,"forma_pagamento": string,"id": string,"is_deleted": boolean,"recorrencia_id": string,"updated_at": string,"valor": number,"vigente_desde": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cartao_id"?: string | null,"categoria_id": string,"conta_id"?: string | null,"created_at"?: string,"created_by"?: string,"dia": number,"forma_pagamento"?: string,"id"?: string,"is_deleted"?: boolean,"recorrencia_id": string,"updated_at"?: string,"valor": number,"vigente_desde": string
+                  }
+                  Update: {
+                    "cartao_id"?: string | null,"categoria_id"?: string,"conta_id"?: string | null,"created_at"?: string,"created_by"?: string,"dia"?: number,"forma_pagamento"?: string,"id"?: string,"is_deleted"?: boolean,"recorrencia_id"?: string,"updated_at"?: string,"valor"?: number,"vigente_desde"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "recorrencia_versoes_cartao_id_created_by_fkey"
+      columns: ["cartao_id","created_by"]
+isOneToOne: false
+      referencedRelation: "cartoes"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "recorrencia_versoes_categoria_id_created_by_fkey"
+      columns: ["categoria_id","created_by"]
+isOneToOne: false
+      referencedRelation: "categorias"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "recorrencia_versoes_conta_id_created_by_fkey"
+      columns: ["conta_id","created_by"]
+isOneToOne: false
+      referencedRelation: "contas"
+      referencedColumns: ["id","created_by"]
+    },{
+      foreignKeyName: "recorrencia_versoes_recorrencia_id_created_by_fkey"
+      columns: ["recorrencia_id","created_by"]
+isOneToOne: false
+      referencedRelation: "recorrencias"
+      referencedColumns: ["id","created_by"]
+    }
+                  ]
+                },"recorrencias": {
+                  Row: {
+                    "ativa": boolean,"auto_confirmar": boolean,"competencia_fim": string | null,"competencia_inicio": string,"created_at": string,"created_by": string,"descricao": string,"id": string,"is_deleted": boolean,"natureza": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "ativa"?: boolean,"auto_confirmar"?: boolean,"competencia_fim"?: string | null,"competencia_inicio": string,"created_at"?: string,"created_by"?: string,"descricao": string,"id"?: string,"is_deleted"?: boolean,"natureza": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "ativa"?: boolean,"auto_confirmar"?: boolean,"competencia_fim"?: string | null,"competencia_inicio"?: string,"created_at"?: string,"created_by"?: string,"descricao"?: string,"id"?: string,"is_deleted"?: boolean,"natureza"?: string,"updated_at"?: string
                   }
                   Relationships: [
                     

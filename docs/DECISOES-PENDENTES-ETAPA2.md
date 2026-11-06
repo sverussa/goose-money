@@ -52,3 +52,8 @@ Casos que a spec não cobre ou em que o texto da tarefa diverge do `MODELO-DADOS
 4. "Parcela paga" para o trigger `parcelas_divida_paga_imutavel` = `paga_antes_do_cadastro` ou com `pagamento_divida` ativo; o trigger recusa mudar valor, juros ou amortização (excluir a parcela continua possível, para excluir a dívida sem pagamentos).
 5. O pagamento aponta para uma parcela da mesma dívida (chave estrangeira `(parcela_divida_id, divida_id, created_by)`).
 6. Não conferido no banco (core): parcela `paga_antes_do_cadastro` com `pagamento_divida`.
+
+## T02-07
+1. Retrato da ocorrência no banco, igual ao core: confirmada exige valor, data, categoria e exatamente um par (conta + lançamento) ou (cartão + compra); ignorada tem o retrato todo nulo (`ocorrencias_retrato`).
+2. Não conferidos no banco (core, D36): renda só com forma de pagamento "conta"; excluir a recorrência levar versões e ocorrências; excluir o lançamento ou a compra de uma ocorrência levar a ocorrência (D68).
+3. O teste de concorrência usa duas sessões do mesmo usuário gravando a mesma confirmação ao mesmo tempo: uma grava, a outra recebe `23505` e o lote dela (com a receita) é desfeito inteiro.
