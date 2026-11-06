@@ -21,9 +21,9 @@ import { mensagens } from '../mensagens';
 import { useSessao } from '../providers/useSessao';
 import { AtalhosDialog } from './AtalhosDialog';
 import { teclaModificadora, useAtalhos } from './atalhos';
-import { BarraProvisoria } from './BarraProvisoria';
 import { BuscaGlobal } from './BuscaGlobal';
 import { itemAtivo } from './navegacao';
+import { BotaoPrivacidade, TotalsBar } from './TotalsBar';
 import { BarraDeNavegacao, MenuLateral, MenuRail } from './Menus';
 import { ContextoLancar } from './useLancar';
 import { ContextoSlots } from './useSlots';
@@ -108,7 +108,7 @@ export function AppShell() {
         <MenuLateral badges={b} />
         <MenuRail badges={b} />
         <div className="flex min-w-0 flex-1 flex-col pb-20 medium:pb-0 medium:pl-20 expanded:pl-0">
-          <header className="flex min-h-app-bar items-center gap-1 py-2 pr-2 pl-4 medium:gap-3 medium:px-6">
+          <header className="flex min-h-app-bar flex-wrap items-center gap-1 py-2 pr-2 pl-4 medium:flex-nowrap medium:gap-3 medium:px-6">
             <h1 className="flex-1 truncate text-title-lg">{titulo}</h1>
             {/* Seletor de mês das telas mensais (T04-07). */}
             <div ref={setAppBar} className="contents" />
@@ -120,12 +120,14 @@ export function AppShell() {
             >
               <Search />
             </Button>
+            {/* No compact, o olho fica na top app bar (D44); nas outras larguras, na Barra. */}
+            <BotaoPrivacidade className="medium:hidden" />
             <MenuDoUsuario />
           </header>
           <div className="sticky top-0 z-20">
             {/* Faixa "Sem conexão" (T03-05) logo abaixo da top app bar, fixa junto com a Barra. */}
             <BannerSemConexao />
-            <BarraProvisoria />
+            <TotalsBar />
             {/* Cabeçalho de contexto do módulo (T04-07), fixo junto com a Barra. */}
             <div ref={setCabecalho} />
           </div>

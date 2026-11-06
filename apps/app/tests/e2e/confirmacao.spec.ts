@@ -88,7 +88,7 @@ test('ao entrar, confirma a renda pendente e mostra "1 lançamento automático r
 
   // Reabrir não confirma de novo.
   await page.reload();
-  await expect(page.getByLabel('Barra de Totais (centavos)')).toBeVisible();
+  await expect(page.getByRole('link', { name: /^Saldo em contas/ })).toBeVisible();
   await expect(page.getByText('lançamento automático registrado')).toHaveCount(0);
   const [{ n: depois }] = await sqlComoPostgres<[{ n: number }]>`
     select count(*)::int as n from lancamentos where created_by = ${u.id} and not is_deleted`;

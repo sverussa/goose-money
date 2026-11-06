@@ -85,3 +85,16 @@ Escolhas feitas durante T04-01 a T04-09 em casos que a spec e o design não cobr
 5. Ações da busca: "Lançar", "Nova conta" (`/contas?acao=nova`) e "Pagar fatura" (`/cartoes?acao=pagar`); as telas da etapa 5 leem `acao`. Escolher um lançamento leva a `/lancamentos?destaque=<id>` (D45, T05-07).
 6. A escolha na busca roda depois que a busca termina de fechar, para o diálogo de lançamento não disputar o foco com ela.
 7. Achado no teste: com teclas seguidas, o mês andava uma vez só (a navegação do React Router é uma transição e a função de `setSearchParams` não enfileira). O seletor agora parte do último mês pedido.
+
+## T04-06
+
+1. Destinos dos indicadores (5.3): Saldo em contas `/contas`; Previsto `/?aba=projecoes&mes=<mês corrente>`; A pagar `/cartoes`; Resultado do mês a Visão geral com "Este mês" (`/?de=<dia 1>&ate=<hoje>`); Patrimônio `/?aba=saldos`. As telas da etapa 5 leem esses parâmetros.
+2. Cores dos valores: Previsto pelo `estadoDoPrevisto` do core (`warning` abaixo do limite, `error` negativo); os outros quatro, negativos em `expense`, como no design. Sem preferências carregadas, o limite é zero (como a projeção do core).
+3. O chip de variação de "A pagar nos cartões" inverte as cores: subir é dívida a mais e fica em `expense` (como no design do celular); o sinal continua o do valor. Nos outros, "+" em `income` e "−" em `expense`.
+4. O chip aparece uma vez por gravação, quando os valores novos chegam, e some em 2 s; gravações feitas antes de a Barra aparecer e recargas de outros aparelhos não acendem chip. No modo privacidade, sem chip.
+5. A animação vale para toda mudança de valor (gravação, Desfazer, recarga), em 400 ms; com `prefers-reduced-motion`, troca direto.
+6. No compact, os 3 indicadores recolhidos aparecem como linhas largas ao expandir ("Mais 3 indicadores" / "Menos"); o temporário aparece no mesmo lugar, com fundo destacado, enquanto o chip dura.
+7. O tooltip de cada indicador abre ao passar o mouse ou focar o próprio link (o ícone de informação é decorativo), para não pôr um botão dentro do link.
+8. No compact, o seletor de mês desce para uma linha própria na top app bar (o título, a busca, o olho e o menu não cabem com ele em 360 dp).
+9. A Barra expõe `data-hoje` (o "hoje" do app), que os testes de T03-03 usam no lugar do texto "Hoje:" da página provisória. Os testes de T03-03 a T03-06 passaram a esperar a Barra de verdade.
+10. A página `#/dev/casca` ganhou "Simular compra no cartão" (só em desenvolvimento), que grava pelo caminho normal (`useComando`), para testar o chip e o Desfazer antes do formulário de compra (T05-13).

@@ -30,7 +30,9 @@ export function MonthSelector() {
     };
   }, [deslocar]);
   const seletor = (
-    <div className="flex items-center gap-1">
+    // No compact, a top app bar não comporta o seletor ao lado do título: ele desce para uma linha
+    // própria, centralizado.
+    <div className="order-last flex w-full items-center justify-center gap-1 medium:order-none medium:w-auto">
       <Button
         variant="icon"
         className="size-11"

@@ -13,11 +13,12 @@ test('à meia-noite o "hoje" muda sem recarregar a página', async ({ page }) =>
   await page.getByLabel('E-mail').fill(u.email);
   await page.getByLabel('Senha', { exact: true }).fill(u.senha);
   await page.getByRole('button', { name: 'Entrar' }).click();
-  await expect(page.getByText('Hoje: 2026-11-04')).toBeVisible();
-  await expect(page.getByLabel('Barra de Totais (centavos)')).toBeVisible();
+  const barra = page.getByRole('region', { name: 'Barra de Totais' });
+  await expect(barra).toHaveAttribute('data-hoje', '2026-11-04');
+  await expect(page.getByRole('link', { name: /^Saldo em contas/ })).toBeVisible();
 
   await page.clock.fastForward(15_000);
-  await expect(page.getByText('Hoje: 2026-11-05')).toBeVisible();
+  await expect(barra).toHaveAttribute('data-hoje', '2026-11-05');
 });
 
 test('voltar o foco à janela recarrega os fatos', async ({ page }) => {
@@ -27,7 +28,7 @@ test('voltar o foco à janela recarrega os fatos', async ({ page }) => {
   await page.getByLabel('E-mail').fill(u.email);
   await page.getByLabel('Senha', { exact: true }).fill(u.senha);
   await page.getByRole('button', { name: 'Entrar' }).click();
-  await expect(page.getByLabel('Barra de Totais (centavos)')).toBeVisible();
+  await expect(page.getByRole('link', { name: /^Saldo em contas/ })).toBeVisible();
 
   // Depois do staleTime (30 s), a volta do foco busca os fatos de novo.
   await page.clock.fastForward(31_000);

@@ -89,7 +89,11 @@ test('cada fatia da rosca tem a cor da sua categoria', async ({ page }) => {
     .locator('.recharts-pie-sector path');
   await expect(fatias).toHaveCount(4);
   const cores = () => fatias.evaluateAll((ps) => ps.map((p) => getComputedStyle(p).fill));
-  // A animação do Recharts é em JavaScript: espera as cores finais.
-  await expect.poll(async () => new Set(await cores()).size).toBe(4);
-  expect(await cores()).toContain('rgb(27, 107, 90)'); // cat-1, Moradia
+  // A animação do Recharts é em JavaScript e redesenha as fatias: espera as cores finais.
+  await expect
+    .poll(async () => {
+      const c = await cores();
+      return new Set(c).size === 4 && c.includes('rgb(27, 107, 90)'); // cat-1, Moradia
+    })
+    .toBe(true);
 });
