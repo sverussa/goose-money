@@ -29,3 +29,15 @@ Decisões tomadas durante as tarefas da etapa 5 (e da T00-14, que a prepara) em 
 7. Data efetivada no futuro: o erro do core aparece inline e o diálogo não fecha (o "Previsto" chega na T05-04).
 8. Fora da pasta da tarefa: `react-hook-form` 7.91.0 no `apps/app/package.json` (aprovado), a mesma dependência no `optimizeDeps` do `vite.config.ts` (regra da T00-14, para o Vite não recarregar no meio dos testes) e o nome do diálogo em `tests/e2e/atalhos.spec.ts` ("Lançar" passou a "Novo lançamento", o título do design).
 9. Ambiente: `arquivos.spec.ts › abrir lê o arquivo escolhido` estourou o tempo de novo no conjunto e passou sozinho.
+
+## T05-03
+
+1. "Parcelar esta compra" (design) não aparece: o diálogo Nova compra é a T05-13, fora desta sequência. A compra no cartão grava sempre à vista (1 parcela).
+2. Sem cartão cadastrado, os chips Compra no cartão e Pagamento de fatura mostram, no lugar dos campos, o estado vazio "Para lançar no cartão, cadastre antes um cartão" e o botão "Cadastrar cartão", que leva a `#/cartoes?novo=1` (a T05-11 abre o formulário por esse parâmetro). O valor digitado fica, e "Salvar" fica desabilitado.
+3. Último cartão usado: guardado no `localStorage` deste aparelho, como a última conta; sem ele, o primeiro cartão ativo.
+4. Pagamento de fatura: as faturas oferecidas são as vencidas, as fechadas e a aberta (as que podem receber pagamento em 3.5), com o saldo de cada uma no rótulo. "Saldo total" é um chip que preenche o valor com o saldo da fatura escolhida. A prévia diz "restam R$ X nesta fatura", "o pagamento quita esta fatura" ou "sobram R$ X de crédito para a próxima fatura" (`previaDoPagamento`).
+5. Ao trocar o cartão no pagamento, a conta volta à conta de pagamento do cartão e a fatura, ao destino padrão de 3.5.
+6. Na transferência, a conta de destino já vem preenchida com a primeira conta ativa diferente da origem.
+7. O aviso da transferência entre inclusões diferentes também cobre o sentido contrário ("o Saldo em contas vai subir R$ X").
+8. A descrição (opcional) aparece em todos os tipos, inclusive transferência e pagamento de fatura (o lançamento tem o campo).
+9. O `Enter` só envia a partir de um campo de texto: com o foco num seletor ou num chip, o `Enter` aciona aquele controle, como no navegador.

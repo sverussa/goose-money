@@ -1,17 +1,37 @@
-import { dataCivil, gerarSeed } from '@goose-money/core';
+import { type Contexto, dataCivil, derivar, gerarSeed } from '@goose-money/core';
 import { describe, expect, it } from 'vitest';
 
-import { camposDoLancamento, esquemaDoFormulario, resolverZod } from './formulario';
-import { aClassificar, contaInicial, opcoesDeCategoria, padraoDaTela } from './padroes';
+import { comandoDoFormulario, esquemaDoFormulario, resolverZod } from './formulario';
+import {
+  aClassificar,
+  cartaoInicial,
+  contaInicial,
+  destinoPadrao,
+  opcoesDeCategoria,
+  padraoDaTela,
+} from './padroes';
 
-const fatos = gerarSeed(dataCivil('2026-11-04'), '00000000-0000-4000-8000-000000000001');
+const HOJE = dataCivil('2026-11-04');
+const USUARIO = '00000000-0000-4000-8000-000000000001';
+const fatos = gerarSeed(HOJE, USUARIO);
+let n = 0;
+const ctx: Contexto = {
+  hoje: HOJE,
+  agora: `${HOJE}T12:00:00Z`,
+  usuario: USUARIO,
+  novoId: () => `00000000-0000-4000-9000-${String(++n).padStart(12, '0')}`,
+};
 const [corrente, poupanca] = fatos.contas;
 
 describe('padrões do formulário de lançamento (7.2)', () => {
   it('na tela de uma conta, Despesa naquela conta; nas outras, Despesa sem conta', () => {
-    expect(padraoDaTela('/contas/abc')).toEqual({ tipo: 'despesa', contaId: 'abc' });
-    expect(padraoDaTela('/contas')).toEqual({ tipo: 'despesa', contaId: null });
-    expect(padraoDaTela('/')).toEqual({ tipo: 'despesa', contaId: null });
+    expect(padraoDaTela('/contas/abc')).toEqual({
+      tipo: 'despesa',
+      contaId: 'abc',
+      cartaoId: null,
+    });
+    expect(padraoDaTela('/cartoes/x')).toEqual({ tipo: 'compra', contaId: null, cartaoId: 'x' });
+    expect(padraoDaTela('/contas')).toEqual({ tipo: 'despesa', contaId: null, cartaoId: null });
   });
 
   it('conta inicial: a da tela, senão a última usada, senão a do lançamento mais recente', () => {
@@ -35,14 +55,20 @@ describe('padrões do formulário de lançamento (7.2)', () => {
 });
 
 describe('formulário de lançamento', () => {
+  const cartao = fatos.cartoes[0];
   const validos = {
     tipo: 'despesa' as const,
     valor: 1590,
     descricao: '  ',
-    categoriaId: 'cat',
-    data: '2026-11-04',
-    contaId: 'conta',
+    categoriaId: aClassificar(fatos) ?? '',
+    data: HOJE,
+    contaId: corrente?.id ?? '',
+    contaDestinoId: '',
+    cartaoId: cartao?.id ?? '',
+    faturaCompetencia: '',
   };
+  const tabelas = (v: typeof validos | Record<string, unknown>) =>
+    comandoDoFormulario(fatos, ctx, { ...validos, ...v }).mudancas.map((x) => x.entidade);
 
   it('o adaptador devolve o primeiro erro de cada campo (D7)', async () => {
     const resolver = resolverZod(esquemaDoFormulario);
@@ -54,12 +80,40 @@ describe('formulário de lançamento', () => {
     expect(r.errors.valor?.message).toBe('Informe um valor maior que zero');
   });
 
-  it('descrição só com espaços vira nula; o lançamento sai efetivado', () => {
-    expect(camposDoLancamento(validos)).toMatchObject({
-      tipo: 'despesa',
-      status: 'efetivado',
-      valor: 1590,
+  it('transferência com origem igual ao destino é bloqueada no formulário', () => {
+    const r = esquemaDoFormulario.safeParse({
+      ...validos,
+      tipo: 'transferencia',
+      contaDestinoId: validos.contaId,
+    });
+    expect(r.error?.issues.map((i) => i.message)).toEqual([
+      'Escolha uma conta de destino diferente da origem',
+    ]);
+  });
+
+  it('cada tipo vira o comando do core certo', () => {
+    expect(tabelas({})).toEqual(['lancamentos']);
+    expect(tabelas({ tipo: 'compra' })).toEqual(['compras', 'parcelas']);
+    expect(tabelas({ tipo: 'transferencia', contaDestinoId: poupanca?.id })).toEqual([
+      'lancamentos',
+    ]);
+    const destino = destinoPadrao(derivar(fatos, HOJE), validos.cartaoId);
+    expect(destino).not.toBeNull();
+    const pagamento = comandoDoFormulario(fatos, ctx, {
+      ...validos,
+      tipo: 'pagamento',
+      faturaCompetencia: destino ?? '',
+    });
+    expect(pagamento.mudancas[0]?.dados).toMatchObject({
+      tipo: 'pagamento_fatura',
       descricao: null,
     });
+  });
+
+  it('cartão inicial: o da tela, senão o último usado, senão o primeiro ativo', () => {
+    const [a, b] = fatos.cartoes;
+    expect(cartaoInicial(fatos, b?.id ?? null, a?.id ?? null)).toBe(b?.id);
+    expect(cartaoInicial(fatos, null, b?.id ?? null)).toBe(b?.id);
+    expect(cartaoInicial(fatos, null, null)).toBe(a?.id);
   });
 });
