@@ -13,6 +13,7 @@ import { resultadoEnv } from '@/app/env';
 import { InicioProvisorio } from '@/app/InicioProvisorio';
 import { LoginProvisorio } from '@/app/LoginProvisorio';
 import { OuvinteDeLinks } from '@/app/OuvinteDeLinks';
+import { PrivacidadeProvider } from '@/app/providers/privacidade';
 import { SessaoProvider } from '@/app/providers/sessao';
 import { TemaProvider } from '@/app/providers/tema';
 import { RotaProtegida } from '@/app/RotaProtegida';
@@ -43,20 +44,22 @@ createRoot(raiz).render(
           <QueryClientProvider client={clienteDeConsultas}>
             <HashRouter>
               <SessaoProvider>
-                <OuvinteDeLinks />
-                <Routes>
-                  <Route path="/login" element={<LoginProvisorio />} />
-                  <Route path="/esqueci-senha" element={<EsqueciSenha />} />
-                  <Route path="/redefinir-senha" element={<RedefinirSenha />} />
-                  {import.meta.env.DEV && <Route path="/dev/tema" element={<TemaDev />} />}
-                  {import.meta.env.DEV && (
-                    <Route path="/dev/componentes" element={<ComponentesDev />} />
-                  )}
-                  <Route element={<RotaProtegida />}>
-                    {/* T04-05 cria as rotas do menu; até lá, toda rota autenticada é a provisória. */}
-                    <Route path="*" element={<InicioProvisorio />} />
-                  </Route>
-                </Routes>
+                <PrivacidadeProvider>
+                  <OuvinteDeLinks />
+                  <Routes>
+                    <Route path="/login" element={<LoginProvisorio />} />
+                    <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+                    <Route path="/redefinir-senha" element={<RedefinirSenha />} />
+                    {import.meta.env.DEV && <Route path="/dev/tema" element={<TemaDev />} />}
+                    {import.meta.env.DEV && (
+                      <Route path="/dev/componentes" element={<ComponentesDev />} />
+                    )}
+                    <Route element={<RotaProtegida />}>
+                      {/* T04-05 cria as rotas do menu; até lá, toda rota autenticada é a provisória. */}
+                      <Route path="*" element={<InicioProvisorio />} />
+                    </Route>
+                  </Routes>
+                </PrivacidadeProvider>
               </SessaoProvider>
             </HashRouter>
             <Toaster />
