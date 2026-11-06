@@ -9,3 +9,4 @@ export {
   receitasReconhecidas,
   somarItens,
 } from './reconhecimento';
+export * from './pendencias';
