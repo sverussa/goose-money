@@ -28,3 +28,13 @@ Escolhas feitas durante T04-01 a T04-09 em casos que a spec e o design não cobr
 6. A rolagem do `ScrollArea` recebe foco pelo teclado (`tabIndex=0`), pedido do axe.
 7. O CLI do shadcn 4.23 trocou o import de `cn` por um pacote `cn` e trouxe `next-themes`; os dois foram removidos e o `use-mobile` foi para `src/components/ui` (fora de `src/hooks`, que não é da trilha U).
 8. Textos dos componentes base (por ora só "Fechar") ficam em `src/app/mensagens.ts`.
+
+## T04-04
+
+1. `MoneyText` sem `tipo` mostra só o valor com o sinal dele, sem cor nem ícone (saldos, totais). Com `tipo`, o sinal vem do tipo (receita sempre "+", despesa sempre "−", com o valor em módulo); `neutro` mantém o sinal do valor e usa o ícone de setas trocadas.
+2. Valor zero sai sem sinal ("R$ 0,00"), inclusive `-0`.
+3. Modo privacidade: a escolha do botão de olho fica no `sessionStorage` e vale até fechar o app; ao abrir de novo, volta a seguir a preferência "ocultar valores ao abrir". Enquanto os fatos não chegam, os valores não aparecem de qualquer forma.
+4. Ícones escolhidos para os chips (não definidos na spec): Previsto relógio, A pagar ampulheta, Vencido/Vencida alerta, Atrasado relógio com alerta, Vence em breve calendário com relógio, Futura calendário, Aberta cadeado aberto, Fechada cadeado, Paga check, Transportada seta para a linha, Paga parcialmente pizza, A classificar etiqueta, Novo brilho, Anterior ao saldo inicial retroceder, Paga antes do cadastro calendário com check.
+5. Cores dos chips fora de `statusChips` do design: Vencida (fatura) igual a Vencido; Transportada, Anterior ao saldo inicial e Paga antes do cadastro em `surface-container` (neutro); Paga parcialmente em `transfer-container`.
+6. "Vence em breve" é o rótulo padrão do chip de vencimento próximo; a tela pode trocar o texto ("Vence amanhã") mantendo cor e ícone.
+7. Percentual negativo usa o mesmo "−" (U+2212) da moeda; a moeda curta dos eixos segue o Intl ("R$ 1,2 mil", "R$ 3,5 mi").

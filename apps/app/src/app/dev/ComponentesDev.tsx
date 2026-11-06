@@ -1,4 +1,5 @@
-import { Info, Pencil, Plus, Trash2, TriangleAlert } from 'lucide-react';
+import { centavos } from '@goose-money/core';
+import { Eye, EyeOff, Info, Pencil, Plus, Trash2, TriangleAlert } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Alert, AlertAction, AlertDescription } from '@/components/ui/alert';
@@ -75,6 +76,12 @@ import { Toggle } from '@/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
+import { MoneyText } from '@/components/MoneyText';
+import { estadosDoChip } from '@/components/estados';
+import { StatusChip } from '@/components/StatusChip';
+
+import { mensagens } from '../mensagens';
+import { usePrivacidade } from '../providers/usePrivacidade';
 import { SeletorDeTemaDev } from './SeletorDeTemaDev';
 
 // Textos de exemplo, só para revisão visual em desenvolvimento.
@@ -89,10 +96,33 @@ function Secao({ titulo, children }: { titulo: string; children: React.ReactNode
 
 /** Componentes base e variantes, nos dois temas (só em desenvolvimento, `#/dev/componentes`). */
 export function ComponentesDev() {
+  const { oculto, alternar } = usePrivacidade();
   return (
     <main className="mx-auto flex max-w-conteudo flex-col gap-8 p-pagina">
       <h1 className="text-headline-md">Componentes</h1>
       <SeletorDeTemaDev />
+
+      <Secao titulo="MoneyText">
+        <Button
+          variant="icon"
+          aria-label={oculto ? mensagens.privacidade.mostrar : mensagens.privacidade.ocultar}
+          aria-pressed={oculto}
+          onClick={alternar}
+        >
+          {oculto ? <EyeOff /> : <Eye />}
+        </Button>
+        <MoneyText valor={centavos(650000)} tipo="receita" className="text-title-lg" />
+        <MoneyText valor={centavos(8990)} tipo="despesa" className="text-title-lg" />
+        <MoneyText valor={centavos(-150000)} tipo="neutro" className="text-title-lg" />
+        <MoneyText valor={centavos(-8990)} className="text-headline-md" />
+        <MoneyText valor={centavos(0)} />
+      </Secao>
+
+      <Secao titulo="StatusChip">
+        {estadosDoChip.map((e) => (
+          <StatusChip key={e} estado={e} />
+        ))}
+      </Secao>
 
       <Secao titulo="Button">
         <Button>Filled</Button>
