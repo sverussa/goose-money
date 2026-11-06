@@ -2,14 +2,18 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { Tooltip as TooltipPrimitive } from 'radix-ui';
 
+// Tooltip simples do M3: só texto, não recebe o ponteiro. Sem `disableHoverableContent`, o Radix
+// ficava preso na "área de passagem" depois de um clique e não abria o tooltip do próximo item.
 function TooltipProvider({
   delayDuration = 300,
+  disableHoverableContent = true,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
   return (
     <TooltipPrimitive.Provider
       data-slot="tooltip-provider"
       delayDuration={delayDuration}
+      disableHoverableContent={disableHoverableContent}
       {...props}
     />
   );

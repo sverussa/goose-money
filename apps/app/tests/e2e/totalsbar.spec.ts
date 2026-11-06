@@ -74,16 +74,17 @@ for (const largura of [768, 1440]) {
 test('cada indicador leva ao destino de 5.3 e explica o cálculo no tooltip', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await entrar(page, await comSeed());
-  const destinos: [string, RegExp][] = [
-    ['Saldo em contas', /#\/contas$/],
-    ['Previsto até o fim do mês', /#\/\?aba=projecoes&mes=\d{4}-\d{2}$/],
-    ['A pagar nos cartões', /#\/cartoes$/],
-    ['Resultado do mês', /#\/\?de=\d{4}-\d{2}-01&ate=\d{4}-\d{2}-\d{2}$/],
-    ['Patrimônio líquido', /#\/\?aba=saldos$/],
+  const destinos: [string, RegExp, RegExp][] = [
+    ['Saldo em contas', /#\/contas$/, /^Soma do saldo de hoje/],
+    ['Previsto até o fim do mês', /#\/\?aba=projecoes&mes=\d{4}-\d{2}$/, /^Saldo em contas \+/],
+    ['A pagar nos cartões', /#\/cartoes$/, /^Faturas vencidas/],
+    ['Resultado do mês', /#\/\?de=\d{4}-\d{2}-01&ate=\d{4}-\d{2}-\d{2}$/, /^Receitas − despesas/],
+    ['Patrimônio líquido', /#\/\?aba=saldos$/, /^Saldo em todas as contas/],
   ];
-  for (const [nome, url] of destinos) {
+  for (const [nome, url, dica] of destinos) {
     await indicador(page, nome).hover();
-    await expect(page.getByRole('tooltip')).not.toBeEmpty();
+    // O tooltip anterior ainda pode estar sumindo: procura o deste indicador pelo texto.
+    await expect(page.getByRole('tooltip', { name: dica })).toBeVisible();
     await indicador(page, nome).click();
     await expect(page).toHaveURL(url);
   }
