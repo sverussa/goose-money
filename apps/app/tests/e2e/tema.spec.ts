@@ -77,10 +77,10 @@ test('alternar o tema muda a tela sem recarregar', async ({ page }) => {
   await page.goto('/#/dev/tema');
   const fundo = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   const claro = await fundo();
-  await page.getByRole('button', { name: 'escuro' }).click();
+  await page.getByRole('radio', { name: 'escuro' }).click();
   await expect(page.locator('html')).toHaveClass(/dark/);
   expect(await fundo()).not.toBe(claro);
-  await page.getByRole('button', { name: 'claro' }).click();
+  await page.getByRole('radio', { name: 'claro' }).click();
   await expect(page.locator('html')).not.toHaveClass(/dark/);
   expect(await fundo()).toBe(claro);
 });
@@ -88,7 +88,7 @@ test('alternar o tema muda a tela sem recarregar', async ({ page }) => {
 test('em "sistema", trocar o tema do SO troca o app', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('/#/dev/tema');
-  await page.getByRole('button', { name: 'sistema' }).click();
+  await page.getByRole('radio', { name: 'sistema' }).click();
   await expect(page.locator('html')).not.toHaveClass(/dark/);
   await page.emulateMedia({ colorScheme: 'dark' });
   await expect(page.locator('html')).toHaveClass(/dark/);
@@ -98,11 +98,17 @@ test('em "sistema", trocar o tema do SO troca o app', async ({ page }) => {
 
 test('recarregar no tema escuro não pisca o claro', async ({ page }) => {
   await page.goto('/#/dev/tema');
-  await page.getByRole('button', { name: 'escuro' }).click();
-  const escuro = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-  // Sem o app: só o tema-inicial.js roda, como antes da primeira pintura.
-  await page.route('**/src/main.tsx', (rota) => rota.abort());
+  await page.getByRole('radio', { name: 'escuro' }).click();
+  const superficie = () =>
+    page.evaluate(() =>
+      getComputedStyle(document.documentElement).getPropertyValue('--color-surface').trim(),
+    );
+  const escuro = await superficie();
+  // Sem o app (nem o tema.css, que o Vite injeta por ele): só o tema-inicial.js roda, como antes
+  // da primeira pintura, e já deixa as variáveis escuras no lugar.
+  await page.route(/\/src\/main\.tsx/, (rota) => rota.abort());
   await page.reload();
   await expect(page.locator('html')).toHaveClass(/dark/);
-  expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe(escuro);
+  expect(escuro).not.toBe('');
+  expect(await superficie()).toBe(escuro);
 });

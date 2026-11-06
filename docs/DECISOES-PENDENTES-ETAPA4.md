@@ -17,3 +17,14 @@ Escolhas feitas durante T04-01 a T04-09 em casos que a spec e o design não cobr
 4. Esquema M3 usado na geração: Tonal Spot (o padrão do Material You), contraste padrão (0). Semânticos gerados como cores customizadas **sem harmonizar** com a semente, para manter a cor de cada significado.
 5. A paleta categórica e as cores de cartão **não** mudam no escuro (são cores de gráfico e de identidade, não de texto). Contraste de elementos gráficos (3:1) fica para T06-02.
 6. Peso no bundle inicial: `@material/material-color-utilities` 0.4.0 acrescenta cerca de 87 kB (21 kB com gzip): de 745 kB para 832 kB.
+
+## T04-03
+
+1. As variantes do `Button` passam a ter só os nomes M3 (`filled`, padrão, `tonal`, `outlined`, `text`, `icon`) e `destructive` (fundo `error`, para "Apagar tudo" e confirmações irreversíveis). As variantes e tamanhos do shadcn (`default`, `ghost`, `sm`, `icon-sm`…) saíram; os componentes do shadcn que os usavam foram ajustados.
+2. O alvo de 48 dp de botões, chips, segmentos, checkbox e switch vem de uma área invisível centrada (utilitário `alvo`), sem mudar o tamanho visível do design (40 dp nos botões, 36 dp nos chips).
+3. `Card` `elevated` segue o design (branco com borda `surface-container-highest`, sem sombra), não a borda `outline-variant` citada na tarefa; `outlined` usa `outline-variant`.
+4. Item de menu desabilitado mostra o motivo numa segunda linha (`motivo`), na cor `outline`, como no design da fatura; o item fica fora da navegação pelo teclado (comportamento do Radix).
+5. O `Alert` não tem `role` fixo: quem usa escolhe `note`, `status` ou `alert`.
+6. A rolagem do `ScrollArea` recebe foco pelo teclado (`tabIndex=0`), pedido do axe.
+7. O CLI do shadcn 4.23 trocou o import de `cn` por um pacote `cn` e trouxe `next-themes`; os dois foram removidos e o `use-mobile` foi para `src/components/ui` (fora de `src/hooks`, que não é da trilha U).
+8. Textos dos componentes base (por ora só "Fechar") ficam em `src/app/mensagens.ts`.
