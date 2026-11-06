@@ -1,7 +1,14 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Permissões mínimas da janela principal",
+  "description": "Permissões mínimas da janela principal. O fs não tem escopo fixo: só alcança os caminhos que o usuário escolhe no diálogo de salvar ou abrir (T03-07).",
   "windows": ["main"],
-  "permissions": ["core:default"]
+  "permissions": [
+    "core:default",
+    "dialog:allow-save",
+    "dialog:allow-open",
+    "fs:allow-write-file",
+    "fs:allow-write-text-file",
+    "fs:allow-read-text-file"
+  ]
 }
