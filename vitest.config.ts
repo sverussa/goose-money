@@ -20,7 +20,7 @@ export default defineConfig({
           root: './packages/core',
           include: ['src/motor/desempenho.test.ts'],
           environment: 'node',
-          sequence: { groupOrder: 1 },
+          sequence: { groupOrder: 2 },
         },
       },
       {
@@ -49,9 +49,11 @@ export default defineConfig({
             },
             {
               // src/data do app contra o banco, com usuários dos utilitários de supabase/tests.
+              // Depois do `db`, para não disputar o banco com os testes de tempo dele.
               extends: './apps/app/vite.config.ts',
               test: {
                 name: 'app-db',
+                sequence: { groupOrder: 1 },
                 root: './apps/app',
                 include: ['tests/db/**/*.test.ts'],
                 environment: 'node',

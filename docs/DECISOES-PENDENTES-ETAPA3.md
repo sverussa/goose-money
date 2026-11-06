@@ -46,3 +46,11 @@ Casos que a spec não cobre ou em que o texto da tarefa diverge do `MODELO-DADOS
 5. O banner fica, por enquanto, no topo das rotas autenticadas (`RotaProtegida`); a T04-05 o põe logo abaixo da top app bar. Não aparece no login, que tem a própria mensagem.
 6. `BotaoSalvar` (`src/components`): "Salvando…" durante a gravação e desabilitado sem conexão, com a explicação no `title` até o `Tooltip` da T04-03.
 7. **Verificação pendente (sem tela ainda):** "Salvar fica desabilitado offline" na interface fica para o Playwright da T05-02, primeiro formulário a usar o `BotaoSalvar`. O banner, a recarga ao voltar e a recusa da gravação offline estão testados.
+
+## T03-06
+1. A lógica fica em `confirmarPendentes` (`src/queries/confirmacaoAutomatica.ts`), sem React, testada contra o banco local; o hook só a dispara e mostra o snackbar. Cada pendente vira um `confirmarOcorrencia` do core (uma ocorrência por chamada do `gravar`), em vez do `confirmarEmLote`, que juntaria todas numa gravação só.
+2. Além de `23505` (outro aparelho já confirmou, pulado sem erro), uma ocorrência que o core ou o banco recusa por outra regra (ex.: conta arquivada) é pulada e volta a ser tentada na próxima rodada, para não travar as seguintes. Sem rede ou com a sessão expirada, a rodada para em silêncio e tenta de novo na próxima (é automática; nada que o usuário pediu se perde).
+3. Roda depois da primeira carga, na virada do dia, ao voltar a conexão e a cada 60 minutos. Depois de um conflito, recarrega os fatos (o que o outro aparelho gravou ainda não estava no cache).
+4. O snackbar conta só o que este aparelho registrou. "Revisar" leva a `#/lancamentos?origem=recorrencia&criadosEm=<hoje>`; os nomes dos parâmetros são provisórios até os filtros da T05-07.
+5. O hook fica montado na área autenticada (`AreaAutenticada`, em `RotaProtegida.tsx`) até o `AppShell` (T04-05).
+6. Vitest: o projeto `app-db` roda depois do `db` (`groupOrder` 1) e o desempenho do core passou para o fim (`groupOrder` 2, sozinho como antes). Com os dois projetos de banco ao mesmo tempo, os testes de tempo do `db` (carga de 10 mil lançamentos em < 1 s, importação em < 8 s) estouravam com a máquina carregada. Os limites não mudaram.
