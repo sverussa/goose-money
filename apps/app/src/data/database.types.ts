@@ -393,7 +393,10 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "carregar_tudo":
+            "apagar_tudo":
+{ Args: Record<PropertyKey, never>; Returns: undefined
+                           },
+"carregar_tudo":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
 "gravar":

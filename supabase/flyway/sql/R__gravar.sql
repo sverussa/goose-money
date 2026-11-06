@@ -4,6 +4,8 @@
 -- banco (snake_case). Tudo numa transação: se uma operação falha, nada é gravado. Não existe
 -- apagar: excluir é `alterar` com is_deleted = true. `security invoker`: o RLS do usuário vale.
 -- Devolve as linhas gravadas por tabela ({ tabela: [linha, ...] }, a última versão de cada id).
+-- `inserir` de um id que existe excluído, do próprio usuário, traz o registro de volta com os
+-- dados novos (importação no modo Substituir, 9.2); existindo ativo, é erro de unicidade.
 create or replace function public.gravar(ops jsonb)
 returns jsonb
 language plpgsql
@@ -21,7 +23,11 @@ declare
   campos text[];
   desconhecidos text[];
   linha jsonb;
-  gravadas jsonb := '{}';
+  -- Uma entrada por operação, na ordem; o retorno fica com a última de cada id. Arrays
+  -- crescem no lugar: o lote de 10 mil operações não fica quadrático.
+  g_tabelas text[] := '{}';
+  g_ids uuid[] := '{}';
+  g_linhas jsonb[] := '{}';
   estado text;
   restricao text;
   mensagem text;
@@ -70,11 +76,18 @@ begin
 
       if acao = 'inserir' then
         execute format(
-          'insert into public.%1$I (id%2$s) select $2%3$s from jsonb_populate_record(null::public.%1$I, $1) r returning to_jsonb(%1$I.*)',
+          'insert into public.%1$I as t (id%2$s) select $2%3$s from jsonb_populate_record(null::public.%1$I, $1) r '
+          'on conflict (id) do update set is_deleted = excluded.is_deleted%4$s where t.is_deleted '
+          'returning to_jsonb(t.*)',
           tabela,
           (select coalesce(string_agg(', ' || quote_ident(c), ''), '') from unnest(campos) c),
-          (select coalesce(string_agg(', r.' || quote_ident(c), ''), '') from unnest(campos) c)
+          (select coalesce(string_agg(', r.' || quote_ident(c), ''), '') from unnest(campos) c),
+          (select coalesce(string_agg(format(', %1$I = excluded.%1$I', c), ''), '')
+            from unnest(campos) c where c <> 'is_deleted')
         ) into linha using dados, alvo;
+        if linha is null then
+          raise exception 'gravar: % % já existe', tabela, alvo using errcode = '23505';
+        end if;
       else
         if cardinality(campos) = 0 then
           -- Só colunas de controle: nada a mudar.
@@ -93,11 +106,9 @@ begin
         end if;
       end if;
 
-      gravadas := jsonb_set(
-        gravadas || jsonb_build_object(tabela, coalesce(gravadas -> tabela, '{}')),
-        array[tabela, alvo::text],
-        linha
-      );
+      g_tabelas := array_append(g_tabelas, tabela);
+      g_ids := array_append(g_ids, alvo);
+      g_linhas := array_append(g_linhas, linha);
     end loop;
 
     -- Checagens adiadas (soma das parcelas etc.) rodam aqui, para o erro sair com código.
@@ -114,8 +125,16 @@ begin
   end;
 
   return (
-    select coalesce(jsonb_object_agg(t, (select jsonb_agg(l) from jsonb_each(por_id) as x(i, l))), '{}')
-    from jsonb_each(gravadas) as g(t, por_id)
+    select coalesce(jsonb_object_agg(t, linhas), '{}')
+    from (
+      select t, jsonb_agg(l) as linhas
+      from (
+        select distinct on (t, i) t, i, l
+        from unnest(g_tabelas, g_ids, g_linhas) with ordinality as u(t, i, l, ordem)
+        order by t, i, ordem desc
+      ) ultimas
+      group by t
+    ) por_tabela
   );
 end;
 $$;
