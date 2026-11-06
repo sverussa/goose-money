@@ -120,7 +120,7 @@ Tokens, temas, componentes base e a estrutura comum das telas.
 | ✅ [T04-02 · Tema escuro e seletor de tema](04-tema-casca/T04-02-tema-escuro.md) | Tema | T04-01 | tomada |
 | ✅ [T04-03 · Componentes base do shadcn ajustados ao design](04-tema-casca/T04-03-componentes-shadcn-base.md) | Design system | T04-01 | — |
 | ✅ [T04-04 · `MoneyText`, `StatusChip`, formatação e mensagens](04-tema-casca/T04-04-moneytext-statuschip-mensagens.md) | Componentes do app | T04-03 | — |
-| [T04-05 · `AppShell` e navegação](04-tema-casca/T04-05-appshell-navegacao.md) | Casca | T04-04, T03-01, T01-21 | — |
+| ✅ [T04-05 · `AppShell` e navegação](04-tema-casca/T04-05-appshell-navegacao.md) | Casca | T04-04, T03-01, T01-21 | — |
 | [T04-06 · Barra de Totais (`TotalsBar`)](04-tema-casca/T04-06-totalsbar.md) | Casca | T04-05, T03-04 | tomada |
 | [T04-07 · Cabeçalho de contexto, seletores de mês e período, estados](04-tema-casca/T04-07-cabecalho-seletores-estados.md) | Componentes do app | T04-05, T01-04 | — |
 | [T04-08 · `ChartCard` e base dos gráficos](04-tema-casca/T04-08-chartcard-graficos.md) | Gráficos | T04-07, T03-07 | — |
