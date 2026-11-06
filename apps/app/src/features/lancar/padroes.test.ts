@@ -1,7 +1,19 @@
-import { type Contexto, dataCivil, derivar, gerarSeed } from '@goose-money/core';
+import {
+  aplicar,
+  type Contexto,
+  dataCivil,
+  derivar,
+  gerarSeed,
+  somarDias,
+} from '@goose-money/core';
 import { describe, expect, it } from 'vitest';
 
-import { comandoDoFormulario, esquemaDoFormulario, resolverZod } from './formulario';
+import {
+  comandoDoFormulario,
+  contaComDataPosterior,
+  esquemaDoFormulario,
+  resolverZod,
+} from './formulario';
 import {
   aClassificar,
   cartaoInicial,
@@ -66,6 +78,9 @@ describe('formulário de lançamento', () => {
     contaDestinoId: '',
     cartaoId: cartao?.id ?? '',
     faturaCompetencia: '',
+    observacao: '',
+    previsto: false,
+    saldoInicial: 'manter' as const,
   };
   const tabelas = (v: typeof validos | Record<string, unknown>) =>
     comandoDoFormulario(fatos, ctx, { ...validos, ...v }).mudancas.map((x) => x.entidade);
@@ -115,5 +130,23 @@ describe('formulário de lançamento', () => {
     expect(cartaoInicial(fatos, b?.id ?? null, a?.id ?? null)).toBe(b?.id);
     expect(cartaoInicial(fatos, null, b?.id ?? null)).toBe(b?.id);
     expect(cartaoInicial(fatos, null, null)).toBe(a?.id);
+  });
+
+  it('data no saldo inicial ou antes: avisa; "Mudar a data" grava conta e lançamento juntos (3.4)', () => {
+    const inicial = corrente?.dataSaldoInicial ?? HOJE;
+    const antes = { ...validos, data: inicial };
+    expect(contaComDataPosterior(fatos, antes)?.id).toBe(corrente?.id);
+    expect(contaComDataPosterior(fatos, { ...antes, previsto: true })).toBeNull();
+    expect(contaComDataPosterior(fatos, { ...antes, tipo: 'compra' })).toBeNull();
+    expect(contaComDataPosterior(fatos, validos)).toBeNull();
+
+    expect(tabelas(antes)).toEqual(['lancamentos']);
+    const mudar = comandoDoFormulario(fatos, ctx, { ...antes, saldoInicial: 'mudar' });
+    expect(mudar.mudancas.map((x) => x.entidade)).toEqual(['contas', 'lancamentos']);
+    const depois = aplicar(fatos, mudar.mudancas);
+    expect(depois.contas.find((c) => c.id === corrente?.id)?.dataSaldoInicial).toBe(
+      somarDias(inicial, -1),
+    );
+    expect(aplicar(depois, mudar.inversas)).toEqual(fatos);
   });
 });

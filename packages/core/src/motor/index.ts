@@ -12,3 +12,4 @@ export {
 } from './reconhecimento';
 export * from './pendencias';
 export * from './barra';
+export * from './sugestoes';

@@ -36,6 +36,23 @@ export const mensagensLancar = {
       `${fora} está fora do total: o Saldo em contas vai subir ${valor}. Resultado e Patrimônio líquido não mudam.`,
   },
   dicaTeclas: 'Enter salva · Esc fecha',
+  sugestoes: 'Sugestões',
+  verTodas: 'Ver todas',
+  buscarCategoria: 'Buscar categoria',
+  nenhumaCategoria: 'Nenhuma categoria encontrada',
+  hoje: 'Hoje',
+  ontem: 'Ontem',
+  escolherData: 'Escolher data',
+  maisOpcoes: 'Mais opções: previsto e observação',
+  observacao: 'Observação (opcional)',
+  previsto: 'Previsto: ainda vai acontecer',
+  anteriorAoSaldo: {
+    aviso: (conta: string, data: string) =>
+      `Esta data é anterior ao saldo inicial de ${conta} (${data}). O lançamento conta nas receitas e despesas, mas não muda o saldo da conta.`,
+    rotulo: 'O que fazer com o saldo',
+    manter: 'Manter fora do saldo',
+    mudar: (data: string) => `Mudar a data do saldo inicial para ${data}`,
+  },
   erros: {
     valor: 'Informe um valor maior que zero',
     conta: 'Escolha a conta',

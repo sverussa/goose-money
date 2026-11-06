@@ -6,20 +6,23 @@ import {
   ErroDeDominio,
   faturaDaCompra,
   previaDoPagamento,
+  sugestoesDeLancamento,
 } from '@goose-money/core';
-import { Check, CreditCard } from 'lucide-react';
+import { Check, ChevronDown, CreditCard, TriangleAlert } from 'lucide-react';
 import { ToggleGroup as ToggleGroupPrimitive } from 'radix-ui';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { type Control, Controller, useForm, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 
-import { formatarMesCurto, formatarMoeda } from '@/app/formatacao';
+import { formatarData, formatarMesCurto, formatarMoeda } from '@/app/formatacao';
 import { mensagens } from '@/app/mensagens';
 import { BotaoSalvar } from '@/components/BotaoSalvar';
 import { EmptyState } from '@/components/EstadosDaTela';
 import { corDoTema } from '@/components/graficos/dados';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -32,8 +35,12 @@ import { Toggle, toggleVariants } from '@/components/ui/toggle';
 import { cn } from '@/lib/utils';
 import { useComando, useContexto } from '@/queries/useComando';
 
+import { CampoData, CampoDescricao, GradeDeCategorias } from './campos';
 import {
   comandoDoFormulario,
+  contaComDataPosterior,
+  novaDataDoSaldoInicial,
+  podeSerPrevisto,
   esquemaDoFormulario,
   resolverZod,
   TIPOS,
@@ -48,6 +55,7 @@ import {
   contasAtivas,
   destinoPadrao,
   faturasParaPagar,
+  gruposDeCategoria,
   guardarUltimaConta,
   guardarUltimoCartao,
   opcoesDeCategoria,
@@ -153,11 +161,14 @@ export function FormularioLancamento({
   derivado,
   inicial,
   valorRef,
+  listaAbertaRef,
   onFechar,
 }: {
   derivado: Derivado;
   inicial: Pick<ValoresDoFormulario, 'tipo' | 'contaId' | 'cartaoId' | 'data'>;
   valorRef: React.RefObject<HTMLInputElement | null>;
+  /** Com as sugestões abertas, Esc fecha a lista e não o diálogo. */
+  listaAbertaRef: React.RefObject<boolean>;
   onFechar: () => void;
 }) {
   const { fatos } = derivado;
@@ -178,6 +189,9 @@ export function FormularioLancamento({
       categoriaId: semCategoria,
       contaDestinoId: contas.find((c) => c.id !== inicial.contaId)?.id ?? '',
       faturaCompetencia: inicial.cartaoId ? (destinoPadrao(derivado, inicial.cartaoId) ?? '') : '',
+      observacao: '',
+      previsto: false,
+      saldoInicial: 'manter',
     },
   });
   const { control, register, handleSubmit, setValue, setError, reset, formState } = form;
@@ -188,7 +202,18 @@ export function FormularioLancamento({
 
   const usaCartao = TIPOS_DE_CARTAO.includes(tipo);
   const cartao = cartoes.find((c) => c.id === v.cartaoId);
-  const categorias = opcoesDeCategoria(fatos, tipo === 'receita' ? 'receita' : 'despesa');
+  const [maisOpcoes, setMaisOpcoes] = useState(false);
+  const tipoDaCategoria = tipo === 'receita' ? 'receita' : 'despesa';
+  const categorias = opcoesDeCategoria(fatos, tipoDaCategoria);
+  const nomesDasCategorias = new Map(categorias.map((c) => [c.id, c.nome]));
+  const sugestoes = sugestoesDeLancamento(fatos, tipoDaCategoria);
+  const maisUsadas = sugestoes.maisUsadas.flatMap(
+    (id) => categorias.find((c) => c.id === id) ?? [],
+  );
+  const contaPosterior = contaComDataPosterior(fatos, {
+    ...form.getValues(),
+    ...v,
+  });
   const opcoesDeConta = contas.map((c) => ({ valor: c.id, rotulo: c.nome }));
   const opcoesDeCartao = cartoes.map((c) => ({ valor: c.id, rotulo: c.nome }));
   const faturas = cartao ? faturasParaPagar(derivado, cartao.id) : [];
@@ -232,7 +257,14 @@ export function FormularioLancamento({
       return;
     }
     // "Salvar e lançar outro": volta ao valor mantendo tipo, conta ou cartão e data (7.1).
-    reset({ ...valores, valor: 0, descricao: '', categoriaId: semCategoria });
+    reset({
+      ...valores,
+      valor: 0,
+      descricao: '',
+      categoriaId: semCategoria,
+      observacao: '',
+      saldoInicial: 'manter',
+    });
     valorRef.current?.focus();
   }
   const enviar = (lancarOutro: boolean) => {
@@ -345,41 +377,45 @@ export function FormularioLancamento({
         />
       ) : (
         <>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="lancar-descricao">{m.descricao}</Label>
-            <Input
-              id="lancar-descricao"
-              autoComplete="off"
-              className="h-13"
-              {...register('descricao')}
-            />
-          </div>
+          <CampoDescricao
+            valor={v.descricao ?? ''}
+            sugestoes={sugestoes.descricoes}
+            categorias={nomesDasCategorias}
+            listaAbertaRef={listaAbertaRef}
+            aoMudar={(texto) => {
+              setValue('descricao', texto);
+            }}
+            aoEscolher={(s) => {
+              setValue('descricao', s.descricao);
+              if (categorias.some((c) => c.id === s.categoriaId))
+                setValue('categoriaId', s.categoriaId);
+            }}
+          />
 
           {(tipo === 'despesa' || tipo === 'receita' || tipo === 'compra') && (
-            <CampoSelect
-              nome="categoriaId"
-              rotulo={m.categoria}
-              control={control}
+            <GradeDeCategorias
+              maisUsadas={maisUsadas}
+              grupos={gruposDeCategoria(fatos, tipoDaCategoria)}
+              todas={categorias}
+              valor={v.categoriaId ?? ''}
               erro={erros.categoriaId?.message}
-              opcoes={categorias.map((c) => ({ valor: c.id, rotulo: c.nome, cor: c.cor }))}
+              aoEscolher={(id) => {
+                setValue('categoriaId', id);
+              }}
             />
           )}
 
-          <div className="grid gap-4 medium:grid-cols-2">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="lancar-data" data-erro={!!erros.data}>
-                {m.data}
-              </Label>
-              <Input
-                id="lancar-data"
-                type="date"
-                className="h-12"
-                aria-invalid={!!erros.data || undefined}
-                {...register('data')}
-              />
-              <Erro id="lancar-data-erro" texto={erros.data?.message} />
-            </div>
+          <CampoData
+            hoje={derivado.hoje}
+            valor={v.data ?? ''}
+            campo={register('data')}
+            erro={erros.data?.message}
+            aoMudar={(d) => {
+              setValue('data', d, { shouldValidate: formState.isSubmitted });
+            }}
+          />
 
+          <div className="grid gap-4 medium:grid-cols-2">
             {(tipo === 'despesa' || tipo === 'receita') && (
               <CampoSelect
                 nome="contaId"
@@ -465,6 +501,80 @@ export function FormularioLancamento({
               </>
             )}
           </div>
+
+          {contaPosterior && (
+            <div
+              role="note"
+              className="flex flex-col gap-3 rounded-md bg-warning-container px-4 py-3 text-body-md text-on-warning-container"
+            >
+              <p className="flex gap-2">
+                <TriangleAlert aria-hidden className="mt-0.5 size-4.5 shrink-0" />
+                {m.anteriorAoSaldo.aviso(
+                  contaPosterior.nome,
+                  formatarData(contaPosterior.dataSaldoInicial),
+                )}
+              </p>
+              <fieldset className="flex flex-col gap-1">
+                <legend className="sr-only">{m.anteriorAoSaldo.rotulo}</legend>
+                {(['manter', 'mudar'] as const).map((opcao) => (
+                  <label key={opcao} className="flex min-h-11 cursor-pointer items-center gap-3">
+                    <input
+                      type="radio"
+                      value={opcao}
+                      className="size-4.5 accent-primary"
+                      {...register('saldoInicial')}
+                    />
+                    {opcao === 'manter'
+                      ? m.anteriorAoSaldo.manter
+                      : m.anteriorAoSaldo.mudar(formatarData(novaDataDoSaldoInicial(v.data ?? '')))}
+                  </label>
+                ))}
+              </fieldset>
+            </div>
+          )}
+
+          <Button
+            type="button"
+            variant="text"
+            className="self-start"
+            aria-expanded={maisOpcoes}
+            aria-controls="lancar-mais-opcoes"
+            onClick={() => {
+              setMaisOpcoes(!maisOpcoes);
+            }}
+          >
+            {m.maisOpcoes}
+            <ChevronDown
+              aria-hidden
+              className={cn('transition-transform', maisOpcoes && 'rotate-180')}
+            />
+          </Button>
+          {maisOpcoes && (
+            <div id="lancar-mais-opcoes" className="flex flex-col gap-4">
+              {podeSerPrevisto(tipo) && (
+                <div className="flex min-h-11 items-center gap-3">
+                  <Controller
+                    name="previsto"
+                    control={control}
+                    render={({ field }) => (
+                      <Switch
+                        id="lancar-previsto"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    )}
+                  />
+                  <Label htmlFor="lancar-previsto" className="text-body-md text-on-surface">
+                    {m.previsto}
+                  </Label>
+                </div>
+              )}
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="lancar-observacao">{m.observacao}</Label>
+                <Textarea id="lancar-observacao" {...register('observacao')} />
+              </div>
+            </div>
+          )}
 
           {aviso && (
             <p
