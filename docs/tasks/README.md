@@ -146,7 +146,7 @@ Uma tela ou diálogo por tarefa, na ordem do handoff.
 | ✅ [T05-11 · Cartões: lista, formulário e menu](05-telas/T05-11-cartoes-lista-formulario.md) | Cartões | T05-08, T01-10 | — |
 | ✅ [T05-12 · Fatura do cartão](05-telas/T05-12-cartao-fatura.md) | Cartões | T05-11, T01-09 | tomada |
 | ✅ [T05-13 · Nova compra (à vista ou parcelada)](05-telas/T05-13-nova-compra.md) | Cartões | T05-12, T01-08 | — |
-| [T05-14 · Menu de uma compra](05-telas/T05-14-menu-da-compra.md) | Cartões | T05-13 | — |
+| ✅ [T05-14 · Menu de uma compra](05-telas/T05-14-menu-da-compra.md) | Cartões | T05-13 | — |
 | [T05-15 · Pagar fatura, encargo ou estorno, configurar ciclo](05-telas/T05-15-pagar-encargo-ciclo.md) | Cartões | T05-12 | — |
 | [T05-16 · Painel › Visão geral: pendências e KPIs](05-telas/T05-16-painel-pendencias-kpis.md) | Painel | T04-07, T01-17, T01-21 | — |
 | [T05-17 · Painel › Visão geral: gráficos e maiores despesas](05-telas/T05-17-painel-graficos-visao-geral.md) | Painel | T05-16, T04-08, T05-06 | — |
