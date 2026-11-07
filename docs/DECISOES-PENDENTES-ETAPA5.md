@@ -58,3 +58,14 @@ Decisões tomadas durante as tarefas da etapa 5 (e da T00-14, que a prepara) em 
 2. No celular, Salvar fica no topo (como no design) e "Salvar e lançar outro" no rodapé fixo. Como Salvar está no topo, continua visível com o teclado aberto; o teste simula o teclado encolhendo a janela.
 3. A grade de categorias usa 2 colunas no celular (o design usa 3): os nomes do seed, como "Saúde e bem-estar", quebrariam em 3.
 4. Fora do escopo do design: a dica "Enter salva · Esc fecha" não aparece no celular.
+
+## T05-06
+
+1. **Divergência design × spec:** o design mostra o seletor de mês (`◀ Outubro 2026 ▶`) na top app bar; a spec (8.2) põe o `PeriodPicker` em Lançamentos. Segui a spec: o `PeriodPicker` fica no topo da tela, com o padrão "Este mês" e o período lembrado por aba (`usePeriodoDaUrl('lancamentos')`).
+2. Os filtros vêm da URL com os nomes `tipo`, `conta`, `cartao`, `categoria` e `origem` (listas separadas por vírgula) e `q` (busca); são os que a T05-17 deve usar ao montar o clique dos gráficos. Os chips e menus de filtro chegam na T05-07.
+3. Previstos: não são itens reconhecidos (3.3) e o filtro de estado só chega na T05-07; nesta tarefa a lista mostra só os realizados, como o "Estado: realizados" do design.
+4. O seletor de visão fica acima do `PeriodPicker`, com "Movimentações" desabilitado até a T05-07; no design ele divide a faixa fixa com os totais.
+5. O total do dia é receitas − despesas do dia (como no design, "+R$ 1.138,31" = 1.200,00 − 61,69), calculado com `somarItens` do core em `lista.ts`, fora do componente.
+6. Estorno e ajuste de compra para menos (despesa negativa) aparecem como entrada: "+R$ X" em verde.
+7. O parâmetro `?destaque=` que a busca global manda (T04-09) ainda não rola até o item.
+8. Fora da pasta da tarefa: `@tanstack/react-virtual` 3.14.24 (aprovado) no `package.json` e no `optimizeDeps` do Vite.

@@ -30,6 +30,7 @@ export default defineConfig({
       'html-to-image',
       'radix-ui',
       'react-hook-form',
+      '@tanstack/react-virtual',
     ],
   },
   preview: { port: porta, strictPort: true },
