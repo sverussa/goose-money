@@ -5,9 +5,11 @@ import {
   criarConta,
   dataCivil,
   deMascara,
+  negar,
+  somar,
   type Fatos,
 } from '@goose-money/core';
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 import { lerFatos } from '../../../src/data/mapeamento';
 import { criarUsuario, gravarOk, opsDosFatos } from '../../../../../supabase/tests/apoio';
@@ -51,4 +53,28 @@ export async function semSeed(
   await gravarOk(u.cliente, opsDosFatos({ ...f, categorias: [], preferencias: null }));
   await page.clock.install({ time: new Date(2026, 10, 4, 10) });
   return { u, f, contaId };
+}
+
+/** "−R$ 1.234,56" ou "+R$ 12,00" em centavos com sinal (despesa positiva, estorno negativo). */
+export const centavosDe = (texto: string) => {
+  const c = deMascara(texto.replace(/\D/g, ''));
+  return texto.startsWith('+') ? negar(c) : c;
+};
+
+/**
+ * Lançamentos aberto por um gráfico: a soma dos valores da lista. A lista é virtualizada (D9):
+ * a janela cresce para todas as linhas existirem ao mesmo tempo.
+ */
+export async function somaDaLista(page: Page, itens: number) {
+  const tamanho = page.viewportSize();
+  await page.setViewportSize({ width: tamanho?.width ?? 1440, height: 200 * itens + 1000 });
+  const valores = page
+    .getByRole('list', { name: 'Lançamentos' })
+    .getByRole('listitem')
+    .filter({ hasNot: page.getByRole('heading') })
+    .locator('span.tabular-nums');
+  await expect(valores).toHaveCount(itens);
+  const soma = somar((await valores.allTextContents()).map(centavosDe));
+  if (tamanho) await page.setViewportSize(tamanho);
+  return soma;
 }

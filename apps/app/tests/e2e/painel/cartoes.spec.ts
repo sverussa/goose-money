@@ -1,10 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import {
   comprasParceladasAtivas,
-  deMascara,
   despesasReconhecidas,
   gastoPorCartao,
-  negar,
   parcelasComprometidas,
   periodoPreset,
   somar,
@@ -13,17 +11,11 @@ import { expect, type Page, test } from '@playwright/test';
 
 import { formatarMesCurto, formatarMoeda, MENOS } from '../../../src/app/formatacao';
 import { entrar } from '../lancar/apoio';
-import { HOJE, preparar } from './apoio';
+import { centavosDe, HOJE, preparar, somaDaLista } from './apoio';
 
 // T05-19: Painel › Cartões (6.2, 8.1, 11.7), com "hoje" = 04/11/2026.
 
 test.use({ viewport: { width: 1440, height: 1100 } });
-
-/** "−R$ 1.234,56" ou "+R$ 12,00" em centavos com sinal (despesa positiva, estorno negativo). */
-const centavosDe = (texto: string) => {
-  const c = deMascara(texto.replace(/\D/g, ''));
-  return texto.startsWith('+') ? negar(c) : c;
-};
 
 const tabela = (page: Page) =>
   page.getByRole('region', { name: 'Compras parceladas ativas' }).getByRole('table');
@@ -86,12 +78,5 @@ test('Gasto por cartão: a soma da lista aberta é o valor da barra (11.7)', asy
     .getByRole('definition');
   await expect(despesasNoTopo).toHaveText(`${MENOS}${formatarMoeda(alvo.valor)}`);
   const itens = despesasReconhecidas(d, p, { cartaoId: alvo.cartaoId });
-  const valores = await page
-    .getByRole('list', { name: 'Lançamentos' })
-    .getByRole('listitem')
-    .filter({ hasNot: page.getByRole('heading') })
-    .locator('span.tabular-nums')
-    .allTextContents();
-  expect(valores).toHaveLength(itens.length);
-  expect(somar(valores.map(centavosDe))).toBe(alvo.valor);
+  expect(await somaDaLista(page, itens.length)).toBe(alvo.valor);
 });

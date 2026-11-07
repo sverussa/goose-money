@@ -41,6 +41,7 @@ export function ChartCard({
   series,
   verItens,
   vazio,
+  rodape,
   children,
 }: {
   titulo: string;
@@ -55,6 +56,8 @@ export function ChartCard({
   verItens?: () => void;
   /** Estado vazio: frase curta e ação ("Sem despesas neste período · Lançar despesa"). */
   vazio: { frase: string; acao?: ReactNode };
+  /** Abaixo do gráfico e fora do `role="img"`: ranking ou legenda com itens clicáveis. */
+  rodape?: ReactNode;
   children: ReactNode;
 }) {
   const card = useRef<HTMLDivElement>(null);
@@ -121,12 +124,15 @@ export function ChartCard({
           {vazio.acao}
         </div>
       ) : (
-        <div
-          role="img"
-          aria-label={`${titulo}. ${resumirSeries(dados, categoria.chave, series, oculto)}`}
-        >
-          {children}
-        </div>
+        <>
+          <div
+            role="img"
+            aria-label={`${titulo}. ${resumirSeries(dados, categoria.chave, series, oculto)}`}
+          >
+            {children}
+          </div>
+          {rodape}
+        </>
       )}
     </Card>
   );

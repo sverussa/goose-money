@@ -7,6 +7,7 @@ import { usePeriodoDaUrl } from '@/components/periodo';
 import { Card } from '@/components/ui/card';
 import { useIndicadoresDoPeriodo } from '@/queries/fatos';
 
+import { GraficosVisaoGeral } from './GraficosVisaoGeral';
 import { mensagensPainel } from './mensagens';
 import { Pendencias } from './Pendencias';
 
@@ -101,6 +102,7 @@ export function VisaoGeral({ d }: { d: Derivado }) {
           </Kpi>
         </section>
       )}
+      <GraficosVisaoGeral d={d} p={periodo} />
     </div>
   );
 }
