@@ -3,8 +3,12 @@ import {
   centavos,
   dataCivil,
   type DataCivil,
+  type Fatos,
   type Id,
+  mais,
+  type Compra,
   type NovaCompra,
+  somar,
   totalPelaParcela,
 } from '@goose-money/core';
 
@@ -18,6 +22,7 @@ export const PARCELAS_RAPIDAS = [2, 3, 6, 10, 12] as const;
 export const MAX_PARCELAS = 99;
 
 export interface ValoresDaCompra {
+  cartaoId: Id;
   /** Com "Parcelado", o valor digitado pode ser o da parcela (parcela × n = total). */
   modo: 'total' | 'parcela';
   valor: Centavos;
@@ -61,11 +66,11 @@ export function totalDaCompra(v: ValoresDaCompra): Centavos {
 }
 
 /** Os campos do comando `novaCompra`, ou `null` enquanto o formulário tem erro. */
-export function camposDaCompra(cartaoId: Id, v: ValoresDaCompra): NovaCompra | null {
+export function camposDaCompra(v: ValoresDaCompra): NovaCompra | null {
   const data = dataValida(v.data);
   if (!data || Object.keys(errosDaCompra(v)).length > 0) return null;
   return {
-    cartaoId,
+    cartaoId: v.cartaoId,
     data,
     descricao: v.descricao.trim() || null,
     categoriaId: v.categoriaId,
@@ -75,7 +80,12 @@ export function camposDaCompra(cartaoId: Id, v: ValoresDaCompra): NovaCompra | n
   };
 }
 
-export const valoresIniciaisDaCompra = (hoje: DataCivil, categoriaId: Id): ValoresDaCompra => ({
+export const valoresIniciaisDaCompra = (
+  cartaoId: Id,
+  hoje: DataCivil,
+  categoriaId: Id,
+): ValoresDaCompra => ({
+  cartaoId,
   modo: 'total',
   valor: centavos(0),
   descricao: '',
@@ -84,3 +94,22 @@ export const valoresIniciaisDaCompra = (hoje: DataCivil, categoriaId: Id): Valor
   parcelado: false,
   parcelas: 2,
 });
+
+/** "Editar valor, parcelas, data ou cartão" (T05-14): a Nova compra reaberta com a compra gravada. */
+export const valoresDaCompraGravada = (c: Compra): ValoresDaCompra => ({
+  cartaoId: c.cartaoId,
+  modo: 'total',
+  valor: c.valorTotal,
+  descricao: c.descricao ?? '',
+  categoriaId: c.categoriaId,
+  data: c.data,
+  parcelado: c.numeroParcelas > 1,
+  parcelas: c.numeroParcelas > 1 ? c.numeroParcelas : 2,
+});
+
+/** "Lançar ajuste" (3.6): valor efetivo = valorTotal + ajustes, estornos e encargos vinculados. */
+export const valorEfetivo = (fatos: Fatos, compra: Compra): Centavos =>
+  mais(
+    compra.valorTotal,
+    somar(fatos.itensFatura.filter((i) => i.compraId === compra.id).map((i) => i.valor)),
+  );

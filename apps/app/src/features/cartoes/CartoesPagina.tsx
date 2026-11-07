@@ -2,21 +2,17 @@ import {
   aPagarNosCartoes,
   arquivarCartao,
   type Cartao,
-  type Comando,
   type Derivado,
   desarquivarCartao,
-  ErroDeDominio,
   excluirCartao,
   limiteDisponivelDoCartao,
   obrigacoesDeCartao,
-  type Permissao,
   podeArquivarCartao,
   podeExcluirCartao,
 } from '@goose-money/core';
 import { ChevronDown, CreditCard, EllipsisVertical, Plus } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
-import { toast } from 'sonner';
 
 import { formatarData, formatarMoeda } from '@/app/formatacao';
 import { ContextHeader } from '@/components/ContextHeader';
@@ -27,56 +23,17 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { useDerivado } from '@/queries/fatos';
-import { useComando, useContexto } from '@/queries/useComando';
 
 import { cicloAtual } from './formulario';
+import { ItemDoMenu } from './menu';
+import { useRodar } from './rodar';
 import { FormularioCartao } from './FormularioCartao';
 import { mensagensCartoes as m } from './mensagens';
-
-/** Grava o comando; a recusa do core vira o snackbar de erro (como em Contas). */
-function useRodar() {
-  const { executar } = useComando();
-  const contexto = useContexto();
-  return (montar: (ctx: ReturnType<typeof contexto>) => Comando) => {
-    try {
-      void executar(montar(contexto()));
-    } catch (e) {
-      if (!(e instanceof ErroDeDominio)) throw e;
-      toast.error(e.message);
-    }
-  };
-}
-
-/** Item do menu; desabilitado, mostra o motivo logo abaixo (como em Contas). */
-function ItemDoMenu({
-  rotulo,
-  permissao,
-  aoEscolher,
-}: {
-  rotulo: string;
-  permissao?: Permissao;
-  aoEscolher: () => void;
-}) {
-  const motivo = permissao && !permissao.permitida ? permissao.motivo : undefined;
-  return (
-    <DropdownMenuItem
-      disabled={motivo !== undefined}
-      onSelect={aoEscolher}
-      className="flex-col items-start gap-0.5"
-    >
-      <span>{rotulo}</span>
-      {motivo && (
-        <span className="max-w-64 text-label-md font-normal text-on-surface-variant">{motivo}</span>
-      )}
-    </DropdownMenuItem>
-  );
-}
 
 /** Menu do cartão (6.5): Editar, Configurar ciclo, Arquivar ou Desarquivar, Excluir. */
 function MenuDoCartao({ cartao, d, editar }: { cartao: Cartao; d: Derivado; editar: () => void }) {

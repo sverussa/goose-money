@@ -1,11 +1,14 @@
 import {
   type Cartao,
+  type Compra,
   type Centavos,
   datasDaFatura,
   type Derivado,
+  editarCompra,
   ErroDeDominio,
   faturaAberta,
   limiteDisponivelDoCartao,
+  type NovaCompra,
   novaCompra,
   obrigacoesDoCartao,
   pagaAntesDoCadastro,
@@ -40,7 +43,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { toggleVariants } from '@/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { aClassificar, opcoesDeCategoria } from '@/features/lancar/padroes';
+import { aClassificar, cartoesAtivos, opcoesDeCategoria } from '@/features/lancar/padroes';
 import { cn } from '@/lib/utils';
 import { useComando, useContexto } from '@/queries/useComando';
 
@@ -54,6 +57,7 @@ import {
   PARCELAS_RAPIDAS,
   totalDaCompra,
   type ValoresDaCompra,
+  valoresDaCompraGravada,
   valoresIniciaisDaCompra,
 } from './compra';
 import { efeitosDoComando } from './efeitos';
@@ -79,12 +83,33 @@ const ruim = (diferenca: Centavos, sobeEBom = true) =>
 const mudanca = (c: Centavos) =>
   c === 0 ? m.semMudanca : c > 0 ? `+${formatarMoeda(c)}` : formatarMoeda(c);
 
-function Campos({ d, cartao, onFechar }: { d: Derivado; cartao: Cartao; onFechar: () => void }) {
+function Campos({
+  d,
+  cartao,
+  compra,
+  onFechar,
+}: {
+  d: Derivado;
+  cartao: Cartao;
+  compra: Compra | undefined;
+  onFechar: () => void;
+}) {
   const { executar, salvando } = useComando();
   const contexto = useContexto();
   const categorias = opcoesDeCategoria(d.fatos, 'despesa');
   const semCategoria = aClassificar(d.fatos) ?? categorias[0]?.id ?? '';
-  const [v, setV] = useState<ValoresDaCompra>(() => valoresIniciaisDaCompra(d.hoje, semCategoria));
+  const cartoes = cartoesAtivos(d.fatos);
+  const [v, setV] = useState<ValoresDaCompra>(() =>
+    compra
+      ? valoresDaCompraGravada(compra)
+      : valoresIniciaisDaCompra(cartao.id, d.hoje, semCategoria),
+  );
+  const escolhido = cartoes.find((c) => c.id === v.cartaoId) ?? cartao;
+  // Editar valor, parcelas, data ou cartão (T05-14) regenera as parcelas; a observação fica.
+  const comandoDe = (campos: NovaCompra) =>
+    compra
+      ? editarCompra(d.fatos, contexto(), compra.id, { ...campos, observacao: compra.observacao })
+      : novaCompra(d.fatos, contexto(), campos);
   const [erros, setErros] = useState<ErrosDaCompra>({});
   const [erroDoCore, setErroDoCore] = useState<string | null>(null);
   const valorRef = useRef<HTMLInputElement>(null);
@@ -95,29 +120,32 @@ function Campos({ d, cartao, onFechar }: { d: Derivado; cartao: Cartao; onFechar
 
   // Prévia (6.5) e "O que muda ao salvar" (4.1 item 5): tudo do core, sobre o comando que vai gravar.
   const previa = useMemo(() => {
-    const campos = camposDaCompra(cartao.id, v);
+    const campos = camposDaCompra(v);
     if (!campos) return null;
     try {
-      const comando = novaCompra(d.fatos, contexto(), campos);
-      const obrigacoes = obrigacoesDoCartao(d.faturas.get(cartao.id) ?? []);
+      const efeitos = efeitosDoComando(d, comandoDe(campos));
+      const obrigacoes = obrigacoesDoCartao(d.faturas.get(escolhido.id) ?? []);
       return {
-        ...previaDaCompra(campos, cartao, d.fatos.cartaoCiclos, obrigacoes),
-        efeitos: efeitosDoComando(d, comando),
+        parcelas: previaDaCompra(campos, escolhido, d.fatos.cartaoCiclos, obrigacoes).parcelas,
+        efeitos,
+        limite: limiteDisponivelDoCartao(efeitos.depois, escolhido.id),
       };
     } catch (e) {
       if (e instanceof ErroDeDominio) return null;
       throw e;
     }
-  }, [d, cartao, contexto, v]);
+    // `comandoDe` só usa `d`, `compra` e `contexto`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [d, escolhido, compra, contexto, v]);
 
   async function salvar() {
     const novos = errosDaCompra(v);
     setErros(novos);
-    const campos = camposDaCompra(cartao.id, v);
+    const campos = camposDaCompra(v);
     if (!campos) return;
     let comando;
     try {
-      comando = novaCompra(d.fatos, contexto(), campos);
+      comando = comandoDe(campos);
     } catch (e) {
       if (!(e instanceof ErroDeDominio)) throw e;
       setErroDoCore(e.message);
@@ -129,7 +157,7 @@ function Campos({ d, cartao, onFechar }: { d: Derivado; cartao: Cartao; onFechar
       return;
     }
     // "Salvar e lançar outro": volta ao valor mantendo a data (7.1).
-    setV({ ...valoresIniciaisDaCompra(d.hoje, semCategoria), data: v.data });
+    setV({ ...valoresIniciaisDaCompra(cartao.id, d.hoje, semCategoria), data: v.data });
     setErros({});
     valorRef.current?.focus();
   }
@@ -148,10 +176,10 @@ function Campos({ d, cartao, onFechar }: { d: Derivado; cartao: Cartao; onFechar
     previa && e
       ? [
           [
-            m.limiteDo(cartao.nome),
+            m.limiteDo(escolhido.nome),
             m.deAte(
-              formatarMoeda(limiteDisponivelDoCartao(d, cartao.id)),
-              formatarMoeda(previa.limiteDisponivel),
+              formatarMoeda(limiteDisponivelDoCartao(d, escolhido.id)),
+              formatarMoeda(previa.limite),
             ),
             null,
           ],
@@ -167,7 +195,7 @@ function Campos({ d, cartao, onFechar }: { d: Derivado; cartao: Cartao; onFechar
             e.barra.previstoAteOFimDoMes === 0 && primeira
               ? m.primeiraVence(
                   formatarData(
-                    datasDaFatura(cartao, d.fatos.cartaoCiclos, primeira.competencia).vencimento,
+                    datasDaFatura(escolhido, d.fatos.cartaoCiclos, primeira.competencia).vencimento,
                   ).slice(0, 5),
                 )
               : mudanca(e.barra.previstoAteOFimDoMes),
@@ -278,6 +306,28 @@ function Campos({ d, cartao, onFechar }: { d: Derivado; cartao: Cartao; onFechar
               <Erro id="compra-data-erro" texto={erros.data} />
             </div>
           </div>
+          {compra && (
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="compra-cartao">{m.cartao}</Label>
+              <Select
+                value={v.cartaoId}
+                onValueChange={(cartaoId) => {
+                  mudar({ cartaoId });
+                }}
+              >
+                <SelectTrigger id="compra-cartao" className="h-12">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {cartoes.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.nome}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div className="flex min-h-14 items-center justify-between gap-3 rounded-md bg-surface-container-low px-4">
             <Label htmlFor="compra-parcelado" className="text-body-lg text-on-surface">
               {m.parcelado}
@@ -354,7 +404,7 @@ function Campos({ d, cartao, onFechar }: { d: Derivado; cartao: Cartao; onFechar
                       <span className="flex-1">
                         {m.parcela(p.numero, p.de, formatarMesCurto(p.competencia))}
                       </span>
-                      {pagaAntesDoCadastro(cartao, p) && (
+                      {pagaAntesDoCadastro(escolhido, p) && (
                         <StatusChip estado="pagaAntesDoCadastro" />
                       )}
                       <MoneyText valor={p.valor} className="font-medium" />
@@ -409,16 +459,18 @@ function Campos({ d, cartao, onFechar }: { d: Derivado; cartao: Cartao; onFechar
         <Button type="button" variant="text" onClick={onFechar}>
           {mensagens.acoes.cancelar}
         </Button>
-        <Button
-          type="button"
-          variant="outlined"
-          disabled={salvando}
-          onClick={() => {
-            enviar(true);
-          }}
-        >
-          {mensagens.acoes.salvarELancarOutro}
-        </Button>
+        {!compra && (
+          <Button
+            type="button"
+            variant="outlined"
+            disabled={salvando}
+            onClick={() => {
+              enviar(true);
+            }}
+          >
+            {mensagens.acoes.salvarELancarOutro}
+          </Button>
+        )}
         <BotaoSalvar salvando={salvando} className="px-6">
           {mensagens.acoes.salvar}
         </BotaoSalvar>
@@ -432,11 +484,14 @@ export function NovaCompra({
   aberto,
   d,
   cartao,
+  compra,
   onFechar,
 }: {
   aberto: boolean;
   d: Derivado;
   cartao: Cartao;
+  /** "Editar valor, parcelas, data ou cartão" (T05-14): a compra gravada, preenchida. */
+  compra?: Compra;
   onFechar: () => void;
 }) {
   const ciclo = cicloAtual(d, cartao);
@@ -450,12 +505,12 @@ export function NovaCompra({
     >
       <DialogContent className="max-w-240">
         <DialogHeader>
-          <DialogTitle>{m.titulo(cartao.nome)}</DialogTitle>
+          <DialogTitle>{compra ? m.tituloEditar(cartao.nome) : m.titulo(cartao.nome)}</DialogTitle>
           <DialogDescription>
             {m.subtitulo(ciclo.diaFechamento, ciclo.diaVencimento, formatarMesCurto(aberta))}
           </DialogDescription>
         </DialogHeader>
-        <Campos d={d} cartao={cartao} onFechar={onFechar} />
+        <Campos d={d} cartao={cartao} compra={compra} onFechar={onFechar} />
       </DialogContent>
     </Dialog>
   );

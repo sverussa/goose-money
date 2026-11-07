@@ -1,11 +1,21 @@
 import { useSearchParams } from 'react-router';
 
 /**
- * Ações da tela do cartão, na URL (`?acao=`): os diálogos chegam em T05-13 (`nova-compra`),
- * T05-14 (`compra`, com `?compra=<id>`) e T05-15 (`pagar`, `encargo`, `ciclo`). O menu da lista
- * de cartões já abre `?acao=ciclo`.
+ * Ações da tela do cartão, na URL (`?acao=`): Nova compra (T05-13), o menu da compra e as
+ * operações dela (T05-14, com `?compra=<id>`) e Pagar fatura, encargo ou estorno e ciclo
+ * (T05-15). O menu da lista de cartões já abre `?acao=ciclo`.
  */
-export type AcaoDaFatura = 'nova-compra' | 'pagar' | 'encargo' | 'ciclo' | 'compra';
+export const OPERACOES_DA_COMPRA = [
+  'editar-compra',
+  'editar-valor',
+  'ajuste',
+  'antecipar',
+  'cancelar-compra',
+  'excluir-compra',
+] as const;
+export type OperacaoDaFatura = (typeof OPERACOES_DA_COMPRA)[number];
+export type AcaoDaFatura =
+  'nova-compra' | 'pagar' | 'encargo' | 'ciclo' | 'compra' | OperacaoDaFatura;
 
 export function useAcaoDaFatura() {
   const [busca, setBusca] = useSearchParams();

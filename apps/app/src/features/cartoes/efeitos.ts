@@ -14,6 +14,8 @@ import {
 export interface EfeitosDoComando {
   barra: Record<keyof IndicadoresDaBarra, Centavos>;
   obrigacoes: Centavos;
+  /** A derivação com o comando aplicado, para o Limite disponível depois. */
+  depois: Derivado;
 }
 
 /**
@@ -30,5 +32,6 @@ export function efeitosDoComando(d: Derivado, comando: Comando): EfeitosDoComand
   return {
     barra,
     obrigacoes: menos(obrigacoesDeCartao(depois), obrigacoesDeCartao(d)),
+    depois,
   };
 }
