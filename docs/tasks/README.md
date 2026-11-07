@@ -144,7 +144,7 @@ Uma tela ou diálogo por tarefa, na ordem do handoff.
 | ✅ [T05-09 · Extrato mensal da conta](05-telas/T05-09-conta-extrato.md) | Contas | T05-08, T01-06, T03-07 | — |
 | ✅ [T05-10 · Diálogos Transferir e Ajustar saldo](05-telas/T05-10-transferir-ajustar-saldo.md) | Contas | T05-09, T05-03 | — |
 | ✅ [T05-11 · Cartões: lista, formulário e menu](05-telas/T05-11-cartoes-lista-formulario.md) | Cartões | T05-08, T01-10 | — |
-| [T05-12 · Fatura do cartão](05-telas/T05-12-cartao-fatura.md) | Cartões | T05-11, T01-09 | tomada |
+| ✅ [T05-12 · Fatura do cartão](05-telas/T05-12-cartao-fatura.md) | Cartões | T05-11, T01-09 | tomada |
 | [T05-13 · Nova compra (à vista ou parcelada)](05-telas/T05-13-nova-compra.md) | Cartões | T05-12, T01-08 | — |
 | [T05-14 · Menu de uma compra](05-telas/T05-14-menu-da-compra.md) | Cartões | T05-13 | — |
 | [T05-15 · Pagar fatura, encargo ou estorno, configurar ciclo](05-telas/T05-15-pagar-encargo-ciclo.md) | Cartões | T05-12 | — |
