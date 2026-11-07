@@ -1,5 +1,6 @@
 import { type Conta, type Derivado } from '@goose-money/core';
 import { ArrowLeft, Download, SearchX } from 'lucide-react';
+import { useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router';
 
 import { useLancar } from '@/app/casca/useLancar';
@@ -12,10 +13,12 @@ import { useMesDaUrl } from '@/components/periodo';
 import { StatusChip } from '@/components/StatusChip';
 import { Button } from '@/components/ui/button';
 import { toggleVariants } from '@/components/ui/toggle';
+import { LancarComPadrao } from '@/features/lancar/EditarLancamento';
 import { cn } from '@/lib/utils';
 import { salvarArquivo } from '@/plataforma/arquivos';
 import { useDerivado } from '@/queries/fatos';
 
+import { AjustarSaldo } from './AjustarSaldo';
 import { csvDoExtrato, extratoDaTela, nomeDoCsv } from './extrato';
 import { mensagensContas } from './mensagens';
 
@@ -50,6 +53,8 @@ function SeletorDeConta({ d, contaId }: { d: Derivado; contaId: string }) {
 function Extrato({ d, conta }: { d: Derivado; conta: Conta }) {
   const [mes] = useMesDaUrl();
   const lancar = useLancar();
+  const [transferir, setTransferir] = useState(false);
+  const [ajustar, setAjustar] = useState(false);
   const e = extratoDaTela(d, conta, mes);
   const saldoAtual = d.saldos.get(conta.id)?.atual ?? null;
   const comSaldo = e.abertura !== null;
@@ -60,8 +65,13 @@ function Extrato({ d, conta }: { d: Derivado; conta: Conta }) {
       ? []
       : [
           { rotulo: m.abertura(e.diaDaAbertura), valor: e.abertura },
-          { rotulo: m.entradas, valor: e.entradas, tipo: 'receita' as const },
-          { rotulo: m.saidas, valor: e.saidas, tipo: 'despesa' as const },
+          // Sem movimentos, "R$ 0,00" sem sinal nem cor.
+          {
+            rotulo: m.entradas,
+            valor: e.entradas,
+            tipo: e.entradas ? ('receita' as const) : undefined,
+          },
+          { rotulo: m.saidas, valor: e.saidas, tipo: e.saidas ? ('despesa' as const) : undefined },
           { rotulo: m.fechamento(e.diaDoFechamento), valor: e.fechamento },
         ]),
     ...(saldoAtual === null ? [] : [{ rotulo: m.atual, valor: saldoAtual }]),
@@ -85,7 +95,27 @@ function Extrato({ d, conta }: { d: Derivado; conta: Conta }) {
       <div className="flex flex-wrap items-center gap-2">
         <SeletorDeConta d={d} contaId={conta.id} />
         {/* Conta arquivada: só leitura, sem ações que gravam (6.4). */}
-        {!conta.arquivada && <Button onClick={lancar}>{m.lancar}</Button>}
+        {!conta.arquivada && (
+          <>
+            <Button onClick={lancar}>{m.lancar}</Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setTransferir(true);
+              }}
+            >
+              {m.transferir}
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setAjustar(true);
+              }}
+            >
+              {m.ajustar}
+            </Button>
+          </>
+        )}
         <Button
           variant="icon"
           aria-label={m.exportarCsv}
@@ -199,6 +229,28 @@ function Extrato({ d, conta }: { d: Derivado; conta: Conta }) {
           </table>
         </div>
       </section>
+      {/* Transferir: o tipo Transferência do formulário, com esta conta como origem (T05-10). */}
+      <LancarComPadrao
+        titulo={m.transferir}
+        inicial={
+          transferir
+            ? { tipo: 'transferencia', contaId: conta.id, cartaoId: '', data: d.hoje }
+            : null
+        }
+        onFechar={() => {
+          setTransferir(false);
+        }}
+      />
+      <AjustarSaldo
+        // Um diálogo novo a cada abertura: o saldo calculado é o do momento.
+        key={String(ajustar)}
+        aberto={ajustar}
+        d={d}
+        conta={conta}
+        onFechar={() => {
+          setAjustar(false);
+        }}
+      />
       <p className="text-body-md text-on-surface-variant">
         {m.nota(formatarMoeda(conta.saldoInicial), formatarData(conta.dataSaldoInicial))}
       </p>

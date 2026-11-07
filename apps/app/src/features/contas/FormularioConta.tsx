@@ -10,7 +10,6 @@ import {
   impactoDoNovoSaldoInicial,
 } from '@goose-money/core';
 import { Check } from 'lucide-react';
-import { useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { formatarMoeda } from '@/app/formatacao';
@@ -35,11 +34,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Toggle } from '@/components/ui/toggle';
 import { resolverZod } from '@/features/lancar/formulario';
 import { cn } from '@/lib/utils';
 import { useComando, useContexto } from '@/queries/useComando';
 
+import { CampoDeSaldo } from './CampoDeSaldo';
 import {
   camposDaConta,
   CORES,
@@ -77,8 +76,6 @@ function Campos({
     defaultValues: valoresIniciais(d.fatos, d.hoje, conta),
   });
   const { control, register, handleSubmit, setValue, setError, formState } = form;
-  // Com saldo zero, o sinal "−" escolhido fica guardado até o primeiro dígito.
-  const [sinalNegativo, setSinalNegativo] = useState(false);
   const erros = formState.errors;
   const v = useWatch({ control });
   const travado = conta !== undefined && conta.incluirNoTotal && pagaCartaoAtivo(d.fatos, conta.id);
@@ -185,43 +182,14 @@ function Campos({
           <Controller
             name="saldoInicial"
             control={control}
-            render={({ field }) => {
-              const absoluto = Math.abs(field.value);
-              const negativo = field.value < 0 || (field.value === 0 && sinalNegativo);
-              return (
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="conta-saldo"
-                    inputMode="numeric"
-                    autoComplete="off"
-                    className="h-12 flex-1"
-                    aria-describedby="conta-saldo-dica"
-                    // Vazio no zero, como o valor do lançamento: o primeiro dígito já vale.
-                    placeholder={formatarMoeda(centavos(0))}
-                    value={
-                      absoluto === 0 ? '' : formatarMoeda(centavos(negativo ? -absoluto : absoluto))
-                    }
-                    onChange={(e) => {
-                      const digitos = e.target.value.replace(/\D/g, '').replace(/^0+/, '');
-                      if (digitos.length > 11) return;
-                      const n = Number(digitos || '0');
-                      field.onChange(negativo ? -n : n);
-                    }}
-                  />
-                  <Toggle
-                    className="h-12"
-                    pressed={negativo}
-                    onPressedChange={(p) => {
-                      setSinalNegativo(p);
-                      field.onChange(p ? -absoluto : absoluto);
-                    }}
-                  >
-                    {negativo && <Check aria-hidden />}
-                    {f.negativo}
-                  </Toggle>
-                </div>
-              );
-            }}
+            render={({ field }) => (
+              <CampoDeSaldo
+                id="conta-saldo"
+                valor={field.value}
+                aoMudar={field.onChange}
+                descricao="conta-saldo-dica"
+              />
+            )}
           />
           <p id="conta-saldo-dica" className="text-label-md font-normal text-on-surface-variant">
             {f.dicaSaldo}

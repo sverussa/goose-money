@@ -33,6 +33,8 @@ export const mensagensContas = {
     atual: 'Saldo atual · hoje',
     contas: 'Contas',
     lancar: 'Lançar',
+    transferir: 'Transferir',
+    ajustar: 'Ajustar saldo',
     exportarCsv: 'Exportar CSV',
     tabela: (nome: string, mes: string) => `Extrato de ${nome} em ${mes}`,
     colunas: {
@@ -63,6 +65,20 @@ export const mensagensContas = {
       saidas: 'Saídas',
       fechamento: 'Saldo de fechamento',
     },
+  },
+  ajuste: {
+    titulo: 'Ajustar saldo',
+    explicacao:
+      'Informe o saldo real da conta numa data. O app grava a diferença como um ajuste, que muda o saldo mas não entra em receitas e despesas.',
+    saldoReal: 'Saldo real',
+    data: 'Data',
+    previa: 'Antes de salvar',
+    calculado: 'Saldo calculado',
+    informado: 'Saldo informado',
+    diferenca: 'Diferença',
+    confere: 'O saldo já confere',
+    antesDoInicial: 'O ajuste precisa ser depois da data do saldo inicial.',
+    salvar: 'Ajustar',
   },
   formulario: {
     tituloNova: 'Nova conta',
