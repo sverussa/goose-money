@@ -150,7 +150,7 @@ Uma tela ou diálogo por tarefa, na ordem do handoff.
 | ✅ [T05-15 · Pagar fatura, encargo ou estorno, configurar ciclo](05-telas/T05-15-pagar-encargo-ciclo.md) | Cartões | T05-12 | — |
 | ✅ [T05-16 · Painel › Visão geral: pendências e KPIs](05-telas/T05-16-painel-pendencias-kpis.md) | Painel | T04-07, T01-17, T01-21 | — |
 | [T05-17 · Painel › Visão geral: gráficos e maiores despesas](05-telas/T05-17-painel-graficos-visao-geral.md) | Painel | T05-16, T04-08, T05-06 | — |
-| [T05-18 · Painel › Saldos](05-telas/T05-18-painel-saldos.md) | Painel | T05-16, T04-08 | tomada |
+| ✅ [T05-18 · Painel › Saldos](05-telas/T05-18-painel-saldos.md) | Painel | T05-16, T04-08 | tomada |
 | [T05-19 · Painel › Cartões](05-telas/T05-19-painel-cartoes.md) | Painel | T05-16, T01-10 | — |
 | [T05-20 · Painel › Projeções](05-telas/T05-20-painel-projecoes.md) | Painel | T05-16, T01-16 | tomada |
 | [T05-21 · Projeções: simulador "E se?" e previsão de quitação](05-telas/T05-21-projecoes-simulador-quitacao.md) | Painel | T05-20 | — |
