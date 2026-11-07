@@ -196,14 +196,6 @@ function Campos({
                     autoComplete="off"
                     className="h-12 flex-1"
                     aria-describedby="conta-saldo-dica"
-                    // A máscara preenche da direita: o cursor fica sempre no fim.
-                    onSelect={(e) => {
-                      const el = e.currentTarget;
-                      const fim = el.value.length;
-                      // Seleção (para apagar tudo) fica; só o cursor solto vai para o fim.
-                      if (el.selectionStart === el.selectionEnd && el.selectionStart !== fim)
-                        el.setSelectionRange(fim, fim);
-                    }}
                     // Vazio no zero, como o valor do lançamento: o primeiro dígito já vale.
                     placeholder={formatarMoeda(centavos(0))}
                     value={

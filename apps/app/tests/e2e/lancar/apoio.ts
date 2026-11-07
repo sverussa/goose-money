@@ -67,7 +67,11 @@ export async function conferirBarra(page: Page, esperado: IndicadoresDaBarra) {
 }
 
 export const dialogo = (page: Page) => page.getByRole('dialog', { name: 'Novo lançamento' });
-export const fab = (page: Page) => page.getByRole('button', { name: 'Lançar', exact: true });
+/** O FAB "+ Lançar" (o da tecla N), não os botões "Lançar" das telas. */
+export const fab = (page: Page) =>
+  page
+    .getByRole('button', { name: 'Lançar', exact: true })
+    .and(page.locator('[aria-keyshortcuts="N"]'));
 export const campoValor = (page: Page) =>
   dialogo(page).getByRole('textbox', { name: 'Valor', exact: true });
 
