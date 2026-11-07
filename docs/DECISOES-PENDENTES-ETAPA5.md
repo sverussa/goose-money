@@ -51,3 +51,10 @@ Decisões tomadas durante as tarefas da etapa 5 (e da T00-14, que a prepara) em 
 5. Aviso de data anterior ao saldo inicial (3.4): aparece quando a data é igual ou anterior à `dataSaldoInicial` da conta do movimento (a de origem, na transferência) e o lançamento é efetivado; compra no cartão e previsto não mexem no saldo e não mostram o aviso. "Mudar a data do saldo inicial" leva a data para a véspera do movimento, sem mudar o valor do saldo inicial, e grava a conta e o lançamento num comando só (o Desfazer desfaz os dois). A composição dos dois comandos está no app (`formulario.ts`), sem função nova no core.
 6. Na transferência, o aviso olha só a conta de origem.
 7. A data ocupa a linha inteira (chips Hoje e Ontem e o seletor nativo), e a conta vem na linha de baixo; no design, data e conta dividem a linha.
+
+## T05-05
+
+1. "Abaixo de 600 dp" é lido por `matchMedia('(width < 600px)')` num hook da própria pasta (`useCompact`), em vez do `use-mobile` do shadcn, que corta em 768.
+2. No celular, Salvar fica no topo (como no design) e "Salvar e lançar outro" no rodapé fixo. Como Salvar está no topo, continua visível com o teclado aberto; o teste simula o teclado encolhendo a janela.
+3. A grade de categorias usa 2 colunas no celular (o design usa 3): os nomes do seed, como "Saúde e bem-estar", quebrariam em 3.
+4. Fora do escopo do design: a dica "Enter salva · Esc fecha" não aparece no celular.

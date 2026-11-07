@@ -6,11 +6,13 @@ import { useLancar } from '@/app/casca/useLancar';
 import { EmptyState, EstadoDaCarga } from '@/components/EstadosDaTela';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer';
 import { cn } from '@/lib/utils';
 import { useDerivado } from '@/queries/fatos';
 import { useHoje } from '@/queries/relogio';
 
 import { FormularioLancamento } from './FormularioLancamento';
+import { useCompact } from './useCompact';
 import { mensagensLancar as m } from './mensagens';
 import {
   cartaoInicial,
@@ -62,14 +64,25 @@ export function LancarDialog({ aberto, onFechar }: { aberto: boolean; onFechar: 
   const valorRef = useRef<HTMLInputElement>(null);
   const listaAbertaRef = useRef(false);
 
-  function conteudo() {
-    if (derivado.estado !== 'pronto') return <EstadoDaCarga carga={derivado} />;
+  const telaCheia = useCompact();
+
+  function conteudo(titulo: React.ReactNode) {
+    const comTitulo = (corpo: React.ReactNode) =>
+      telaCheia ? (
+        <div className="flex flex-col gap-4 p-4">
+          {titulo}
+          {corpo}
+        </div>
+      ) : (
+        corpo
+      );
+    if (derivado.estado !== 'pronto') return comTitulo(<EstadoDaCarga carga={derivado} />);
     const { fatos } = derivado.dados;
     const padrao = padraoDaTela(pathname);
     const contaId = contaInicial(fatos, padrao.contaId, lerUltimaConta());
     const cartaoId = cartaoInicial(fatos, padrao.cartaoId, lerUltimoCartao());
     if (!contaId)
-      return (
+      return comTitulo(
         <EmptyState
           Icone={Wallet}
           frase={m.semConta.frase}
@@ -83,7 +96,7 @@ export function LancarDialog({ aberto, onFechar }: { aberto: boolean; onFechar: 
               {m.semConta.acao}
             </Button>
           }
-        />
+        />,
       );
     return (
       <FormularioLancamento
@@ -92,37 +105,54 @@ export function LancarDialog({ aberto, onFechar }: { aberto: boolean; onFechar: 
         valorRef={valorRef}
         listaAbertaRef={listaAbertaRef}
         onFechar={onFechar}
+        telaCheia={telaCheia}
+        titulo={titulo}
       />
     );
   }
 
+  // Os dois invólucros são diálogos do Radix: Esc com as sugestões abertas fecha só a lista
+  // (padrão combobox) e o foco começa no valor.
+  const aoEsc = (e: KeyboardEvent) => {
+    if (listaAbertaRef.current) e.preventDefault();
+  };
+  const focarValor = (e: Event) => {
+    if (!valorRef.current) return;
+    e.preventDefault();
+    valorRef.current.focus();
+  };
+  const aoMudar = (a: boolean) => {
+    if (!a) onFechar();
+  };
+
   return (
     <>
       <QuickAddFab />
-      <Dialog
-        open={aberto}
-        onOpenChange={(a) => {
-          if (!a) onFechar();
-        }}
-      >
-        <DialogContent
-          aria-describedby={undefined}
-          onEscapeKeyDown={(e) => {
-            // Esc com as sugestões da descrição abertas fecha só a lista (padrão combobox).
-            if (listaAbertaRef.current) e.preventDefault();
-          }}
-          onOpenAutoFocus={(e) => {
-            if (!valorRef.current) return;
-            e.preventDefault();
-            valorRef.current.focus();
-          }}
-        >
-          <DialogHeader>
-            <DialogTitle>{m.titulo}</DialogTitle>
-          </DialogHeader>
-          {conteudo()}
-        </DialogContent>
-      </Dialog>
+      {telaCheia ? (
+        <Drawer open={aberto} onOpenChange={aoMudar} repositionInputs={false}>
+          <DrawerContent
+            telaCheia
+            aria-describedby={undefined}
+            onEscapeKeyDown={aoEsc}
+            onOpenAutoFocus={focarValor}
+          >
+            {conteudo(<DrawerTitle>{m.titulo}</DrawerTitle>)}
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <Dialog open={aberto} onOpenChange={aoMudar}>
+          <DialogContent
+            aria-describedby={undefined}
+            onEscapeKeyDown={aoEsc}
+            onOpenAutoFocus={focarValor}
+          >
+            <DialogHeader>
+              <DialogTitle>{m.titulo}</DialogTitle>
+            </DialogHeader>
+            {conteudo(null)}
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 }
