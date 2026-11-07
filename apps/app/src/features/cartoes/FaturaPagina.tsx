@@ -1,12 +1,13 @@
 import {
   type Cartao,
+  type Compra,
   type DataCivil,
   type Derivado,
   type Fatura,
   itensPrevistosNaFatura,
   limiteDisponivelDoCartao,
 } from '@goose-money/core';
-import { ArrowLeft, Clock, EllipsisVertical, SearchX } from 'lucide-react';
+import { ArrowLeft, Clock, SearchX } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router';
 
@@ -26,6 +27,7 @@ import { faturaEscolhida, linhasDaFatura } from './fatura';
 import { cicloAtual } from './formulario';
 import { mensagensCartoes } from './mensagens';
 import { NovaCompra } from './NovaCompra';
+import { MenuDaCompra, OperacoesDaCompra } from './OperacoesDaCompra';
 
 const m = mensagensCartoes.fatura;
 const ddmm = (d: DataCivil) => formatarData(d).slice(0, 5);
@@ -95,7 +97,7 @@ function TabsDeFaturas({ faturas, atual }: { faturas: readonly Fatura[]; atual: 
 
 function Detalhe({ d, cartao }: { d: Derivado; cartao: Cartao }) {
   const [busca] = useSearchParams();
-  const { acao, abrir, fechar } = useAcaoDaFatura();
+  const { acao, compraId, abrir, fechar } = useAcaoDaFatura();
   const faturas = d.faturas.get(cartao.id) ?? [];
   const f = faturaEscolhida(faturas, busca.get('fatura'));
   const ciclo = cicloAtual(d, cartao);
@@ -115,6 +117,10 @@ function Detalhe({ d, cartao }: { d: Derivado; cartao: Cartao }) {
       </div>
     );
   const linhas = linhasDaFatura(d, cartao, f);
+  const compraDa = (l: (typeof linhas)[number]) =>
+    l.compraId ? d.porId.compras.get(l.compraId) : undefined;
+  const primeiraDa = (l: (typeof linhas)[number]) =>
+    linhas.find((x) => x.compraId === l.compraId) === l;
   const previstos = itensPrevistosNaFatura(d.fatos, cartao.id, f.competencia, d.hoje);
 
   return (
@@ -240,17 +246,17 @@ function Detalhe({ d, cartao }: { d: Derivado; cartao: Cartao }) {
                     l.valor < 0 && 'text-income',
                   )}
                 />
-                {l.compraId && !leitura ? (
-                  // O menu da compra (T05-14) abre por `?acao=compra&compra=<id>`.
-                  <Button
-                    variant="icon"
-                    aria-label={m.operacoes(l.texto)}
-                    onClick={() => {
-                      abrir('compra', l.compraId ?? undefined);
-                    }}
-                  >
-                    <EllipsisVertical aria-hidden />
-                  </Button>
+                {compraDa(l) && !leitura ? (
+                  // O menu da compra (T05-14) abre por `?acao=compra&compra=<id>`, na 1ª linha dela.
+                  <MenuDaCompra
+                    d={d}
+                    cartao={cartao}
+                    compra={compraDa(l) as Compra}
+                    rotulo={m.operacoes(l.texto)}
+                    aberto={acao === 'compra' && compraId === l.compraId && primeiraDa(l)}
+                    abrir={abrir}
+                    fechar={fechar}
+                  />
                 ) : (
                   <span aria-hidden className="size-12" />
                 )}
@@ -287,7 +293,16 @@ function Detalhe({ d, cartao }: { d: Derivado; cartao: Cartao }) {
         </aside>
       </div>
       {!leitura && (
-        <NovaCompra aberto={acao === 'nova-compra'} d={d} cartao={cartao} onFechar={fechar} />
+        <>
+          <NovaCompra aberto={acao === 'nova-compra'} d={d} cartao={cartao} onFechar={fechar} />
+          <OperacoesDaCompra
+            d={d}
+            cartao={cartao}
+            acao={acao}
+            compraId={compraId}
+            onFechar={fechar}
+          />
+        </>
       )}
     </>
   );

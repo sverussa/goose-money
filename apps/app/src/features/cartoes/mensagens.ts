@@ -54,6 +54,8 @@ export const mensagensCartoes = {
   },
   compra: {
     titulo: (cartao: string) => `Nova compra · ${cartao}`,
+    tituloEditar: (cartao: string) => `Editar compra · ${cartao}`,
+    cartao: 'Cartão',
     descricaoDoDialogo: 'Valor, descrição, categoria, data e parcelamento da compra no cartão.',
     subtitulo: (f: number, v: number, mes: string) =>
       `Fecha dia ${String(f)} · vence dia ${String(v)} · compras de hoje caem na fatura de ${mes}`,
@@ -84,6 +86,71 @@ export const mensagensCartoes = {
       data: 'Informe a data',
       parcelas: (max: number) => `Informe de 2 a ${String(max)} parcelas`,
     },
+  },
+  operacoes: {
+    menu: {
+      editarDescricao: 'Editar descrição, categoria ou observação',
+      detalheEditarDescricao: 'Vale para todas as parcelas',
+      editarValor: 'Editar valor, parcelas, data ou cartão',
+      detalheEditarValor: 'Regenera todas as parcelas',
+      ajuste: 'Lançar ajuste',
+      detalheAjuste: 'Cria encargo ou estorno na fatura aberta',
+      antecipar: 'Antecipar parcelas',
+      detalheAntecipar: (n: number) =>
+        n === 1 ? '1 parcela em fatura futura' : `${String(n)} parcelas em faturas futuras`,
+      cancelar: 'Cancelar compra',
+      detalheCancelar: 'Pergunta se o banco estornou as já faturadas',
+      excluir: 'Excluir compra',
+      detalheExcluir: 'Remove a compra e as parcelas',
+    },
+    parcelas: (n: number) => (n === 1 ? '1 parcela' : `${String(n)} parcelas`),
+    linha: (n: number, de: number, mes: string) => `${String(n)}/${String(de)} · ${mes}`,
+    editar: {
+      titulo: 'Editar descrição, categoria e observação',
+      explicacao: 'Vale para a compra inteira, inclusive as parcelas passadas.',
+      observacao: 'Observação (opcional)',
+    },
+    ajuste: {
+      explicacao: (mes: string) =>
+        `Encargo ou estorno na fatura aberta (${mes}), vinculado à compra.`,
+      tipo: 'Tipo do ajuste',
+      encargo: 'Encargo (+)',
+      estorno: 'Estorno (−)',
+      valor: 'Valor',
+      valorDaCompra: 'Valor da compra',
+      efetivo: 'Valor efetivo depois do ajuste',
+    },
+    antecipar: {
+      explicacao: (mes: string) =>
+        `As últimas parcelas passam para a fatura aberta (${mes}); a compra termina mais cedo.`,
+      quantas: 'Quantas parcelas (as últimas)',
+      desconto: 'Desconto (opcional)',
+      dicaDesconto: (max: string) => `Vira estorno na fatura aberta. Até ${max}.`,
+      erroDesconto: (max: string) => `O desconto vai até ${max}`,
+      antes: 'Antes',
+      depois: 'Depois',
+      estorno: (valor: string) => `Estorno do desconto na fatura aberta: ${valor}`,
+      salvar: 'Antecipar',
+    },
+    cancelar: {
+      titulo: (nome: string) => `Cancelar a compra ${nome}?`,
+      remove: (n: number) =>
+        n === 0
+          ? 'Nenhuma parcela está em fatura ainda não fechada.'
+          : `Remove ${n === 1 ? 'a parcela' : `as ${String(n)} parcelas`} das faturas ainda não fechadas. As já faturadas continuam.`,
+      pergunta: 'O banco estornou as parcelas já faturadas?',
+      sim: (valor: string) => `Sim: lançar estorno de ${valor} na fatura aberta`,
+      nao: 'Não',
+      irreversivel: 'A compra fica cancelada; só o Desfazer logo depois volta atrás.',
+      confirmar: 'Cancelar compra',
+    },
+    excluir: {
+      titulo: (nome: string) => `Excluir a compra ${nome}?`,
+      explicacao: (n: number) =>
+        `Remove a compra e ${n === 1 ? 'a parcela' : `as ${String(n)} parcelas`}. O Desfazer logo depois volta atrás.`,
+      confirmar: 'Excluir compra',
+    },
+    voltar: 'Voltar',
   },
   fatura: {
     totais: 'Totais da fatura',
