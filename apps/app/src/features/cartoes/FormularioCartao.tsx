@@ -1,10 +1,8 @@
 import {
   type Cartao,
-  type Centavos,
   centavos,
   criarCartao,
   type Derivado,
-  deMascara,
   editarCartao,
   ErroDeDominio,
   limiteDisponivel,
@@ -49,48 +47,16 @@ import {
   type ValoresDoCartao,
   valoresIniciais,
 } from './formulario';
+import { CampoDeValor } from './CampoDeValor';
 import { mensagensCartoes } from './mensagens';
 
 const f = mensagensCartoes.formulario;
-/** Até R$ 999.999.999,99: 11 dígitos. */
-const MAX_DIGITOS = 11;
-
 function Erro({ id, texto }: { id: string; texto: string | undefined }) {
   return texto ? (
     <p id={id} className="text-label-md text-error">
       {texto}
     </p>
   ) : null;
-}
-
-/** Valor positivo com máscara da direita, vazio no zero, como o valor do lançamento. */
-function CampoDeValor({
-  id,
-  valor,
-  aoMudar,
-  ...aria
-}: {
-  id: string;
-  valor: number;
-  aoMudar: (c: Centavos) => void;
-  'aria-describedby'?: string;
-  'aria-invalid'?: boolean;
-}) {
-  return (
-    <Input
-      id={id}
-      inputMode="numeric"
-      autoComplete="off"
-      className="h-12"
-      placeholder={formatarMoeda(centavos(0))}
-      value={valor ? formatarMoeda(centavos(valor)) : ''}
-      onChange={(e) => {
-        const digitos = e.target.value.replace(/\D/g, '').replace(/^0+/, '');
-        if (digitos.length <= MAX_DIGITOS) aoMudar(deMascara(digitos));
-      }}
-      {...aria}
-    />
-  );
 }
 
 function Campos({

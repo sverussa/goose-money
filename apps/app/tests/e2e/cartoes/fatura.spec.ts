@@ -1,15 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import {
-  aplicar,
-  type Comando,
   competenciaDe,
-  type Contexto,
   criarCartao,
-  dataCivil,
   deMascara,
-  derivar,
-  type Fatos,
-  gerarSeed,
   itensPrevistosNaFatura,
   negar,
   pagarFatura,
@@ -18,36 +11,13 @@ import {
 import { expect, type Page, test } from '@playwright/test';
 
 import { formatarMesCurto, formatarMoeda } from '../../../src/app/formatacao';
-import { criarUsuario, gravarOk, opsDosFatos } from '../../../../../supabase/tests/apoio';
 import { entrar } from '../lancar/apoio';
+import { HOJE, idDo, preparar } from './apoio';
 
 // T05-12: fatura do cartão (6.5, 3.5, 11.3), com o seed de "hoje" = 04/11/2026 (DESIGN-HANDOFF 2).
 
 test.use({ viewport: { width: 1440, height: 1000 } });
 
-const HOJE = dataCivil('2026-11-04');
-
-/** Seed de 04/11/2026 mais os comandos de `extras`, gravado; o navegador vive em 04/11/2026. */
-async function preparar(page: Page, extras: (f: Fatos, ctx: Contexto) => Comando[] = () => []) {
-  const u = await criarUsuario();
-  let f = gerarSeed(HOJE, u.id);
-  const ctx: Contexto = {
-    hoje: HOJE,
-    agora: `${HOJE}T12:00:00Z`,
-    usuario: u.id,
-    novoId: () => crypto.randomUUID(),
-  };
-  for (const c of extras(f, ctx)) f = aplicar(f, c.mudancas);
-  await gravarOk(u.cliente, opsDosFatos(f));
-  await page.clock.install({ time: new Date(2026, 10, 4, 10) });
-  return { u, d: derivar(f, HOJE) };
-}
-
-const idDo = (f: Fatos, nome: string) => {
-  const c = f.cartoes.find((x) => x.nome === nome);
-  if (!c) throw new Error(`${nome} não está no seed`);
-  return c.id;
-};
 const faturas = (page: Page) => page.getByRole('navigation', { name: 'Faturas' });
 const totais = (page: Page) => page.getByRole('region', { name: 'Totais da fatura' });
 const linha = (page: Page, texto: string) => page.getByRole('listitem').filter({ hasText: texto });
@@ -190,6 +160,12 @@ test('as ações ficam na tela e levam a ação na URL para os diálogos (T05-13
   ] as const) {
     await page.getByRole('button', { name: nome, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`[?&]acao=${acao}(&|$)`));
+    // Os diálogos que já existem fecham com Esc e tiram a ação da URL.
+    if (acao === 'nova-compra') {
+      await expect(page.getByRole('dialog', { name: /^Nova compra/ })).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(page).not.toHaveURL(/[?&]acao=/);
+    }
   }
   await page.getByRole('button', { name: 'Operações da compra Fone · 1/3' }).click();
   await expect(page).toHaveURL(/[?&]acao=compra&compra=/);

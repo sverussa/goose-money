@@ -25,6 +25,7 @@ import { useAcaoDaFatura } from './acoes';
 import { faturaEscolhida, linhasDaFatura } from './fatura';
 import { cicloAtual } from './formulario';
 import { mensagensCartoes } from './mensagens';
+import { NovaCompra } from './NovaCompra';
 
 const m = mensagensCartoes.fatura;
 const ddmm = (d: DataCivil) => formatarData(d).slice(0, 5);
@@ -94,7 +95,7 @@ function TabsDeFaturas({ faturas, atual }: { faturas: readonly Fatura[]; atual: 
 
 function Detalhe({ d, cartao }: { d: Derivado; cartao: Cartao }) {
   const [busca] = useSearchParams();
-  const { abrir } = useAcaoDaFatura();
+  const { acao, abrir, fechar } = useAcaoDaFatura();
   const faturas = d.faturas.get(cartao.id) ?? [];
   const f = faturaEscolhida(faturas, busca.get('fatura'));
   const ciclo = cicloAtual(d, cartao);
@@ -285,6 +286,9 @@ function Detalhe({ d, cartao }: { d: Derivado; cartao: Cartao }) {
           <span>{m.cicloTexto(ciclo.diaFechamento, ciclo.diaVencimento)}</span>
         </aside>
       </div>
+      {!leitura && (
+        <NovaCompra aberto={acao === 'nova-compra'} d={d} cartao={cartao} onFechar={fechar} />
+      )}
     </>
   );
 }
