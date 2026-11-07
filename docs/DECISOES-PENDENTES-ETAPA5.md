@@ -105,3 +105,13 @@ Tela sem design (DESIGN-HANDOFF 7): montada com os componentes existentes, no vo
 6. Conta inexistente na URL: estado vazio "Esta conta não existe mais; talvez tenha sido excluída." com "Voltar para Contas".
 7. Os testes passaram a achar o FAB pelo `aria-keyshortcuts="N"`, porque o extrato também tem um botão "Lançar".
 8. Ambiente: `movimentacoes.spec.ts › editar abre o mesmo formulário…` (WebKit) estourou o tempo uma vez no conjunto e passou sozinho.
+
+## T05-10
+
+Diálogos sem design (DESIGN-HANDOFF 7): no vocabulário do `LancarDialog.dc.html`.
+
+1. **Transferir:** abre o mesmo formulário de lançamento, com o título "Transferir", o chip Transferência marcado e a conta da tela como origem; o destino vem com a primeira outra conta ativa. Os outros chips continuam disponíveis (a pessoa pode trocar o tipo ali). O invólucro foi generalizado em `features/lancar/EditarLancamento.tsx` (`LancarComPadrao`), o mesmo da edição.
+2. **Ajustar saldo:** "Saldo real" (com o chip "Negativo") e "Data" (padrão hoje). O saldo real começa no saldo calculado de hoje, então a diferença começa em zero e "Ajustar" vem desabilitado com "O saldo já confere". O bloco "Antes de salvar" mostra o saldo calculado na data, o informado e a diferença (`diferencaDeAjuste`); data igual ou anterior ao saldo inicial mostra "O ajuste precisa ser depois da data do saldo inicial." e também desabilita.
+3. O campo de saldo com sinal virou um componente da pasta de contas (`CampoDeSaldo`), usado no formulário de conta e no Ajustar saldo.
+4. Conta arquivada: sem Transferir nem Ajustar saldo (extrato só para leitura).
+5. No cabeçalho do extrato, entradas e saídas zeradas aparecem como "R$ 0,00", sem sinal nem cor.

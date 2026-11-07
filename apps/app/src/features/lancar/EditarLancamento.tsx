@@ -6,19 +6,28 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer';
 import { useDerivado } from '@/queries/fatos';
 
+import type { ValoresDoFormulario } from './formulario';
 import { FormularioLancamento } from './FormularioLancamento';
 import { mensagensLancar as m } from './mensagens';
 import { useCompact } from './useCompact';
 
+type Inicial = Pick<ValoresDoFormulario, 'tipo' | 'contaId' | 'cartaoId' | 'data'>;
+
 /**
- * "Abrir para editar" de Lançamentos (T05-07): o mesmo formulário de lançamento, preenchido com o
- * lançamento e no mesmo invólucro (diálogo ou tela cheia no compact).
+ * O formulário de lançamento num invólucro das telas (diálogo, ou tela cheia no compact), fora
+ * do FAB: para editar (T05-07) ou para lançar com padrões da tela (Transferir, T05-10).
  */
-export function EditarLancamento({
-  lancamento,
+function DialogoDoFormulario({
+  aberto,
+  titulo,
+  inicial,
+  editando,
   onFechar,
 }: {
-  lancamento: Lancamento | null;
+  aberto: boolean;
+  titulo: string;
+  inicial: Inicial | null;
+  editando?: Lancamento;
   onFechar: () => void;
 }) {
   const derivado = useDerivado();
@@ -39,40 +48,76 @@ export function EditarLancamento({
       valorRef.current.focus();
     },
   };
-  const formulario = (titulo: React.ReactNode) =>
-    derivado.estado !== 'pronto' || !lancamento ? (
+  const formulario = (rotulo: React.ReactNode) =>
+    derivado.estado !== 'pronto' || !inicial ? (
       <EstadoDaCarga carga={derivado} />
     ) : (
       <FormularioLancamento
         derivado={derivado.dados}
-        inicial={{
-          tipo: 'despesa',
-          contaId: lancamento.contaId,
-          cartaoId: '',
-          data: lancamento.data,
-        }}
-        editando={lancamento}
+        inicial={inicial}
+        editando={editando}
         valorRef={valorRef}
         listaAbertaRef={listaAbertaRef}
         onFechar={onFechar}
         telaCheia={telaCheia}
-        titulo={titulo}
+        titulo={rotulo}
       />
     );
   return telaCheia ? (
-    <Drawer open={!!lancamento} onOpenChange={aoMudar} repositionInputs={false}>
+    <Drawer open={aberto} onOpenChange={aoMudar} repositionInputs={false}>
       <DrawerContent telaCheia {...props}>
-        {formulario(<DrawerTitle>{m.tituloEdicao}</DrawerTitle>)}
+        {formulario(<DrawerTitle>{titulo}</DrawerTitle>)}
       </DrawerContent>
     </Drawer>
   ) : (
-    <Dialog open={!!lancamento} onOpenChange={aoMudar}>
+    <Dialog open={aberto} onOpenChange={aoMudar}>
       <DialogContent {...props}>
         <DialogHeader>
-          <DialogTitle>{m.tituloEdicao}</DialogTitle>
+          <DialogTitle>{titulo}</DialogTitle>
         </DialogHeader>
         {formulario(null)}
       </DialogContent>
     </Dialog>
+  );
+}
+
+/** "Abrir para editar" de Lançamentos (T05-07): o mesmo formulário, preenchido. */
+export function EditarLancamento({
+  lancamento,
+  onFechar,
+}: {
+  lancamento: Lancamento | null;
+  onFechar: () => void;
+}) {
+  return (
+    <DialogoDoFormulario
+      aberto={!!lancamento}
+      titulo={m.tituloEdicao}
+      inicial={
+        lancamento && {
+          tipo: 'despesa',
+          contaId: lancamento.contaId,
+          cartaoId: '',
+          data: lancamento.data,
+        }
+      }
+      editando={lancamento ?? undefined}
+      onFechar={onFechar}
+    />
+  );
+}
+
+/** Lançar com padrões dados pela tela, como "Transferir" no extrato (T05-10). */
+export function LancarComPadrao({
+  inicial,
+  titulo = m.titulo,
+  onFechar,
+}: {
+  inicial: Inicial | null;
+  titulo?: string;
+  onFechar: () => void;
+}) {
+  return (
+    <DialogoDoFormulario aberto={!!inicial} titulo={titulo} inicial={inicial} onFechar={onFechar} />
   );
 }
