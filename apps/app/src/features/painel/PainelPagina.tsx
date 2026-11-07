@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { useDerivado } from '@/queries/fatos';
 
 import { mensagensPainel as m } from './mensagens';
+import { Cartoes } from './Cartoes';
 import { Saldos } from './Saldos';
 import { VisaoGeral } from './VisaoGeral';
 
@@ -86,6 +87,8 @@ export function PainelPagina() {
         <VisaoGeral d={d} />
       ) : aba === 'saldos' ? (
         <Saldos d={d} />
+      ) : aba === 'cartoes' ? (
+        <Cartoes d={d} />
       ) : (
         <PaginaProvisoria />
       );

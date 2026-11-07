@@ -107,9 +107,11 @@ test('R$ 1.000,00 em 3x: 333,34 + 333,33 + 333,33 em faturas seguidas e Limite �
   ).toHaveText(formatarMoeda(menos(antes, total)));
   const g = await gravadoEmHoje(u);
   const compra = g.fatos.compras.find((c) => c.descricao === 'Bicicleta');
-  expect(g.fatos.parcelas.filter((x) => x.compraId === compra?.id).map((x) => x.valor)).toEqual(
-    valores,
-  );
+  // O banco não garante a ordem: pela numeração das parcelas.
+  const gravadas = g.fatos.parcelas
+    .filter((x) => x.compraId === compra?.id)
+    .sort((x, y) => x.numero - y.numero);
+  expect(gravadas.map((x) => x.valor)).toEqual(valores);
 });
 
 test('R$ 1.200,00 em 12x: Patrimônio −R$ 1.200,00, Obrigações +R$ 1.200,00, A pagar +R$ 100,00 (11.3, 7.4)', async ({

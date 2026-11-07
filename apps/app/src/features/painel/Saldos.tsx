@@ -14,7 +14,6 @@ import { Link, useNavigate } from 'react-router';
 import { formatarData, formatarMes, formatarMesCurto, formatarMoeda } from '@/app/formatacao';
 import { mensagens } from '@/app/mensagens';
 import { ChartCard } from '@/components/ChartCard';
-import { corDoTema } from '@/components/graficos/dados';
 import { BarrasHorizontais, Linhas, Sparkline } from '@/components/graficos/Graficos';
 import { MoneyText } from '@/components/MoneyText';
 import { PeriodPicker } from '@/components/PeriodPicker';
@@ -22,6 +21,7 @@ import { usePeriodoDaUrl } from '@/components/periodo';
 
 import { mensagensPainel } from './mensagens';
 import { sparklineDe30Dias, variacaoNoMes } from './contas';
+import { Legenda } from './Legenda';
 
 const m = mensagensPainel.saldos;
 const b = mensagens.barra;
@@ -212,14 +212,7 @@ export function Saldos({ d }: { d: Derivado }) {
           vazio={{ frase: m.evolucao.vazio }}
         >
           <Linhas dados={evolucao} categoria="mes" series={SERIES_DA_EVOLUCAO} />
-          <ul aria-hidden className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-label-md font-normal">
-            {SERIES_DA_EVOLUCAO.map((x) => (
-              <li key={x.chave} className="flex items-center gap-1.5">
-                <span className="h-0.5 w-4 rounded-full" style={{ background: corDoTema(x.cor) }} />
-                {x.rotulo}
-              </li>
-            ))}
-          </ul>
+          <Legenda series={SERIES_DA_EVOLUCAO} linha />
         </ChartCard>
       </div>
     </div>
