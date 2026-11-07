@@ -213,3 +213,12 @@ Lista e formulário sem design (DESIGN-HANDOFF 7): a face do cartão de `PainelC
 5. **Títulos:** em forma de pergunta ("Quanto das próximas faturas já está comprometido?", "Quanto foi gasto em cada cartão?"), como na T05-18.
 6. `Legenda` (`features/painel/Legenda.tsx`) mostra as séries abaixo dos gráficos de Saldos e Cartões; é decorativa (o `aria-label` do gráfico já resume as séries).
 7. Correção de teste: `nova-compra.spec.ts` (T05-13) passou a ordenar pela numeração as parcelas lidas do banco antes de comparar; no WebKit elas vieram fora de ordem uma vez. Ambiente: `conexao.spec.ts › falha de rede numa chamada…` falhou uma vez e passou sozinho.
+
+## T05-20
+
+1. **Horizonte:** segmented 3, 6, 12 ou 24 meses na URL (`?horizonte=`); sem ele, a preferência "horizonte padrão" (12 sem preferências). A projeção vai de hoje ao último dia do mês corrente + (horizonte − 1).
+2. **Banner:** sempre visível. Sem mês negativo ou abaixo do limite, "Nenhum mês fica abaixo do limite de alerta (R$ X)." como no design; com alertas, uma frase por mês ("Em março 2027, o saldo previsto fica negativo: …" ou "… abaixo do limite de alerta …") em fundo de aviso; as rendas atrasadas e receitas avulsas com data passada (`naoIncluido`) dizem que não entram. A frase "A projeção é conservadora…" do design fica sempre.
+3. **Gráfico (D48):** linha cheia na cor primária com a faixa `warning` translúcida de zero ao limite de alerta (`ReferenceArea`, com o texto "Abaixo do limite de alerta" dentro); a faixa aparece no subtítulo ("faixa: abaixo do limite de alerta (até R$ X)") e na legenda, que são texto acessível (o `aria-label` num `<path>` do SVG é proibido). Clique num ponto detalha o mês. O título é uma pergunta ("Como fica o saldo nos próximos meses?"), como nas T05-18 e T05-19.
+4. **Tabela:** uma linha por mês com o botão do mês (`aria-pressed` no escolhido), saldo inicial, os seis grupos de 3.9 (entradas com "+", saídas com "−", zero sem sinal) e o saldo final; nota "O mês corrente vai de hoje (dd/mm) a dd/mm; o saldo final dele é o Previsto até o fim do mês da Barra.".
+5. **Detalhamento:** o mês escolhido vai na URL (`?mes=`); sem ele, o mês corrente (inclusive em `#/projecoes`). Um bloco por grupo com itens, com o total do grupo e cada item (data, texto do core e valor). Ocupa a largura toda até o simulador "E se?" da T05-21.
+6. Correção em `Graficos.tsx`: o clique sem ponto ativo (índice `null`) era lido como o 1º ponto; agora é ignorado.

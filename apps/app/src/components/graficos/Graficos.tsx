@@ -43,6 +43,8 @@ const clicar = (
   i: unknown,
   serie?: string,
 ) => {
+  // Sem ponto ativo, o Recharts manda `null` ou `undefined`: nada a abrir (e não o 1º ponto).
+  if (i === null || i === undefined || i === '') return;
   const linha = dados[Number(i)];
   if (aoClicar && linha) aoClicar(linha, serie);
 };
@@ -243,7 +245,7 @@ export function BarrasEmpilhadas({ dados, categoria, series, aoClicar }: Cartesi
 export interface Faixa {
   de: number;
   ate: number;
-  /** Rótulo acessível, também escrito dentro da faixa. */
+  /** Escrito dentro da faixa; a tela também o põe no subtítulo ou na legenda (texto acessível). */
   rotulo: string;
   /** Chave de cor do tema (D77). */
   cor: string;
@@ -275,7 +277,6 @@ export function Linhas({
             fillOpacity={0.16}
             stroke="none"
             ifOverflow="extendDomain"
-            aria-label={faixa.rotulo}
             label={{ value: faixa.rotulo, position: 'insideBottomLeft', fontSize: 11 }}
           />
         )}
