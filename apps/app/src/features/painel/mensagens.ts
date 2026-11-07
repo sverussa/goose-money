@@ -132,6 +132,77 @@ export const mensagensPainel = {
     detalhamento: (mes: string) => `Detalhamento de ${mes}`,
     semItens: 'Nenhum item pendente neste mês.',
   },
+  graficos: {
+    periodo: (de: string, ate: string) => `${de} – ${ate}`,
+    receitasDespesas: {
+      sobrouEmTodos: (n: number) =>
+        n === 1 ? 'Sobrou dinheiro no mês' : `Sobrou dinheiro nos ${String(n)} meses`,
+      faltouEmTodos: (n: number) =>
+        n === 1 ? 'Faltou dinheiro no mês' : `Faltou dinheiro nos ${String(n)} meses`,
+      sobrouEmAlguns: (k: number, n: number) =>
+        `Sobrou dinheiro em ${String(k)} de ${String(n)} meses`,
+      semMovimento: 'Sem receitas nem despesas no período',
+      subtitulo: (periodo: string) => `Receitas × despesas por mês · ${periodo} · competência`,
+      mes: 'Mês',
+      receitas: 'Receitas',
+      despesas: 'Despesas',
+      resultado: 'Resultado',
+      vazio: 'Sem receitas nem despesas neste período',
+    },
+    categorias: {
+      maior: (nome: string, fatia: string) => `${nome} é ${fatia} das despesas`,
+      semDespesas: 'Sem despesas no período',
+      subtitulo: (periodo: string) => `Despesas por categoria · ${periodo}`,
+      categoria: 'Categoria',
+      valor: 'Despesas',
+      outras: 'Outras',
+      ranking: 'Ranking das categorias',
+      vazio: 'Sem despesas neste período',
+    },
+    acumulado: {
+      mais: (mes: string, variacao: string, anterior: string) =>
+        `${mes} gastou ${variacao} mais que ${anterior}`,
+      menos: (mes: string, variacao: string, anterior: string) =>
+        `${mes} gastou ${variacao} menos que ${anterior}`,
+      igual: (mes: string, anterior: string) => `${mes} gastou o mesmo que ${anterior}`,
+      ateODia: (dia: number, frase: string) => `Até o dia ${String(dia)}, ${frase}`,
+      novo: (mes: string, valor: string, anterior: string) =>
+        `${mes} gastou ${valor}, e ${anterior} nada no mesmo período`,
+      semGastos: (mes: string, anterior: string) => `Sem gastos em ${mes} nem em ${anterior}`,
+      subtitulo: (mes: string, anterior: string) =>
+        `Gasto acumulado por dia · ${mes} × ${anterior} · clique num dia para ver os itens até ele`,
+      dia: 'Dia',
+      vazio: 'Sem gastos nestes dois meses',
+    },
+    fixos: {
+      fixos: (fatia: string) => `Fixos são ${fatia} das despesas`,
+      variaveis: (fatia: string) => `Gastos variáveis pesam mais: fixos são ${fatia} das despesas`,
+      semDespesas: 'Sem despesas no período',
+      subtitulo: (periodo: string) => `Fixos × variáveis por mês · ${periodo} · competência`,
+      mes: 'Mês',
+      serieFixos: 'Fixos (recorrências)',
+      serieVariaveis: 'Variáveis',
+      vazio: 'Sem despesas neste período',
+    },
+    comprometimento: {
+      comprometida: (fatia: string) => `${fatia} da renda já sai comprometida`,
+      acimaDaRenda: (fatia: string) => `Os compromissos passam da renda: ${fatia} dela`,
+      semRenda: (mes: string) => `Sem renda fixa em ${mes}`,
+      subtitulo: (mes: string, renda: string) =>
+        `Comprometimento da renda · ${mes} · renda fixa ${renda}`,
+      segmento: 'Parte',
+      valor: 'Valor',
+      fixos: 'Gastos fixos',
+      parcelasCartao: 'Parcelas de cartão',
+      dividas: 'Dívidas',
+      livre: 'Livre',
+      vazio: 'Sem renda fixa neste mês',
+    },
+    maiores: {
+      titulo: 'Maiores despesas do período',
+      vazio: 'Sem despesas neste período.',
+    },
+  },
   pendencias: {
     titulo: (n: number) => `Pendências · ${String(n)}`,
     confirmarTodos: 'Confirmar todos os fixos',

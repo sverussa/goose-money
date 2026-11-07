@@ -354,7 +354,12 @@ export function Rosca({
   categoria,
   serie,
   aoClicar,
-}: Omit<Cartesiano, 'series'> & { serie: Serie }) {
+  semRanking = false,
+}: Omit<Cartesiano, 'series'> & {
+  serie: Serie;
+  /** A tela mostra o ranking fora do gráfico (no `rodape` do ChartCard), com os itens clicáveis. */
+  semRanking?: boolean;
+}) {
   const total = totalDaSerie(dados, serie.chave);
   const corDe = (l: Linha) => corDoTema(typeof l.cor === 'string' ? l.cor : null);
   // A cor de cada fatia vai no próprio ponto (`fill`), como o Recharts 3 lê.
@@ -390,42 +395,24 @@ export function Rosca({
           />
         </PieChart>
       </ChartContainer>
-      <ol className="flex min-w-48 flex-1 flex-col gap-2">
-        {ranking.map((l) => {
-          const conteudo = (
-            <>
+      {!semRanking && (
+        <ol className="flex min-w-48 flex-1 flex-col gap-2">
+          {ranking.map((l) => (
+            <li key={String(l[categoria])} className="flex items-center gap-2 text-body-md">
               <span
                 aria-hidden
                 className="size-3 shrink-0 rounded-full"
                 style={{ background: corDe(l) }}
               />
-              <span className="flex-1 truncate text-left">{String(l[categoria])}</span>
+              <span className="flex-1 truncate">{String(l[categoria])}</span>
               <MoneyText valor={valorDe(l, serie.chave)} className="font-semibold" />
               <span className="w-14 text-right text-on-surface-variant tabular-nums">
                 {participacao(valorDe(l, serie.chave), total)}
               </span>
-            </>
-          );
-          return (
-            <li key={String(l[categoria])} className="flex text-body-md">
-              {aoClicar ? (
-                // A fatia clicável também pelo teclado: o item do ranking é o mesmo destino.
-                <button
-                  type="button"
-                  className="-mx-2 flex min-h-11 flex-1 cursor-pointer items-center gap-2 rounded-sm px-2 hover:bg-on-surface/8"
-                  onClick={() => {
-                    aoClicar(l);
-                  }}
-                >
-                  {conteudo}
-                </button>
-              ) : (
-                <span className="flex flex-1 items-center gap-2">{conteudo}</span>
-              )}
             </li>
-          );
-        })}
-      </ol>
+          ))}
+        </ol>
+      )}
     </div>
   );
 }
