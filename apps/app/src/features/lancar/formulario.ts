@@ -8,6 +8,9 @@ import {
   dataCivil,
   type DataCivil,
   editarConta,
+  editarLancamento,
+  type Id,
+  type Lancamento,
   type Fatos,
   lancar,
   novaCompra,
@@ -110,15 +113,61 @@ function emSequencia(fatos: Fatos, primeiro: Comando, segundo: (f: Fatos) => Com
 }
 
 /** O comando do core para o que foi digitado; o core valida as regras e lança `ErroDeDominio`. */
-export function comandoDoFormulario(fatos: Fatos, ctx: Contexto, v: ValoresDoFormulario): Comando {
+export function comandoDoFormulario(
+  fatos: Fatos,
+  ctx: Contexto,
+  v: ValoresDoFormulario,
+  /** Edição de um lançamento existente (T05-07): o tipo e os vínculos não mudam. */
+  editando?: Id,
+): Comando {
+  const gravar = (f: Fatos) =>
+    editando
+      ? editarLancamento(f, ctx, editando, camposDoLancamento(v))
+      : comandoSimples(f, ctx, v);
   const conta = contaComDataPosterior(fatos, v);
   if (conta && v.saldoInicial === 'mudar')
     return emSequencia(
       fatos,
       editarConta(fatos, ctx, conta.id, { dataSaldoInicial: novaDataDoSaldoInicial(v.data) }),
-      (f) => comandoSimples(f, ctx, v),
+      gravar,
     );
-  return comandoSimples(fatos, ctx, v);
+  return gravar(fatos);
+}
+
+/** Tipos que a edição reabre no formulário; os demais só se excluem e lançam de novo. */
+export const TIPOS_EDITAVEIS = ['receita', 'despesa', 'transferencia'] as const;
+
+/** Os valores do formulário de um lançamento gravado, para editar. */
+export function valoresDoLancamento(
+  l: Lancamento,
+): Omit<ValoresDoFormulario, 'cartaoId' | 'faturaCompetencia'> {
+  return {
+    tipo: l.tipo === 'receita' || l.tipo === 'transferencia' ? l.tipo : 'despesa',
+    valor: l.valor,
+    descricao: l.descricao ?? '',
+    categoriaId: l.categoriaId ?? '',
+    data: l.data,
+    contaId: l.contaId,
+    contaDestinoId: l.contaDestinoId ?? '',
+    observacao: l.observacao ?? '',
+    previsto: l.status === 'previsto',
+    saldoInicial: 'manter',
+  };
+}
+
+/** Receita, despesa ou transferência avulsa: os campos do `Lancamento`. */
+function camposDoLancamento(v: ValoresDoFormulario) {
+  const transferencia = v.tipo === 'transferencia';
+  return {
+    status: v.previsto && podeSerPrevisto(v.tipo) ? ('previsto' as const) : ('efetivado' as const),
+    data: dataCivil(v.data),
+    valor: v.valor as Centavos,
+    descricao: v.descricao.trim() || null,
+    observacao: v.observacao.trim() || null,
+    contaId: v.contaId,
+    contaDestinoId: transferencia ? v.contaDestinoId : null,
+    categoriaId: transferencia ? null : v.categoriaId,
+  };
 }
 
 function comandoSimples(fatos: Fatos, ctx: Contexto, v: ValoresDoFormulario): Comando {
@@ -147,15 +196,8 @@ function comandoSimples(fatos: Fatos, ctx: Contexto, v: ValoresDoFormulario): Co
       });
     default:
       return lancar(fatos, ctx, {
+        ...camposDoLancamento(v),
         tipo: v.tipo,
-        status: v.previsto && podeSerPrevisto(v.tipo) ? 'previsto' : 'efetivado',
-        data,
-        valor,
-        descricao,
-        observacao,
-        contaId: v.contaId,
-        contaDestinoId: v.tipo === 'transferencia' ? v.contaDestinoId : null,
-        categoriaId: v.tipo === 'transferencia' ? null : v.categoriaId,
         cartaoId: null,
         faturaCompetencia: null,
         dividaId: null,

@@ -13,3 +13,4 @@ export {
 export * from './pendencias';
 export * from './barra';
 export * from './sugestoes';
+export * from './movimentacoes';

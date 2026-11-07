@@ -2,6 +2,7 @@
 export const mensagensLancar = {
   fab: 'Lançar',
   titulo: 'Novo lançamento',
+  tituloEdicao: 'Editar lançamento',
   tipos: {
     rotulo: 'Tipo de lançamento',
     despesa: 'Despesa',
