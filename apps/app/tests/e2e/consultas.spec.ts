@@ -29,6 +29,9 @@ test('voltar o foco à janela recarrega os fatos', async ({ page }) => {
   await page.getByLabel('Senha', { exact: true }).fill(u.senha);
   await page.getByRole('button', { name: 'Entrar' }).click();
   await expect(page.getByRole('link', { name: /^Saldo em contas/ })).toBeVisible();
+  // A página da rota (carregada sob demanda) monta antes de o relógio andar: montada depois dos
+  // 30 s, ela mesma recarregaria os fatos antes do evento de foco.
+  await page.waitForLoadState('networkidle');
 
   // Depois do staleTime (30 s), a volta do foco busca os fatos de novo.
   await page.clock.fastForward(31_000);
