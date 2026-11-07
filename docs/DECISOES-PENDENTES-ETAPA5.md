@@ -88,9 +88,20 @@ Tela sem design (DESIGN-HANDOFF 7): montada com os componentes existentes, no vo
 2. **Arquivadas:** um botão "Arquivadas (N)" no fim, recolhido por padrão; os cards arquivados ficam iguais, com o menu Desarquivar e Excluir.
 3. **Menu da conta:** botão "Ações de <nome>" no card. Item desabilitado mostra o motivo do core (`permissoesDaConta`) logo abaixo do rótulo, em vez de tooltip (item desabilitado de menu não recebe foco nem hover). Excluir desabilitado diz "Arquive-a", que é o "oferece Arquivar" da tarefa; não há atalho direto para arquivar dali.
 4. **Formulário:** diálogo "Nova conta" / "Editar conta" com Nome, Instituição, Tipo, Saldo inicial, Data do saldo inicial (com "Saldo no fim deste dia…"), Cor (8 círculos da paleta categórica) e "Incluir no total" (interruptor). A cor nova é a primeira que nenhuma conta ativa usa.
-5. **Saldo negativo:** a máscara só aceita dígitos; um chip "Negativo" ao lado do campo troca o sinal (cheque especial). Com saldo zero o campo fica vazio, com "R$ 0,00" de exemplo, e o cursor fica sempre no fim.
+5. **Saldo negativo:** a máscara só aceita dígitos; um chip "Negativo" ao lado do campo troca o sinal (cheque especial). Com saldo zero o campo fica vazio, com "R$ 0,00" de exemplo, como o valor do lançamento.
 6. **Tipo investimento:** no cadastro, escolher Investimento desmarca "Incluir no total" e escolher outro tipo marca de novo; na edição, trocar o tipo não mexe nesse campo.
 7. **Conta de pagamento de cartão ativo:** o interruptor "Incluir no total" fica desabilitado, com o motivo como descrição.
 8. **Prévia na edição:** ao mudar saldo inicial ou data, o bloco "O que muda ao salvar" mostra o saldo atual antes → depois e quantos movimentos passam a ficar (ou deixam de ficar) anteriores ao saldo inicial (`impactoDoNovoSaldoInicial`).
 9. Arquivar e excluir não pedem confirmação: o Desfazer do snackbar volta.
 10. `#/contas?nova=1` abre o formulário de conta nova (o FAB do primeiro uso, T05-02, leva para lá).
+
+## T05-09
+
+1. O título da top app bar continua "Contas" (vem da casca, pelo item do menu); o nome da conta aparece num título logo acima dos chips, com o botão "Voltar para Contas". No design, o nome da conta é o título da barra.
+2. Meses anteriores ao saldo inicial: a tabela some com a coluna Saldo, o cabeçalho mostra só "Saldo atual · hoje" e as linhas de abertura e fechamento não aparecem. Dentro de um mês com saldo, a linha anterior ao saldo inicial mostra o chip "Anterior ao saldo inicial" e "—" na coluna Saldo, com o texto "Antes do saldo inicial informado" como tooltip e nome acessível.
+3. Descrição das linhas: a mesma da visão Movimentações (`movimentacoes` do core); a transferência que chega diz "Transferência · de <conta de origem>". "Categoria ou tipo": a categoria, ou o tipo do lançamento quando não há categoria.
+4. Transferir e Ajustar saldo entram na T05-10; nesta tarefa a barra de ações tem Lançar e Exportar CSV. Conta arquivada: sem Lançar, com o aviso "Conta arquivada: o extrato é só para leitura."; Exportar CSV continua.
+5. CSV: `extrato-<nome-da-conta>-<AAAA-MM>.csv`, separado por `;` com vírgula decimal (como os CSV dos gráficos): cabeçalho, abertura, uma linha por movimento, entradas, saídas e fechamento.
+6. Conta inexistente na URL: estado vazio "Esta conta não existe mais; talvez tenha sido excluída." com "Voltar para Contas".
+7. Os testes passaram a achar o FAB pelo `aria-keyshortcuts="N"`, porque o extrato também tem um botão "Lançar".
+8. Ambiente: `movimentacoes.spec.ts › editar abre o mesmo formulário…` (WebKit) estourou o tempo uma vez no conjunto e passou sozinho.
