@@ -103,6 +103,10 @@ test('Gasto acumulado: o dia clicado abre do dia 1 até ele, com a mesma soma (1
   // Eixo Y de 72 px e uma faixa igual por dia do mês mais longo.
   const x = caixa.x + 72 + ((caixa.width - 72) * (dia - 0.5)) / serie.dias.length;
   await page.mouse.move(x, caixa.y + caixa.height / 2, { steps: 5 });
+  // Sob carga, o ponto ativo demora: só clica com o tooltip já no dia certo.
+  await expect(g.locator('.recharts-tooltip-wrapper')).toContainText(
+    new RegExp(`^${String(dia)}\\D`),
+  );
   await page.mouse.down();
   await page.mouse.up();
   const ate = dataCivil(`${serie.mes}-${String(dia).padStart(2, '0')}`);
