@@ -9,6 +9,43 @@ export const mensagensPainel = {
   },
   semContas: 'Cadastre sua primeira conta para ver o Painel.',
   cadastrarConta: 'Cadastrar conta',
+  saldos: {
+    periodo: 'Período dos gráficos de evolução',
+    patrimonio: (hoje: string) => `Patrimônio líquido · hoje, ${hoje}`,
+    decomposicao: 'Decomposição do Patrimônio líquido',
+    saldoTodas: 'Saldo em todas as contas',
+    obrigacoes: 'Obrigações de cartão',
+    devedor: 'Saldo devedor de dívidas',
+    nContas: (n: number) => (n === 1 ? '1 conta' : `${String(n)} contas`),
+    incluindo: (n: string, fora: string) => `${n}, incluindo ${fora}`,
+    comParcelasFuturas: 'Faturas não pagas, com parcelas futuras',
+    semDividas: 'Nenhuma dívida em aberto',
+    causa: {
+      inicio: (compromissos: string, contas: string) =>
+        `Negativo porque dívidas e compras no cartão somam ${compromissos}, mais que os ${contas} em contas.`,
+      obrigacoesDeCartao: (valor: string) =>
+        `O que mais pesa são as obrigações de cartão (${valor}).`,
+      saldoDevedorDeDividas: (valor: string) =>
+        `O que mais pesa é o saldo devedor de dívidas (${valor}).`,
+    },
+    contas: 'Contas',
+    foraDoTotal: 'Fora do total',
+    variacaoNoMes: (valor: string, mes: string) => `${valor} em ${mes}`,
+    semSaldo: 'Antes do saldo inicial',
+    composicao: {
+      titulo: 'Onde está o seu dinheiro?',
+      subtitulo: 'Composição do saldo por conta · hoje · clique numa conta para ver o extrato',
+      conta: 'Conta',
+      saldo: 'Saldo',
+      vazio: 'Nenhuma conta com saldo hoje',
+    },
+    evolucao: {
+      titulo: 'Como evoluíram o saldo e o patrimônio?',
+      subtitulo: (de: string, ate: string) => `Evolução no fim de cada mês · ${de} – ${ate}`,
+      mes: 'Mês',
+      vazio: 'Sem saldo nas contas neste período',
+    },
+  },
   pendencias: {
     titulo: (n: number) => `Pendências · ${String(n)}`,
     confirmarTodos: 'Confirmar todos os fixos',

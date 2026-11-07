@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { useDerivado } from '@/queries/fatos';
 
 import { mensagensPainel as m } from './mensagens';
+import { Saldos } from './Saldos';
 import { VisaoGeral } from './VisaoGeral';
 
 const ABAS = ['visao-geral', 'saldos', 'cartoes', 'projecoes'] as const;
@@ -83,6 +84,8 @@ export function PainelPagina() {
         />
       ) : aba === 'visao-geral' ? (
         <VisaoGeral d={d} />
+      ) : aba === 'saldos' ? (
+        <Saldos d={d} />
       ) : (
         <PaginaProvisoria />
       );
