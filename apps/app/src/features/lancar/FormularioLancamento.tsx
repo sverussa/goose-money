@@ -2,6 +2,7 @@ import {
   type Competencia,
   dataCivil,
   type Derivado,
+  type Lancamento,
   deMascara,
   ErroDeDominio,
   faturaDaCompra,
@@ -41,6 +42,7 @@ import {
   contaComDataPosterior,
   novaDataDoSaldoInicial,
   podeSerPrevisto,
+  valoresDoLancamento,
   esquemaDoFormulario,
   resolverZod,
   TIPOS,
@@ -165,6 +167,7 @@ export function FormularioLancamento({
   onFechar,
   telaCheia = false,
   titulo,
+  editando,
 }: {
   derivado: Derivado;
   inicial: Pick<ValoresDoFormulario, 'tipo' | 'contaId' | 'cartaoId' | 'data'>;
@@ -176,6 +179,8 @@ export function FormularioLancamento({
   telaCheia?: boolean;
   /** O título do invólucro (DrawerTitle), mostrado no topo da tela cheia. */
   titulo?: React.ReactNode;
+  /** Edição (T05-07): o formulário abre preenchido e grava por `editarLancamento`. */
+  editando?: Lancamento;
 }) {
   const { fatos } = derivado;
   const { executar, salvando } = useComando();
@@ -188,17 +193,21 @@ export function FormularioLancamento({
 
   const form = useForm<ValoresDoFormulario>({
     resolver: resolverZod(esquemaDoFormulario),
-    defaultValues: {
-      ...inicial,
-      valor: 0,
-      descricao: '',
-      categoriaId: semCategoria,
-      contaDestinoId: contas.find((c) => c.id !== inicial.contaId)?.id ?? '',
-      faturaCompetencia: inicial.cartaoId ? (destinoPadrao(derivado, inicial.cartaoId) ?? '') : '',
-      observacao: '',
-      previsto: false,
-      saldoInicial: 'manter',
-    },
+    defaultValues: editando
+      ? { ...valoresDoLancamento(editando), cartaoId: inicial.cartaoId, faturaCompetencia: '' }
+      : {
+          ...inicial,
+          valor: 0,
+          descricao: '',
+          categoriaId: semCategoria,
+          contaDestinoId: contas.find((c) => c.id !== inicial.contaId)?.id ?? '',
+          faturaCompetencia: inicial.cartaoId
+            ? (destinoPadrao(derivado, inicial.cartaoId) ?? '')
+            : '',
+          observacao: '',
+          previsto: false,
+          saldoInicial: 'manter',
+        },
   });
   const { control, register, handleSubmit, setValue, setError, reset, formState } = form;
   const erros = formState.errors;
@@ -249,7 +258,7 @@ export function FormularioLancamento({
   async function salvar(valores: ValoresDoFormulario) {
     let comando;
     try {
-      comando = comandoDoFormulario(fatos, contexto(), valores);
+      comando = comandoDoFormulario(fatos, contexto(), valores, editando?.id);
     } catch (e) {
       if (!(e instanceof ErroDeDominio)) throw e;
       setError('root', { message: e.message });
@@ -360,7 +369,13 @@ export function FormularioLancamento({
           )}
         >
           {TIPOS.map((t) => (
-            <ToggleGroupPrimitive.Item key={t} value={t} className={toggleVariants()}>
+            <ToggleGroupPrimitive.Item
+              key={t}
+              value={t}
+              // Na edição, o tipo não muda (o core recusa): exclua e lance de novo.
+              disabled={!!editando && t !== tipo}
+              className={toggleVariants()}
+            >
               {t === tipo && <Check aria-hidden />}
               {m.tipos[t]}
             </ToggleGroupPrimitive.Item>
@@ -659,9 +674,11 @@ export function FormularioLancamento({
       </div>
 
       {telaCheia ? (
-        <div className="shrink-0 border-t border-surface-container-highest bg-surface px-4 pt-3 pb-6">
-          {lancarOutro}
-        </div>
+        !editando && (
+          <div className="shrink-0 border-t border-surface-container-highest bg-surface px-4 pt-3 pb-6">
+            {lancarOutro}
+          </div>
+        )
       ) : (
         <div className="flex flex-wrap items-center justify-end gap-2">
           <span className="flex-1 text-label-md font-normal text-on-surface-variant">
@@ -670,7 +687,7 @@ export function FormularioLancamento({
           <Button type="button" variant="text" onClick={onFechar}>
             {mensagens.acoes.cancelar}
           </Button>
-          {lancarOutro}
+          {!editando && lancarOutro}
           {salvarBotao}
         </div>
       )}

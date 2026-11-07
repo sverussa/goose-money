@@ -69,3 +69,13 @@ Decisões tomadas durante as tarefas da etapa 5 (e da T00-14, que a prepara) em 
 6. Estorno e ajuste de compra para menos (despesa negativa) aparecem como entrada: "+R$ X" em verde.
 7. O parâmetro `?destaque=` que a busca global manda (T04-09) ainda não rola até o item.
 8. Fora da pasta da tarefa: `@tanstack/react-virtual` 3.14.24 (aprovado) no `package.json` e no `optimizeDeps` do Vite.
+
+## T05-07
+
+1. `movimentacoes(fatos, hoje, periodo, filtros)` e `entradasESaidasDeCaixa(itens)` no core (aprovadas). A função recebe também `hoje`, para marcar como "Atrasado" a receita prevista com data passada (3.1). Compras canceladas ficam fora.
+2. Cabeçalho de Movimentações: "Entradas de caixa" e "Saídas de caixa" dos itens realizados, sem transferências (o dinheiro continua com a pessoa) e sem compras no cartão (o caixa sai no pagamento da fatura). O design mostra também "Itens" (a contagem); ficou de fora porque o cabeçalho de contexto só mostra valores em dinheiro.
+3. Total do dia em Movimentações: entradas − saídas de caixa do dia. Dia só com compras mostra "no cartão" e dia só com transferências, "R$ 0,00 no total", como no design.
+4. Filtro de estado: Liquidado, A pagar, Vencido, Previsto e Atrasado; sem o parâmetro, "Estado: realizados" (os três primeiros). Em Receitas e despesas, os previstos que aparecem com o filtro são as despesas e receitas avulsas marcadas como previstas, com chip e fora dos totais; as ocorrências ainda não confirmadas das recorrências não entram (ficam nas telas de Rendas e Gastos fixos e na Projeção).
+5. Filtro de conta e de cartão: um só por vez (menu de opção única); tipo, categoria, estado e origem aceitam vários. Na transferência, o filtro de conta vale para a origem ou o destino. Trocar de visão limpa o filtro de tipo, porque os tipos das duas visões são diferentes.
+6. Ações por item: "Classificar" em itens "A classificar" (lançamentos e compras, inclusive pela parcela), e o menu "Ações de …" com Editar (receita, despesa e transferência) e Excluir (qualquer lançamento, menos amortização). Excluir não pede confirmação: o Desfazer do snackbar volta tudo. Parcelas e compras ainda não abrem o menu da compra (T05-14, fora desta sequência).
+7. Editar usa o mesmo formulário de lançamento (`features/lancar/EditarLancamento.tsx`), com título "Editar lançamento", o tipo travado (o core não deixa mudar) e sem "Salvar e lançar outro".
