@@ -138,7 +138,7 @@ Uma tela ou diálogo por tarefa, na ordem do handoff.
 | ✅ [T05-03 · Formulário de lançamento: compra no cartão, transferência e pagamento de fatura](05-telas/T05-03-lancar-demais-tipos.md) | Lançar | T05-02 | — |
 | ✅ [T05-04 · Formulário de lançamento: campos inteligentes e "Mais opções"](05-telas/T05-04-lancar-campos-inteligentes.md) | Lançar | T05-02 | — |
 | ✅ [T05-05 · Formulário de lançamento em tela cheia no celular](05-telas/T05-05-lancar-celular.md) | Lançar | T05-04 | — |
-| [T05-06 · Lançamentos: visão "Receitas e despesas"](05-telas/T05-06-lancamentos-receitas-despesas.md) | Lançamentos | T04-07, T01-14 | — |
+| ✅ [T05-06 · Lançamentos: visão "Receitas e despesas"](05-telas/T05-06-lancamentos-receitas-despesas.md) | Lançamentos | T04-07, T01-14 | — |
 | [T05-07 · Lançamentos: "Movimentações", filtros e ações por item](05-telas/T05-07-lancamentos-movimentacoes-filtros.md) | Lançamentos | T05-06, T05-04 | — |
 | [T05-08 · Contas: lista, formulário e menu](05-telas/T05-08-contas-lista-formulario.md) | Contas | T04-07, T01-22 | — |
 | [T05-09 · Extrato mensal da conta](05-telas/T05-09-conta-extrato.md) | Contas | T05-08, T01-06, T03-07 | — |
