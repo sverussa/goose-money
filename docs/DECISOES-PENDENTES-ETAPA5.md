@@ -79,3 +79,18 @@ Decisões tomadas durante as tarefas da etapa 5 (e da T00-14, que a prepara) em 
 5. Filtro de conta e de cartão: um só por vez (menu de opção única); tipo, categoria, estado e origem aceitam vários. Na transferência, o filtro de conta vale para a origem ou o destino. Trocar de visão limpa o filtro de tipo, porque os tipos das duas visões são diferentes.
 6. Ações por item: "Classificar" em itens "A classificar" (lançamentos e compras, inclusive pela parcela), e o menu "Ações de …" com Editar (receita, despesa e transferência) e Excluir (qualquer lançamento, menos amortização). Excluir não pede confirmação: o Desfazer do snackbar volta tudo. Parcelas e compras ainda não abrem o menu da compra (T05-14, fora desta sequência).
 7. Editar usa o mesmo formulário de lançamento (`features/lancar/EditarLancamento.tsx`), com título "Editar lançamento", o tipo travado (o core não deixa mudar) e sem "Salvar e lançar outro".
+
+## T05-08
+
+Tela sem design (DESIGN-HANDOFF 7): montada com os componentes existentes, no vocabulário de `PainelSaldos.dc.html` (cards) e do `LancarDialog.dc.html` (diálogo).
+
+1. **Lista:** cabeçalho de contexto com Saldo em contas, Saldo em todas as contas e o botão "Nova conta"; cards em grade (1, 2 ou 3 colunas) com a cor, o nome (link para o extrato), o chip "Fora do total", o saldo atual em destaque e "tipo · instituição". Saldo indisponível (antes do saldo inicial) mostra "Antes do saldo inicial". Sem sparkline nem variação, que o design do Painel tem.
+2. **Arquivadas:** um botão "Arquivadas (N)" no fim, recolhido por padrão; os cards arquivados ficam iguais, com o menu Desarquivar e Excluir.
+3. **Menu da conta:** botão "Ações de <nome>" no card. Item desabilitado mostra o motivo do core (`permissoesDaConta`) logo abaixo do rótulo, em vez de tooltip (item desabilitado de menu não recebe foco nem hover). Excluir desabilitado diz "Arquive-a", que é o "oferece Arquivar" da tarefa; não há atalho direto para arquivar dali.
+4. **Formulário:** diálogo "Nova conta" / "Editar conta" com Nome, Instituição, Tipo, Saldo inicial, Data do saldo inicial (com "Saldo no fim deste dia…"), Cor (8 círculos da paleta categórica) e "Incluir no total" (interruptor). A cor nova é a primeira que nenhuma conta ativa usa.
+5. **Saldo negativo:** a máscara só aceita dígitos; um chip "Negativo" ao lado do campo troca o sinal (cheque especial). Com saldo zero o campo fica vazio, com "R$ 0,00" de exemplo, e o cursor fica sempre no fim.
+6. **Tipo investimento:** no cadastro, escolher Investimento desmarca "Incluir no total" e escolher outro tipo marca de novo; na edição, trocar o tipo não mexe nesse campo.
+7. **Conta de pagamento de cartão ativo:** o interruptor "Incluir no total" fica desabilitado, com o motivo como descrição.
+8. **Prévia na edição:** ao mudar saldo inicial ou data, o bloco "O que muda ao salvar" mostra o saldo atual antes → depois e quantos movimentos passam a ficar (ou deixam de ficar) anteriores ao saldo inicial (`impactoDoNovoSaldoInicial`).
+9. Arquivar e excluir não pedem confirmação: o Desfazer do snackbar volta.
+10. `#/contas?nova=1` abre o formulário de conta nova (o FAB do primeiro uso, T05-02, leva para lá).
