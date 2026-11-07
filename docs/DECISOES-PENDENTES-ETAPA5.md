@@ -115,3 +115,20 @@ Diálogos sem design (DESIGN-HANDOFF 7): no vocabulário do `LancarDialog.dc.htm
 3. O campo de saldo com sinal virou um componente da pasta de contas (`CampoDeSaldo`), usado no formulário de conta e no Ajustar saldo.
 4. Conta arquivada: sem Transferir nem Ajustar saldo (extrato só para leitura).
 5. No cabeçalho do extrato, entradas e saídas zeradas aparecem como "R$ 0,00", sem sinal nem cor.
+
+## T05-11
+
+Lista e formulário sem design (DESIGN-HANDOFF 7): a face do cartão de `PainelCartoes.dc.html` e o vocabulário do formulário de conta (T05-08).
+
+1. **Lista:** cabeçalho de contexto com A pagar nos cartões, Obrigações de cartão e "Novo cartão"; cards em grade (1 ou 2 colunas) com a face do cartão na cor escolhida (nome, "fecha dia F · vence dia V" do ciclo vigente na fatura aberta, "Fatura aberta · vence dd/mm" e o saldo da aberta) e, abaixo, "Limite disponível X de Y" com a barra de limite usado. O nome é o link para a fatura e o card inteiro é clicável. Ficaram de fora os blocos do Painel ("Próxima a vencer", "Pagar fatura", Obrigações por cartão), que são da T05-19.
+2. **Barra de limite:** usa o `Progress` do tema (cor primária), não a cor do cartão como no design: a cor do indicador é fixa no componente, e mudá-la pediria editar `src/components/ui`.
+3. **Paleta do cartão:** `cartao-a`, `cartao-b` e as categóricas 1, 2, 4, 5 e 7. As categóricas 3, 6 e 8 ficaram de fora porque o texto branco da face fica abaixo de 4,5:1 nelas. O cartão novo vem com a primeira cor que nenhum cartão ativo usa.
+4. **Texto da face no tema escuro:** não há token de cor clara fixa nos dois temas (`on-primary` fica escuro no tema escuro). A face usa `on-primary` no claro e `on-surface` no escuro; no escuro, o contraste fica abaixo de 4,5:1 nas categóricas 2, 4, 5 e 7. **Sugestão:** um token `on-cartao` (branco nos dois temas) em `tema.css` e `theme-tokens.ts`, numa tarefa que possa editá-los.
+5. **Formulário:** diálogo "Novo cartão" / "Editar cartão" com Nome, Instituição, Limite (máscara da direita), Dia de fechamento e Dia de vencimento (campos numéricos de 1 a 31), Conta de pagamento (padrão: a primeira conta ativa incluída no total), "Saldo da fatura fechada a pagar (opcional)" com a explicação, Cor e o bloco "Antes de salvar" com a prévia de `previaDoCadastro`.
+6. **Editar:** os dias aparecem desabilitados, com o texto "Para mudar os dias, use "Configurar ciclo" no menu do cartão."; mudar o limite mostra "Limite disponível: antes → depois" (`limiteDisponivel` com as Obrigações do cartão).
+7. **Menu do cartão:** botão "Ações de <nome>" na face. Itens desabilitados mostram o motivo do core (`podeArquivarCartao`, `podeExcluirCartao`) abaixo do rótulo, como em Contas. "Configurar ciclo" leva a `#/cartoes/<id>?acao=ciclo`: o diálogo é da T05-15, na tela do cartão. Cartão arquivado: só Desarquivar e Excluir.
+8. `ItemDoMenu` e `useRodar` estão repetidos de `features/contas/ContasPagina.tsx` (são locais dela e a tarefa não podia editá-la). **Sugestão:** levá-los para `src/components` numa tarefa que possa editar as duas pastas.
+9. Arquivar e excluir não pedem confirmação: o Desfazer do snackbar volta.
+10. `#/cartoes?novo=1` abre o formulário de cartão novo (o "Cadastrar cartão" do formulário de lançamento, T05-03, leva para lá).
+11. Sem nenhuma conta incluída no total, a Conta de pagamento fica vazia com "Cadastre antes uma conta incluída no total." e Salvar recusa com "Escolha a conta de pagamento".
+12. "Editar" no menu não devolve o foco ao botão "Ações de …" ao fechar o menu (`onCloseAutoFocus` com `preventDefault`): o foco voltava ao botão depois que o diálogo abria e engolia o que se digitava no formulário (o teste de editar o limite falhava 1 vez em 5). O menu da conta (`features/contas/ContasPagina.tsx`) tem o mesmo padrão e o mesmo risco; não foi mexido.
