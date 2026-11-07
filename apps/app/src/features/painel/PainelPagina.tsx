@@ -1,7 +1,6 @@
 import { Wallet } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router';
 
-import { PaginaProvisoria } from '@/app/PaginaProvisoria';
 import { EmptyState, EstadoDaCarga } from '@/components/EstadosDaTela';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -9,6 +8,7 @@ import { useDerivado } from '@/queries/fatos';
 
 import { mensagensPainel as m } from './mensagens';
 import { Cartoes } from './Cartoes';
+import { Projecoes } from './Projecoes';
 import { Saldos } from './Saldos';
 import { VisaoGeral } from './VisaoGeral';
 
@@ -90,7 +90,7 @@ export function PainelPagina() {
       ) : aba === 'cartoes' ? (
         <Cartoes d={d} />
       ) : (
-        <PaginaProvisoria />
+        <Projecoes d={d} />
       );
   }
   return (

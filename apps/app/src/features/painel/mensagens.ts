@@ -90,6 +90,48 @@ export const mensagensPainel = {
       vazio: 'Sem gastos no cartão neste período',
     },
   },
+  projecoes: {
+    horizonte: 'Horizonte',
+    horizonteDaProjecao: 'Horizonte da projeção',
+    meses: (n: number) => `${String(n)} meses`,
+    conservadora:
+      'A projeção é conservadora: considera só rendas e gastos fixos, faturas, parcelas e lançamentos previstos. Compras do dia a dia que você ainda vai fazer não entram.',
+    nenhumAbaixo: (limite: string) => `Nenhum mês fica abaixo do limite de alerta (${limite}).`,
+    negativo: (mes: string, valor: string) =>
+      `Em ${mes}, o saldo previsto fica negativo: ${valor}.`,
+    abaixo: (mes: string, valor: string, limite: string) =>
+      `Em ${mes}, o saldo previsto (${valor}) fica abaixo do limite de alerta (${limite}).`,
+    naoIncluido: (texto: string, valor: string, data: string) =>
+      `${texto} (${valor}, ${data}) está atrasado e não entra na projeção.`,
+    grafico: {
+      titulo: 'Como fica o saldo nos próximos meses?',
+      subtitulo: (de: string, ate: string, limite: string) =>
+        `Saldo projetado no fim de cada mês · ${de} – ${ate} · faixa: abaixo do limite de alerta (até ${limite}) · clique num mês para detalhar`,
+      mes: 'Mês',
+      saldo: 'Saldo projetado',
+      faixa: 'Abaixo do limite de alerta',
+      faixaLegenda: (limite: string) => `Abaixo do limite de alerta (até ${limite})`,
+      vazio: 'Sem saldo para projetar',
+    },
+    tabela: {
+      titulo: 'Mês a mês',
+      mes: 'Mês',
+      saldoInicial: 'Saldo inicial',
+      saldoFinal: 'Saldo final',
+      nota: (hoje: string, fim: string) =>
+        `O mês corrente vai de hoje (${hoje}) a ${fim}; o saldo final dele é o Previsto até o fim do mês da Barra.`,
+    },
+    grupos: {
+      rendas: 'Rendas',
+      receitasAvulsas: 'Receitas avulsas',
+      gastosFixosConta: 'Gastos fixos em conta',
+      faturas: 'Faturas de cartão',
+      parcelasDividas: 'Parcelas de dívidas',
+      despesasAvulsas: 'Despesas avulsas',
+    },
+    detalhamento: (mes: string) => `Detalhamento de ${mes}`,
+    semItens: 'Nenhum item pendente neste mês.',
+  },
   pendencias: {
     titulo: (n: number) => `Pendências · ${String(n)}`,
     confirmarTodos: 'Confirmar todos os fixos',
