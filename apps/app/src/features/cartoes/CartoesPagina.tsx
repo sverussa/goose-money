@@ -82,8 +82,9 @@ function ItemDoMenu({
 function MenuDoCartao({ cartao, d, editar }: { cartao: Cartao; d: Derivado; editar: () => void }) {
   const rodar = useRodar();
   const navegar = useNavigate();
-  // Ao abrir o formulário, o foco não volta ao botão do menu: roubaria o que se digita nele.
-  const abriuDialogo = useRef(false);
+  // O formulário só abre depois que o menu fecha e devolve o foco ao botão: aberto antes, o
+  // menu ainda montado atrás dele (WebKit) toma o foco do campo no meio da digitação.
+  const editarAoFechar = useRef(false);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -97,9 +98,10 @@ function MenuDoCartao({ cartao, d, editar }: { cartao: Cartao; d: Derivado; edit
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        onCloseAutoFocus={(e) => {
-          if (abriuDialogo.current) e.preventDefault();
-          abriuDialogo.current = false;
+        onCloseAutoFocus={() => {
+          if (!editarAoFechar.current) return;
+          editarAoFechar.current = false;
+          editar();
         }}
       >
         {!cartao.arquivado && (
@@ -107,8 +109,7 @@ function MenuDoCartao({ cartao, d, editar }: { cartao: Cartao; d: Derivado; edit
             <ItemDoMenu
               rotulo={m.menu.editar}
               aoEscolher={() => {
-                abriuDialogo.current = true;
-                editar();
+                editarAoFechar.current = true;
               }}
             />
             {/* O diálogo Configurar ciclo é da tela do cartão (T05-15). */}
