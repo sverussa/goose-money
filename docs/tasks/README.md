@@ -142,7 +142,7 @@ Uma tela ou diálogo por tarefa, na ordem do handoff.
 | ✅ [T05-07 · Lançamentos: "Movimentações", filtros e ações por item](05-telas/T05-07-lancamentos-movimentacoes-filtros.md) | Lançamentos | T05-06, T05-04 | — |
 | ✅ [T05-08 · Contas: lista, formulário e menu](05-telas/T05-08-contas-lista-formulario.md) | Contas | T04-07, T01-22 | — |
 | ✅ [T05-09 · Extrato mensal da conta](05-telas/T05-09-conta-extrato.md) | Contas | T05-08, T01-06, T03-07 | — |
-| [T05-10 · Diálogos Transferir e Ajustar saldo](05-telas/T05-10-transferir-ajustar-saldo.md) | Contas | T05-09, T05-03 | — |
+| ✅ [T05-10 · Diálogos Transferir e Ajustar saldo](05-telas/T05-10-transferir-ajustar-saldo.md) | Contas | T05-09, T05-03 | — |
 | [T05-11 · Cartões: lista, formulário e menu](05-telas/T05-11-cartoes-lista-formulario.md) | Cartões | T05-08, T01-10 | — |
 | [T05-12 · Fatura do cartão](05-telas/T05-12-cartao-fatura.md) | Cartões | T05-11, T01-09 | tomada |
 | [T05-13 · Nova compra (à vista ou parcelada)](05-telas/T05-13-nova-compra.md) | Cartões | T05-12, T01-08 | — |
