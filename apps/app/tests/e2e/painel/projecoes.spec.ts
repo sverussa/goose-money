@@ -86,6 +86,10 @@ test('clicar em outro mês troca o detalhamento', async ({ page }) => {
   const x = caixa.x + 72 + ((caixa.width - 72) * 2.5) / 6;
   // Passa o mouse antes, para o Recharts marcar o ponto ativo, e clica.
   await page.mouse.move(x, caixa.y + caixa.height / 2, { steps: 5 });
+  // Sob carga, o ponto ativo demora: só clica com o tooltip já no mês certo.
+  await expect(grafico.locator('.recharts-tooltip-wrapper')).toContainText(
+    formatarMesCurto(somarMeses(competenciaDe(HOJE), 2)),
+  );
   await page.mouse.down();
   await page.mouse.up();
   await expect(detalhe(page)).toHaveAccessibleName(`Detalhamento de ${terceiro}`);
