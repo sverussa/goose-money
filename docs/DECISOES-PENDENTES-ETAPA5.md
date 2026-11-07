@@ -147,3 +147,14 @@ Lista e formulário sem design (DESIGN-HANDOFF 7): a face do cartão de `PainelC
 10. **"Paga parcialmente" no seed:** com "hoje" = 04/11/2026, a fatura de M−1 do Cartão B (paga em 60%) já foi transportada, então tem saldo zero e não leva o chip (3.5: o chip pede saldo > 0); o core confere o chip nela em 05/10 (`seed.test.ts`). O teste da tela grava um pagamento parcial na fatura de novembro do B e confere o chip ali.
 11. No compact (< 600 dp), a linha do item não quebra: o chip desce para baixo do texto e o valor fica à direita.
 12. O teste "FAB nesta tela abre Compra no cartão com este cartão" já existe em `tests/e2e/lancar/tipos.spec.ts` (T05-03) e não foi repetido.
+
+## T05-13
+
+1. **Alternância "Valor total" / "Valor da parcela":** só aparece com "Parcelado" ligado (6.5 e 4.1 item 4, revelação progressiva); o design a mostra sempre. Ao ligar ou desligar "Parcelado", volta para "Valor total".
+2. **Número de parcelas:** chips 2, 3, 6, 10 e 12 (como no design, com nome acessível "N parcelas") e o campo "Outro", que aceita de 2 a 99. A spec não define teto; 99 evita gerar centenas de parcelas por engano.
+3. **"O que muda ao salvar":** além das linhas do design (Limite disponível do cartão antes → depois, A pagar nos cartões, Patrimônio líquido, Previsto até o fim do mês), mostra Obrigações de cartão (11.3) e Resultado do mês (pedido da tarefa). Os indicadores vêm do core: `features/cartoes/efeitos.ts` aplica o comando de `novaCompra` sobre os fatos, deriva com `derivar` e compara `indicadoresDaBarra` e `obrigacoesDeCartao` antes e depois com `menos`, como o chip de variação da Barra (`app/casca/barra.ts`). O limite novo vem de `previaDaCompra`. Diferença zero mostra "sem mudança"; no Previsto, "sem mudança · 1ª parcela vence dd/mm", como no design.
+4. **Cor das diferenças:** vermelho quando o indicador piora (A pagar e Obrigações sobem; Resultado, Previsto e Patrimônio descem), verde quando melhora; o sinal sempre aparece no texto.
+5. **Campos:** a descrição é um campo simples (sem o autocomplete do formulário de lançamento), a categoria é uma lista como no design (padrão "A classificar") e a data é o seletor nativo, sem os chips Hoje e Ontem. A data pode ser anterior ao cadastro do cartão: as parcelas antes da primeira fatura controlada levam o chip "Paga antes do cadastro" na prévia e não reduzem o limite.
+6. **Botões:** "Salvar" (microcopy de 4.3), não "Salvar compra" como no design. "Salvar e lançar outro" mantém o diálogo aberto, volta o valor ao zero e mantém a data.
+7. **Compact:** o diálogo é o mesmo, com as duas colunas empilhadas e rolagem; não há versão em tela cheia (não desenhada).
+8. `CampoDeValor` saiu de `FormularioCartao.tsx` para `features/cartoes/CampoDeValor.tsx`, para servir também à Nova compra e aos diálogos da T05-15. O `preparar` dos testes da fatura foi para `tests/e2e/cartoes/apoio.ts`.
