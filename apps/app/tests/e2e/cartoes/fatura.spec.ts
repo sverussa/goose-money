@@ -160,12 +160,10 @@ test('as ações ficam na tela e levam a ação na URL para os diálogos (T05-13
   ] as const) {
     await page.getByRole('button', { name: nome, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`[?&]acao=${acao}(&|$)`));
-    // Os diálogos que já existem fecham com Esc e tiram a ação da URL.
-    if (acao === 'nova-compra') {
-      await expect(page.getByRole('dialog', { name: /^Nova compra/ })).toBeVisible();
-      await page.keyboard.press('Escape');
-      await expect(page).not.toHaveURL(/[?&]acao=/);
-    }
+    // Cada diálogo fecha com Esc e tira a ação da URL.
+    await expect(page.getByRole('dialog', { name: new RegExp(`^${nome}`) })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page).not.toHaveURL(/[?&]acao=/);
   }
   await page.getByRole('button', { name: 'Operações da compra Fone · 1/3' }).click();
   await expect(page).toHaveURL(/[?&]acao=compra&compra=/);

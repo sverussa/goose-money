@@ -19,12 +19,15 @@ export type AcaoDaFatura =
 
 export function useAcaoDaFatura() {
   const [busca, setBusca] = useSearchParams();
-  const abrir = (acao: AcaoDaFatura, compraId?: string) => {
+  /** `data`: a data sugerida do encargo ("Lançar juros" do rotativo, T05-15). */
+  const abrir = (acao: AcaoDaFatura, compraId?: string, data?: string) => {
     setBusca((b) => {
       const x = new URLSearchParams(b);
       x.set('acao', acao);
       if (compraId) x.set('compra', compraId);
       else x.delete('compra');
+      if (data) x.set('data', data);
+      else x.delete('data');
       return x;
     });
   };
@@ -34,6 +37,7 @@ export function useAcaoDaFatura() {
         const x = new URLSearchParams(b);
         x.delete('acao');
         x.delete('compra');
+        x.delete('data');
         return x;
       },
       { replace: true },
@@ -42,6 +46,7 @@ export function useAcaoDaFatura() {
   return {
     acao: busca.get('acao') as AcaoDaFatura | null,
     compraId: busca.get('compra'),
+    data: busca.get('data'),
     abrir,
     fechar,
   };
