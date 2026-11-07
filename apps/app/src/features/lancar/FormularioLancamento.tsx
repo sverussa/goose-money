@@ -8,7 +8,7 @@ import {
   previaDoPagamento,
   sugestoesDeLancamento,
 } from '@goose-money/core';
-import { Check, ChevronDown, CreditCard, TriangleAlert } from 'lucide-react';
+import { Check, ChevronDown, CreditCard, TriangleAlert, X } from 'lucide-react';
 import { ToggleGroup as ToggleGroupPrimitive } from 'radix-ui';
 import { useRef, useState } from 'react';
 import { type Control, Controller, useForm, useWatch } from 'react-hook-form';
@@ -163,6 +163,8 @@ export function FormularioLancamento({
   valorRef,
   listaAbertaRef,
   onFechar,
+  telaCheia = false,
+  titulo,
 }: {
   derivado: Derivado;
   inicial: Pick<ValoresDoFormulario, 'tipo' | 'contaId' | 'cartaoId' | 'data'>;
@@ -170,6 +172,10 @@ export function FormularioLancamento({
   /** Com as sugestões abertas, Esc fecha a lista e não o diálogo. */
   listaAbertaRef: React.RefObject<boolean>;
   onFechar: () => void;
+  /** No compact (< 600 dp), o layout de tela cheia (T05-05); só o invólucro muda. */
+  telaCheia?: boolean;
+  /** O título do invólucro (DrawerTitle), mostrado no topo da tela cheia. */
+  titulo?: React.ReactNode;
 }) {
   const { fatos } = derivado;
   const { executar, salvando } = useComando();
@@ -296,177 +302,174 @@ export function FormularioLancamento({
       ? previaDoPagamento(faturas, fatura.competencia, valor)
       : null;
 
+  const podeSalvar = !(usaCartao && cartoes.length === 0);
+  const lancarOutro = (
+    <Button
+      type="button"
+      variant="outlined"
+      disabled={salvando}
+      className={cn(telaCheia && 'h-12 w-full')}
+      onClick={() => {
+        enviar(true);
+      }}
+    >
+      {mensagens.acoes.salvarELancarOutro}
+    </Button>
+  );
+  const salvarBotao = (
+    <BotaoSalvar salvando={salvando} disabled={!podeSalvar} className="px-6">
+      {mensagens.acoes.salvar}
+    </BotaoSalvar>
+  );
+
   return (
     <form
       noValidate
-      className="flex flex-col gap-4.5"
+      className={cn('flex flex-col', telaCheia ? 'h-full min-h-0' : 'gap-4.5')}
       onSubmit={(e) => {
         e.preventDefault();
         enviar(false);
       }}
     >
-      <ToggleGroupPrimitive.Root
-        type="single"
-        value={tipo}
-        onValueChange={trocarTipo}
-        aria-label={m.tipos.rotulo}
-        className="flex flex-wrap gap-2"
-      >
-        {TIPOS.map((t) => (
-          <ToggleGroupPrimitive.Item key={t} value={t} className={toggleVariants()}>
-            {t === tipo && <Check aria-hidden />}
-            {m.tipos[t]}
-          </ToggleGroupPrimitive.Item>
-        ))}
-      </ToggleGroupPrimitive.Root>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="lancar-valor" data-erro={!!erros.valor}>
-          {m.valor}
-        </Label>
-        <Controller
-          name="valor"
-          control={control}
-          render={({ field }) => (
-            <Input
-              ref={(el) => {
-                field.ref(el);
-                valorRef.current = el;
-              }}
-              id="lancar-valor"
-              inputMode="numeric"
-              autoComplete="off"
-              placeholder={formatarMoeda(deMascara('0'))}
-              value={field.value ? formatarMoeda(deMascara(String(field.value))) : ''}
-              onChange={(e) => {
-                const digitos = e.target.value.replace(/\D/g, '').replace(/^0+/, '');
-                if (digitos.length <= MAX_DIGITOS) field.onChange(deMascara(digitos));
-              }}
-              onBlur={field.onBlur}
-              aria-invalid={!!erros.valor || undefined}
-              aria-describedby={erros.valor ? 'lancar-valor-erro' : 'lancar-valor-dica'}
-              className={cn('h-18 border-2 border-primary text-headline-lg', corDoValor[tipo])}
-            />
-          )}
-        />
-        {erros.valor ? (
-          <Erro id="lancar-valor-erro" texto={erros.valor.message} />
-        ) : (
-          <p id="lancar-valor-dica" className="text-label-md font-normal text-on-surface-variant">
-            {m.dicaValor}
-          </p>
+      {telaCheia && (
+        // Full-screen dialog do compact (MobileLancar): fechar, título e Salvar no topo, sempre
+        // visíveis, mesmo com o teclado aberto.
+        <div className="flex h-app-bar shrink-0 items-center gap-1 px-2">
+          <Button type="button" variant="icon" aria-label={mensagens.fechar} onClick={onFechar}>
+            <X aria-hidden />
+          </Button>
+          <div className="flex-1">{titulo}</div>
+          {salvarBotao}
+        </div>
+      )}
+      <div
+        className={cn(
+          'flex flex-col gap-4.5',
+          telaCheia && 'min-h-0 flex-1 overflow-y-auto px-4 pt-1 pb-4',
         )}
-      </div>
+      >
+        <ToggleGroupPrimitive.Root
+          type="single"
+          value={tipo}
+          onValueChange={trocarTipo}
+          aria-label={m.tipos.rotulo}
+          className={cn(
+            'flex gap-2',
+            // No celular, uma linha que rola para o lado (MobileLancar).
+            telaCheia ? '-mx-4 shrink-0 overflow-x-auto px-4' : 'flex-wrap',
+          )}
+        >
+          {TIPOS.map((t) => (
+            <ToggleGroupPrimitive.Item key={t} value={t} className={toggleVariants()}>
+              {t === tipo && <Check aria-hidden />}
+              {m.tipos[t]}
+            </ToggleGroupPrimitive.Item>
+          ))}
+        </ToggleGroupPrimitive.Root>
 
-      {usaCartao && cartoes.length === 0 ? (
-        // Sem cartão cadastrado, compra e pagamento de fatura levam ao cadastro (D21).
-        <EmptyState
-          Icone={CreditCard}
-          frase={m.semCartao.frase}
-          acao={
-            <Button
-              type="button"
-              onClick={() => {
-                onFechar();
-                void navegar('/cartoes?novo=1');
-              }}
-            >
-              {m.semCartao.acao}
-            </Button>
-          }
-        />
-      ) : (
-        <>
-          <CampoDescricao
-            valor={v.descricao ?? ''}
-            sugestoes={sugestoes.descricoes}
-            categorias={nomesDasCategorias}
-            listaAbertaRef={listaAbertaRef}
-            aoMudar={(texto) => {
-              setValue('descricao', texto);
-            }}
-            aoEscolher={(s) => {
-              setValue('descricao', s.descricao);
-              if (categorias.some((c) => c.id === s.categoriaId))
-                setValue('categoriaId', s.categoriaId);
-            }}
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="lancar-valor" data-erro={!!erros.valor}>
+            {m.valor}
+          </Label>
+          <Controller
+            name="valor"
+            control={control}
+            render={({ field }) => (
+              <Input
+                ref={(el) => {
+                  field.ref(el);
+                  valorRef.current = el;
+                }}
+                id="lancar-valor"
+                inputMode="numeric"
+                autoComplete="off"
+                placeholder={formatarMoeda(deMascara('0'))}
+                value={field.value ? formatarMoeda(deMascara(String(field.value))) : ''}
+                onChange={(e) => {
+                  const digitos = e.target.value.replace(/\D/g, '').replace(/^0+/, '');
+                  if (digitos.length <= MAX_DIGITOS) field.onChange(deMascara(digitos));
+                }}
+                onBlur={field.onBlur}
+                aria-invalid={!!erros.valor || undefined}
+                aria-describedby={erros.valor ? 'lancar-valor-erro' : 'lancar-valor-dica'}
+                className={cn(
+                  'h-18 text-headline-lg',
+                  telaCheia
+                    ? 'rounded-none border-0 border-b-2 border-primary text-center focus-visible:ring-0'
+                    : 'border-2 border-primary',
+                  corDoValor[tipo],
+                )}
+              />
+            )}
           />
+          {erros.valor ? (
+            <Erro id="lancar-valor-erro" texto={erros.valor.message} />
+          ) : (
+            <p id="lancar-valor-dica" className="text-label-md font-normal text-on-surface-variant">
+              {m.dicaValor}
+            </p>
+          )}
+        </div>
 
-          {(tipo === 'despesa' || tipo === 'receita' || tipo === 'compra') && (
-            <GradeDeCategorias
-              maisUsadas={maisUsadas}
-              grupos={gruposDeCategoria(fatos, tipoDaCategoria)}
-              todas={categorias}
-              valor={v.categoriaId ?? ''}
-              erro={erros.categoriaId?.message}
-              aoEscolher={(id) => {
-                setValue('categoriaId', id);
+        {usaCartao && cartoes.length === 0 ? (
+          // Sem cartão cadastrado, compra e pagamento de fatura levam ao cadastro (D21).
+          <EmptyState
+            Icone={CreditCard}
+            frase={m.semCartao.frase}
+            acao={
+              <Button
+                type="button"
+                onClick={() => {
+                  onFechar();
+                  void navegar('/cartoes?novo=1');
+                }}
+              >
+                {m.semCartao.acao}
+              </Button>
+            }
+          />
+        ) : (
+          <>
+            <CampoDescricao
+              valor={v.descricao ?? ''}
+              sugestoes={sugestoes.descricoes}
+              categorias={nomesDasCategorias}
+              listaAbertaRef={listaAbertaRef}
+              aoMudar={(texto) => {
+                setValue('descricao', texto);
+              }}
+              aoEscolher={(s) => {
+                setValue('descricao', s.descricao);
+                if (categorias.some((c) => c.id === s.categoriaId))
+                  setValue('categoriaId', s.categoriaId);
               }}
             />
-          )}
 
-          <CampoData
-            hoje={derivado.hoje}
-            valor={v.data ?? ''}
-            campo={register('data')}
-            erro={erros.data?.message}
-            aoMudar={(d) => {
-              setValue('data', d, { shouldValidate: formState.isSubmitted });
-            }}
-          />
-
-          <div className="grid gap-4 medium:grid-cols-2">
-            {(tipo === 'despesa' || tipo === 'receita') && (
-              <CampoSelect
-                nome="contaId"
-                rotulo={m.conta}
-                control={control}
-                erro={erros.contaId?.message}
-                opcoes={opcoesDeConta}
+            {(tipo === 'despesa' || tipo === 'receita' || tipo === 'compra') && (
+              <GradeDeCategorias
+                maisUsadas={maisUsadas}
+                grupos={gruposDeCategoria(fatos, tipoDaCategoria)}
+                todas={categorias}
+                valor={v.categoriaId ?? ''}
+                erro={erros.categoriaId?.message}
+                aoEscolher={(id) => {
+                  setValue('categoriaId', id);
+                }}
               />
             )}
 
-            {usaCartao && (
-              <div className="flex flex-col gap-1.5">
-                <CampoSelect
-                  nome="cartaoId"
-                  rotulo={m.cartao}
-                  control={control}
-                  erro={erros.cartaoId?.message}
-                  opcoes={opcoesDeCartao}
-                  aoMudar={(id) => {
-                    if (tipo === 'pagamento') prepararPagamento(id);
-                  }}
-                />
-                {faturaDaData && (
-                  <p className="text-label-md font-normal text-on-surface-variant">
-                    {m.caiNaFatura(formatarMesCurto(faturaDaData))}
-                  </p>
-                )}
-              </div>
-            )}
+            <CampoData
+              hoje={derivado.hoje}
+              valor={v.data ?? ''}
+              campo={register('data')}
+              erro={erros.data?.message}
+              aoMudar={(d) => {
+                setValue('data', d, { shouldValidate: formState.isSubmitted });
+              }}
+            />
 
-            {tipo === 'transferencia' && (
-              <div className="flex flex-wrap gap-4 medium:col-span-2">
-                <CampoSelect
-                  nome="contaId"
-                  rotulo={m.de}
-                  control={control}
-                  erro={erros.contaId?.message}
-                  opcoes={opcoesDeConta}
-                />
-                <CampoSelect
-                  nome="contaDestinoId"
-                  rotulo={m.para}
-                  control={control}
-                  erro={erros.contaDestinoId?.message}
-                  opcoes={opcoesDeConta}
-                />
-              </div>
-            )}
-
-            {tipo === 'pagamento' && (
-              <>
+            <div className="grid gap-4 medium:grid-cols-2">
+              {(tipo === 'despesa' || tipo === 'receita') && (
                 <CampoSelect
                   nome="contaId"
                   rotulo={m.conta}
@@ -474,159 +477,203 @@ export function FormularioLancamento({
                   erro={erros.contaId?.message}
                   opcoes={opcoesDeConta}
                 />
-                <div className="flex flex-wrap items-end gap-2 medium:col-span-2">
+              )}
+
+              {usaCartao && (
+                <div className="flex flex-col gap-1.5">
                   <CampoSelect
-                    nome="faturaCompetencia"
-                    rotulo={m.fatura}
+                    nome="cartaoId"
+                    rotulo={m.cartao}
                     control={control}
-                    erro={erros.faturaCompetencia?.message}
-                    opcoes={faturas.map((f) => ({
-                      valor: f.competencia,
-                      rotulo: `${m.faturaDe(formatarMesCurto(f.competencia))} · ${formatarMoeda(f.saldo)}`,
-                    }))}
+                    erro={erros.cartaoId?.message}
+                    opcoes={opcoesDeCartao}
+                    aoMudar={(id) => {
+                      if (tipo === 'pagamento') prepararPagamento(id);
+                    }}
                   />
-                  {fatura && fatura.saldo > 0 && (
-                    <Toggle
-                      className="mb-1.5"
-                      pressed={valor === fatura.saldo}
-                      onPressedChange={() => {
-                        setValue('valor', fatura.saldo);
-                      }}
-                    >
-                      {valor === fatura.saldo && <Check aria-hidden />}
-                      {m.saldoTotal}
-                    </Toggle>
+                  {faturaDaData && (
+                    <p className="text-label-md font-normal text-on-surface-variant">
+                      {m.caiNaFatura(formatarMesCurto(faturaDaData))}
+                    </p>
                   )}
                 </div>
-              </>
-            )}
-          </div>
+              )}
 
-          {contaPosterior && (
-            <div
-              role="note"
-              className="flex flex-col gap-3 rounded-md bg-warning-container px-4 py-3 text-body-md text-on-warning-container"
-            >
-              <p className="flex gap-2">
-                <TriangleAlert aria-hidden className="mt-0.5 size-4.5 shrink-0" />
-                {m.anteriorAoSaldo.aviso(
-                  contaPosterior.nome,
-                  formatarData(contaPosterior.dataSaldoInicial),
-                )}
-              </p>
-              <fieldset className="flex flex-col gap-1">
-                <legend className="sr-only">{m.anteriorAoSaldo.rotulo}</legend>
-                {(['manter', 'mudar'] as const).map((opcao) => (
-                  <label key={opcao} className="flex min-h-11 cursor-pointer items-center gap-3">
-                    <input
-                      type="radio"
-                      value={opcao}
-                      className="size-4.5 accent-primary"
-                      {...register('saldoInicial')}
-                    />
-                    {opcao === 'manter'
-                      ? m.anteriorAoSaldo.manter
-                      : m.anteriorAoSaldo.mudar(formatarData(novaDataDoSaldoInicial(v.data ?? '')))}
-                  </label>
-                ))}
-              </fieldset>
-            </div>
-          )}
-
-          <Button
-            type="button"
-            variant="text"
-            className="self-start"
-            aria-expanded={maisOpcoes}
-            aria-controls="lancar-mais-opcoes"
-            onClick={() => {
-              setMaisOpcoes(!maisOpcoes);
-            }}
-          >
-            {m.maisOpcoes}
-            <ChevronDown
-              aria-hidden
-              className={cn('transition-transform', maisOpcoes && 'rotate-180')}
-            />
-          </Button>
-          {maisOpcoes && (
-            <div id="lancar-mais-opcoes" className="flex flex-col gap-4">
-              {podeSerPrevisto(tipo) && (
-                <div className="flex min-h-11 items-center gap-3">
-                  <Controller
-                    name="previsto"
+              {tipo === 'transferencia' && (
+                <div className="flex flex-wrap gap-4 medium:col-span-2">
+                  <CampoSelect
+                    nome="contaId"
+                    rotulo={m.de}
                     control={control}
-                    render={({ field }) => (
-                      <Switch
-                        id="lancar-previsto"
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    )}
+                    erro={erros.contaId?.message}
+                    opcoes={opcoesDeConta}
                   />
-                  <Label htmlFor="lancar-previsto" className="text-body-md text-on-surface">
-                    {m.previsto}
-                  </Label>
+                  <CampoSelect
+                    nome="contaDestinoId"
+                    rotulo={m.para}
+                    control={control}
+                    erro={erros.contaDestinoId?.message}
+                    opcoes={opcoesDeConta}
+                  />
                 </div>
               )}
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="lancar-observacao">{m.observacao}</Label>
-                <Textarea id="lancar-observacao" {...register('observacao')} />
-              </div>
+
+              {tipo === 'pagamento' && (
+                <>
+                  <CampoSelect
+                    nome="contaId"
+                    rotulo={m.conta}
+                    control={control}
+                    erro={erros.contaId?.message}
+                    opcoes={opcoesDeConta}
+                  />
+                  <div className="flex flex-wrap items-end gap-2 medium:col-span-2">
+                    <CampoSelect
+                      nome="faturaCompetencia"
+                      rotulo={m.fatura}
+                      control={control}
+                      erro={erros.faturaCompetencia?.message}
+                      opcoes={faturas.map((f) => ({
+                        valor: f.competencia,
+                        rotulo: `${m.faturaDe(formatarMesCurto(f.competencia))} · ${formatarMoeda(f.saldo)}`,
+                      }))}
+                    />
+                    {fatura && fatura.saldo > 0 && (
+                      <Toggle
+                        className="mb-1.5"
+                        pressed={valor === fatura.saldo}
+                        onPressedChange={() => {
+                          setValue('valor', fatura.saldo);
+                        }}
+                      >
+                        {valor === fatura.saldo && <Check aria-hidden />}
+                        {m.saldoTotal}
+                      </Toggle>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
-          )}
 
-          {aviso && (
-            <p
-              role="note"
-              className="rounded-md bg-warning-container px-4 py-3 text-body-md text-on-warning-container"
+            {contaPosterior && (
+              <div
+                role="note"
+                className="flex flex-col gap-3 rounded-md bg-warning-container px-4 py-3 text-body-md text-on-warning-container"
+              >
+                <p className="flex gap-2">
+                  <TriangleAlert aria-hidden className="mt-0.5 size-4.5 shrink-0" />
+                  {m.anteriorAoSaldo.aviso(
+                    contaPosterior.nome,
+                    formatarData(contaPosterior.dataSaldoInicial),
+                  )}
+                </p>
+                <fieldset className="flex flex-col gap-1">
+                  <legend className="sr-only">{m.anteriorAoSaldo.rotulo}</legend>
+                  {(['manter', 'mudar'] as const).map((opcao) => (
+                    <label key={opcao} className="flex min-h-11 cursor-pointer items-center gap-3">
+                      <input
+                        type="radio"
+                        value={opcao}
+                        className="size-4.5 accent-primary"
+                        {...register('saldoInicial')}
+                      />
+                      {opcao === 'manter'
+                        ? m.anteriorAoSaldo.manter
+                        : m.anteriorAoSaldo.mudar(
+                            formatarData(novaDataDoSaldoInicial(v.data ?? '')),
+                          )}
+                    </label>
+                  ))}
+                </fieldset>
+              </div>
+            )}
+
+            <Button
+              type="button"
+              variant="text"
+              className="self-start"
+              aria-expanded={maisOpcoes}
+              aria-controls="lancar-mais-opcoes"
+              onClick={() => {
+                setMaisOpcoes(!maisOpcoes);
+              }}
             >
-              {aviso}
-            </p>
-          )}
-          {previa && (
-            <p role="note" className="text-body-md text-on-surface-variant">
-              {previa.credito > 0
-                ? m.previa.credito(formatarMoeda(previa.credito))
-                : previa.saldoRestante > 0
-                  ? m.previa.resta(formatarMoeda(previa.saldoRestante))
-                  : m.previa.quita}
-            </p>
-          )}
-        </>
-      )}
+              {m.maisOpcoes}
+              <ChevronDown
+                aria-hidden
+                className={cn('transition-transform', maisOpcoes && 'rotate-180')}
+              />
+            </Button>
+            {maisOpcoes && (
+              <div id="lancar-mais-opcoes" className="flex flex-col gap-4">
+                {podeSerPrevisto(tipo) && (
+                  <div className="flex min-h-11 items-center gap-3">
+                    <Controller
+                      name="previsto"
+                      control={control}
+                      render={({ field }) => (
+                        <Switch
+                          id="lancar-previsto"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      )}
+                    />
+                    <Label htmlFor="lancar-previsto" className="text-body-md text-on-surface">
+                      {m.previsto}
+                    </Label>
+                  </div>
+                )}
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="lancar-observacao">{m.observacao}</Label>
+                  <Textarea id="lancar-observacao" {...register('observacao')} />
+                </div>
+              </div>
+            )}
 
-      {erros.root && (
-        <p role="alert" className="text-body-md text-error">
-          {erros.root.message}
-        </p>
-      )}
+            {aviso && (
+              <p
+                role="note"
+                className="rounded-md bg-warning-container px-4 py-3 text-body-md text-on-warning-container"
+              >
+                {aviso}
+              </p>
+            )}
+            {previa && (
+              <p role="note" className="text-body-md text-on-surface-variant">
+                {previa.credito > 0
+                  ? m.previa.credito(formatarMoeda(previa.credito))
+                  : previa.saldoRestante > 0
+                    ? m.previa.resta(formatarMoeda(previa.saldoRestante))
+                    : m.previa.quita}
+              </p>
+            )}
+          </>
+        )}
 
-      <div className="flex flex-wrap items-center justify-end gap-2">
-        <span className="flex-1 text-label-md font-normal text-on-surface-variant">
-          {m.dicaTeclas}
-        </span>
-        <Button type="button" variant="text" onClick={onFechar}>
-          {mensagens.acoes.cancelar}
-        </Button>
-        <Button
-          type="button"
-          variant="outlined"
-          disabled={salvando}
-          onClick={() => {
-            enviar(true);
-          }}
-        >
-          {mensagens.acoes.salvarELancarOutro}
-        </Button>
-        <BotaoSalvar
-          salvando={salvando}
-          disabled={usaCartao && cartoes.length === 0}
-          className="px-6"
-        >
-          {mensagens.acoes.salvar}
-        </BotaoSalvar>
+        {erros.root && (
+          <p role="alert" className="text-body-md text-error">
+            {erros.root.message}
+          </p>
+        )}
       </div>
+
+      {telaCheia ? (
+        <div className="shrink-0 border-t border-surface-container-highest bg-surface px-4 pt-3 pb-6">
+          {lancarOutro}
+        </div>
+      ) : (
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <span className="flex-1 text-label-md font-normal text-on-surface-variant">
+            {m.dicaTeclas}
+          </span>
+          <Button type="button" variant="text" onClick={onFechar}>
+            {mensagens.acoes.cancelar}
+          </Button>
+          {lancarOutro}
+          {salvarBotao}
+        </div>
+      )}
     </form>
   );
 }
