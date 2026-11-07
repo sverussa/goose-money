@@ -6,8 +6,9 @@ import {
   type Fatura,
   itensPrevistosNaFatura,
   limiteDisponivelDoCartao,
+  somarDias,
 } from '@goose-money/core';
-import { ArrowLeft, Clock, SearchX } from 'lucide-react';
+import { ArrowLeft, Clock, SearchX, TriangleAlert } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router';
 
@@ -23,6 +24,7 @@ import { cn } from '@/lib/utils';
 import { useDerivado } from '@/queries/fatos';
 
 import { useAcaoDaFatura } from './acoes';
+import { AcoesDaFatura } from './AcoesDaFatura';
 import { faturaEscolhida, linhasDaFatura } from './fatura';
 import { cicloAtual } from './formulario';
 import { mensagensCartoes } from './mensagens';
@@ -97,7 +99,7 @@ function TabsDeFaturas({ faturas, atual }: { faturas: readonly Fatura[]; atual: 
 
 function Detalhe({ d, cartao }: { d: Derivado; cartao: Cartao }) {
   const [busca] = useSearchParams();
-  const { acao, compraId, abrir, fechar } = useAcaoDaFatura();
+  const { acao, compraId, data, abrir, fechar } = useAcaoDaFatura();
   const faturas = d.faturas.get(cartao.id) ?? [];
   const f = faturaEscolhida(faturas, busca.get('fatura'));
   const ciclo = cicloAtual(d, cartao);
@@ -121,6 +123,12 @@ function Detalhe({ d, cartao }: { d: Derivado; cartao: Cartao }) {
     l.compraId ? d.porId.compras.get(l.compraId) : undefined;
   const primeiraDa = (l: (typeof linhas)[number]) =>
     linhas.find((x) => x.compraId === l.compraId) === l;
+  // Sem encargo na fatura que recebeu o saldo, sugere lançar os juros do rotativo (3.5).
+  const transporte = f.itens.find((i) => i.tipo === 'saldo_anterior_nao_pago');
+  const rotativo =
+    transporte && 'de' in transporte && !f.itens.some((i) => i.tipo === 'encargo')
+      ? transporte
+      : null;
   const previstos = itensPrevistosNaFatura(d.fatos, cartao.id, f.competencia, d.hoje);
 
   return (
@@ -203,6 +211,26 @@ function Detalhe({ d, cartao }: { d: Derivado; cartao: Cartao }) {
       <SeletorDeCartao d={d} cartaoId={cartao.id} />
       <TabsDeFaturas faturas={faturas} atual={f} />
 
+      {rotativo && !leitura && (
+        // Saldo transportado (3.5): sugere lançar os juros do rotativo nesta fatura.
+        <div
+          role="note"
+          className="flex flex-wrap items-center gap-3 rounded-md bg-warning-container px-4 py-3 text-body-md text-on-warning-container"
+        >
+          <TriangleAlert aria-hidden className="size-5 shrink-0" />
+          <p className="min-w-0 flex-1">
+            {mensagensCartoes.acoesDaFatura.rotativo.aviso(formatarMesCurto(rotativo.de))}
+          </p>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              abrir('encargo', undefined, somarDias(f.fechamento, -1));
+            }}
+          >
+            {mensagensCartoes.acoesDaFatura.rotativo.acao}
+          </Button>
+        </div>
+      )}
       <div className="flex flex-col items-start gap-4 expanded:flex-row">
         <section
           aria-label={m.itens(formatarMes(f.competencia))}
@@ -302,6 +330,7 @@ function Detalhe({ d, cartao }: { d: Derivado; cartao: Cartao }) {
             compraId={compraId}
             onFechar={fechar}
           />
+          <AcoesDaFatura d={d} cartao={cartao} acao={acao} dataSugerida={data} onFechar={fechar} />
         </>
       )}
     </>

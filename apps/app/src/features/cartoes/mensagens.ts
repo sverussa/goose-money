@@ -152,6 +152,63 @@ export const mensagensCartoes = {
     },
     voltar: 'Voltar',
   },
+  acoesDaFatura: {
+    pagar: {
+      titulo: 'Pagar fatura',
+      explicacao: (cartao: string) =>
+        `Pagamento da fatura do ${cartao}, alocado à fatura de destino.`,
+      conta: 'Conta',
+      padrao: (nome: string) => `${nome} · padrão do cartão`,
+      destino: 'Fatura de destino',
+      opcao: (mes: string, status: string, saldo: string) => `${mes} · ${status} · ${saldo}`,
+      opcaoAberta: (mes: string, saldo: string) => `${mes} · aberta (antecipar) · ${saldo}`,
+      valor: 'Valor',
+      saldoTotal: 'Saldo total',
+      outroValor: 'Outro valor',
+      data: 'Data do pagamento',
+      previa: 'Antes de salvar',
+      sai: (valor: string, conta: string) => `Sai ${valor} da ${conta}.`,
+      quita: (mes: string) => `A fatura de ${mes} fica paga.`,
+      resta: (valor: string, mes: string) =>
+        `Restam ${valor} na fatura de ${mes}, que fica paga parcialmente.`,
+      credito: (mes: string, valor: string) =>
+        `A fatura de ${mes} fica paga e sobram ${valor} de crédito para a próxima fatura.`,
+      naoEDespesa: 'Pagamento de fatura não é despesa: o Resultado não muda.',
+    },
+    encargo: {
+      titulo: 'Lançar encargo ou estorno',
+      explicacao: () => 'Juros, multa, anuidade ou estorno; cai na fatura da data.',
+      tipo: 'Tipo',
+      tipos: { juros: 'Juros', multa: 'Multa', anuidade: 'Anuidade', estorno: 'Estorno' },
+      valor: 'Valor',
+      data: 'Data',
+      descricao: 'Descrição (opcional)',
+      categoria: 'Categoria',
+      compra: 'Compra vinculada (opcional)',
+      semCompra: 'Nenhuma',
+      opcaoCompra: (nome: string, data: string, valor: string) => `${nome} · ${data} · ${valor}`,
+      categoriaEstornada: 'Categoria estornada',
+      caiNa: (mes: string) => `Cai na fatura de ${mes}.`,
+      salvar: 'Lançar',
+    },
+    ciclo: {
+      titulo: 'Configurar ciclo',
+      explicacao: () => 'Novos dias de fechamento e de vencimento do cartão.',
+      fechamento: 'Dia de fechamento',
+      vencimento: 'Dia de vencimento',
+      previa: 'Antes de salvar',
+      aPartir: (mes: string) => `Os novos dias valem a partir da fatura de ${mes}.`,
+      valeA: (mes: string, fecha: string, vence: string) =>
+        `Valem a partir da fatura de ${mes}: fecha em ${fecha} e vence em ${vence}.`,
+      aviso:
+        'Faturas fechadas e parcelas já lançadas não mudam; só as compras novas usam o novo ciclo.',
+    },
+    rotativo: {
+      aviso: (mes: string) =>
+        `O saldo não pago da fatura de ${mes} passou para esta. Se o banco cobrou juros do rotativo, lance-os como encargo.`,
+      acao: 'Lançar juros',
+    },
+  },
   fatura: {
     totais: 'Totais da fatura',
     saldo: 'Saldo da fatura',
