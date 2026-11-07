@@ -9,6 +9,7 @@ import {
   LineChart,
   Pie,
   PieChart,
+  ReferenceArea,
   ResponsiveContainer,
   XAxis,
   YAxis,
@@ -31,7 +32,20 @@ interface Cartesiano {
   /** Campo da `Linha` com o rótulo do eixo X (mês, dia, cartão). */
   categoria: string;
   series: readonly Serie[];
+  /** Destino do clique (8.1): o ponto clicado e, nas barras, a série da barra. */
+  aoClicar?: (linha: Linha, serie?: string) => void;
 }
+
+/** O ponto `i` dos dados, para o clique; fora do intervalo, nada. */
+const clicar = (
+  dados: readonly Linha[],
+  aoClicar: Cartesiano['aoClicar'],
+  i: unknown,
+  serie?: string,
+) => {
+  const linha = dados[Number(i)];
+  if (aoClicar && linha) aoClicar(linha, serie);
+};
 
 const semAnimacao = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const configDe = (series: readonly Serie[]): ChartConfig =>
@@ -138,6 +152,7 @@ export function BarrasAgrupadas({
   categoria,
   series,
   linha,
+  aoClicar,
 }: Cartesiano & { linha?: Serie }) {
   const hachura = useId();
   const todas = linha ? [...series, linha] : series;
@@ -165,6 +180,10 @@ export function BarrasAgrupadas({
             fill={s.prevista ? `url(#${hachura})` : corDoTema(s.cor)}
             radius={[4, 4, 0, 0]}
             isAnimationActive={!semAnimacao()}
+            cursor={aoClicar ? 'pointer' : undefined}
+            onClick={(_, i) => {
+              clicar(dados, aoClicar, i, s.chave);
+            }}
           />
         ))}
         {linha && (
@@ -183,7 +202,7 @@ export function BarrasAgrupadas({
 }
 
 /** Barras empilhadas por categoria (fixos × variáveis, parcelas por cartão, juros × amortização). */
-export function BarrasEmpilhadas({ dados, categoria, series }: Cartesiano) {
+export function BarrasEmpilhadas({ dados, categoria, series, aoClicar }: Cartesiano) {
   const hachura = useId();
   return (
     <ChartContainer config={configDe(series)} className={area}>
@@ -209,6 +228,10 @@ export function BarrasEmpilhadas({ dados, categoria, series }: Cartesiano) {
             stackId="pilha"
             fill={s.prevista ? `url(#${hachura})` : corDoTema(s.cor)}
             isAnimationActive={!semAnimacao()}
+            cursor={aoClicar ? 'pointer' : undefined}
+            onClick={(_, i) => {
+              clicar(dados, aoClicar, i, s.chave);
+            }}
           />
         ))}
       </BarChart>
@@ -216,11 +239,46 @@ export function BarrasEmpilhadas({ dados, categoria, series }: Cartesiano) {
   );
 }
 
+/** Faixa horizontal entre dois valores do eixo Y (limite de alerta da projeção, D48). */
+export interface Faixa {
+  de: number;
+  ate: number;
+  /** Rótulo acessível, também escrito dentro da faixa. */
+  rotulo: string;
+  /** Chave de cor do tema (D77). */
+  cor: string;
+}
+
 /** Linhas por categoria (gasto acumulado, evolução, saldo projetado, saldo devedor). */
-export function Linhas({ dados, categoria, series }: Cartesiano) {
+export function Linhas({
+  dados,
+  categoria,
+  series,
+  aoClicar,
+  faixa,
+}: Cartesiano & { faixa?: Faixa }) {
   return (
     <ChartContainer config={configDe(series)} className={area}>
-      <LineChart data={dados} accessibilityLayer={false}>
+      <LineChart
+        data={dados}
+        accessibilityLayer={false}
+        className={aoClicar ? 'cursor-pointer' : undefined}
+        onClick={(estado) => {
+          clicar(dados, aoClicar, estado.activeTooltipIndex);
+        }}
+      >
+        {faixa && (
+          <ReferenceArea
+            y1={faixa.de}
+            y2={faixa.ate}
+            fill={corDoTema(faixa.cor)}
+            fillOpacity={0.16}
+            stroke="none"
+            ifOverflow="extendDomain"
+            aria-label={faixa.rotulo}
+            label={{ value: faixa.rotulo, position: 'insideBottomLeft', fontSize: 11 }}
+          />
+        )}
         <CartesianGrid vertical={false} />
         <Eixos categoria={categoria} />
         <ChartTooltip
@@ -251,7 +309,7 @@ export function Linhas({ dados, categoria, series }: Cartesiano) {
 }
 
 /** Barras horizontais (composição do saldo por conta). */
-export function BarrasHorizontais({ dados, categoria, series }: Cartesiano) {
+export function BarrasHorizontais({ dados, categoria, series, aoClicar }: Cartesiano) {
   return (
     <ChartContainer config={configDe(series)} className={area}>
       <BarChart data={dados} layout="vertical" accessibilityLayer={false}>
@@ -275,6 +333,10 @@ export function BarrasHorizontais({ dados, categoria, series }: Cartesiano) {
             fill={corDoTema(s.cor)}
             radius={[0, 4, 4, 0]}
             isAnimationActive={!semAnimacao()}
+            cursor={aoClicar ? 'pointer' : undefined}
+            onClick={(_, i) => {
+              clicar(dados, aoClicar, i, s.chave);
+            }}
           />
         ))}
       </BarChart>
@@ -286,7 +348,12 @@ export function BarrasHorizontais({ dados, categoria, series }: Cartesiano) {
  * Rosca com ranking ao lado (despesas por categoria, composição da renda). Cada `Linha` é uma
  * fatia e traz a chave de cor em `cor`.
  */
-export function Rosca({ dados, categoria, serie }: Omit<Cartesiano, 'series'> & { serie: Serie }) {
+export function Rosca({
+  dados,
+  categoria,
+  serie,
+  aoClicar,
+}: Omit<Cartesiano, 'series'> & { serie: Serie }) {
   const total = totalDaSerie(dados, serie.chave);
   const corDe = (l: Linha) => corDoTema(typeof l.cor === 'string' ? l.cor : null);
   // A cor de cada fatia vai no próprio ponto (`fill`), como o Recharts 3 lê.
@@ -315,24 +382,48 @@ export function Rosca({ dados, categoria, serie }: Omit<Cartesiano, 'series'> & 
             outerRadius="95%"
             strokeWidth={2}
             isAnimationActive={!semAnimacao()}
+            cursor={aoClicar ? 'pointer' : undefined}
+            onClick={(_, i) => {
+              clicar(dados, aoClicar, i);
+            }}
           />
         </PieChart>
       </ChartContainer>
       <ol className="flex min-w-48 flex-1 flex-col gap-2">
-        {ranking.map((l) => (
-          <li key={String(l[categoria])} className="flex items-center gap-2 text-body-md">
-            <span
-              aria-hidden
-              className="size-3 shrink-0 rounded-full"
-              style={{ background: corDe(l) }}
-            />
-            <span className="flex-1 truncate">{String(l[categoria])}</span>
-            <MoneyText valor={valorDe(l, serie.chave)} className="font-semibold" />
-            <span className="w-14 text-right text-on-surface-variant tabular-nums">
-              {participacao(valorDe(l, serie.chave), total)}
-            </span>
-          </li>
-        ))}
+        {ranking.map((l) => {
+          const conteudo = (
+            <>
+              <span
+                aria-hidden
+                className="size-3 shrink-0 rounded-full"
+                style={{ background: corDe(l) }}
+              />
+              <span className="flex-1 truncate text-left">{String(l[categoria])}</span>
+              <MoneyText valor={valorDe(l, serie.chave)} className="font-semibold" />
+              <span className="w-14 text-right text-on-surface-variant tabular-nums">
+                {participacao(valorDe(l, serie.chave), total)}
+              </span>
+            </>
+          );
+          return (
+            <li key={String(l[categoria])} className="flex text-body-md">
+              {aoClicar ? (
+                // A fatia clicável também pelo teclado: o item do ranking é o mesmo destino.
+                <button
+                  type="button"
+                  className="-mx-2 flex min-h-11 flex-1 cursor-pointer items-center gap-2 rounded-sm px-2 hover:bg-on-surface/8"
+                  onClick={() => {
+                    aoClicar(l);
+                  }}
+                >
+                  {conteudo}
+                </button>
+              ) : (
+                <span className="flex flex-1 items-center gap-2">{conteudo}</span>
+              )}
+            </li>
+          );
+        })}
       </ol>
     </div>
   );
