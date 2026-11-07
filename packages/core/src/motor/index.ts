@@ -2,6 +2,7 @@ export * from './derivar';
 export * from './projecao';
 export * from './indicadores';
 export * from './patrimonio';
+export * from './conclusoes';
 export {
   despesasReconhecidas,
   type EstadoDoItem,
