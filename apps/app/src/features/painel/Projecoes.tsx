@@ -3,6 +3,7 @@ import {
   centavos,
   type Competencia,
   competenciaDe,
+  conclusaoSimulacao,
   type DataCivil,
   type Derivado,
   type GrupoProjecao,
@@ -11,7 +12,7 @@ import {
   ultimaData,
 } from '@goose-money/core';
 import { Check, TriangleAlert } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { formatarData, formatarMes, formatarMesCurto, formatarMoeda } from '@/app/formatacao';
@@ -30,7 +31,12 @@ import {
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { cn } from '@/lib/utils';
 
+import { cartoesAtivos } from '@/features/lancar/padroes';
+
 import { mensagensPainel } from './mensagens';
+import { Quitacao } from './Quitacao';
+import { hipoteticoDe, valoresIniciaisDaSimulacao, type ValoresDaSimulacao } from './simulacao';
+import { Simulador } from './Simulador';
 
 const m = mensagensPainel.projecoes;
 const HORIZONTES = [3, 6, 12, 24] as const;
@@ -45,7 +51,8 @@ const GRUPOS: readonly GrupoProjecao[] = [
 ];
 const ENTRADA: readonly GrupoProjecao[] = ['rendas', 'receitasAvulsas'];
 const ddmm = (d: DataCivil) => formatarData(d).slice(0, 5);
-const SERIE: Serie[] = [{ chave: 'saldo', rotulo: m.grafico.saldo, cor: 'primary' }];
+const SERIE: Serie = { chave: 'saldo', rotulo: m.grafico.saldo, cor: 'primary' };
+const s = m.simulador;
 
 function frase(a: AlertaProjecao, limite: string): string {
   if (a.tipo === 'naoIncluido')
@@ -59,7 +66,8 @@ function frase(a: AlertaProjecao, limite: string): string {
 /**
  * Aba Projeções (6.2, 3.9, PainelProjecoes.dc.html; também `#/projecoes`): horizonte, alertas,
  * gráfico com a faixa do limite de alerta (D48), tabela mês a mês e o detalhamento do mês.
- * Tudo de `projetarFluxo`. O simulador e a quitação são da T05-21.
+ * Tudo de `projetarFluxo`. O simulador "E se?" (T05-21) passa o hipotético a ela e desenha a
+ * curva `simulacao` tracejada e uma coluna a mais na tabela; nada é gravado.
  */
 export function Projecoes({ d }: { d: Derivado }) {
   const [busca, setBusca] = useSearchParams();
@@ -69,11 +77,21 @@ export function Projecoes({ d }: { d: Derivado }) {
     ? (pedido as Horizonte)
     : padrao;
   const atual = competenciaDe(d.hoje);
+  const inicial = () => valoresIniciaisDaSimulacao(d.hoje, cartoesAtivos(d.fatos)[0]?.id);
+  const [valores, setValores] = useState<ValoresDaSimulacao>(inicial);
+  const hipotetico = useMemo(() => hipoteticoDe(valores), [valores]);
   const projecao = useMemo(
-    () => projetarFluxo(d, ultimaData(somarMeses(atual, horizonte - 1))),
-    [d, atual, horizonte],
+    () =>
+      projetarFluxo(
+        d,
+        ultimaData(somarMeses(atual, horizonte - 1)),
+        hipotetico ? [hipotetico] : [],
+      ),
+    [d, atual, horizonte, hipotetico],
   );
   const limite = d.fatos.preferencias?.limiteAlerta ?? centavos(0);
+  const simulacao = projecao.simulacao;
+  const conclusao = conclusaoSimulacao(projecao, limite);
   const meses = projecao.meses;
   const pedidoMes = busca.get('mes');
   const escolhido = meses.find((x) => x.competencia === pedidoMes) ?? meses[0];
@@ -91,11 +109,21 @@ export function Projecoes({ d }: { d: Derivado }) {
     mudar('mes', c);
   };
 
-  const dados = meses.map((x) => ({
+  const dados = meses.map((x, i) => ({
     mes: formatarMesCurto(x.competencia),
     competencia: x.competencia,
     saldo: x.saldoFinal,
+    ...(simulacao?.[i] && { simulado: simulacao[i].saldoFinal }),
   }));
+  const legenda =
+    hipotetico?.tipo === 'compra'
+      ? s.legendaCompra(formatarMoeda(hipotetico.valorTotal), hipotetico.numeroParcelas)
+      : hipotetico
+        ? s.legendaGasto(formatarMoeda(hipotetico.valor), hipotetico.dia)
+        : '';
+  const series: Serie[] = simulacao
+    ? [SERIE, { chave: 'simulado', rotulo: legenda, cor: 'forecast', prevista: true }]
+    : [SERIE];
   const avisos = projecao.alertas.filter((a) => a.tipo !== 'naoIncluido');
   const fora = projecao.alertas.filter((a) => a.tipo === 'naoIncluido');
   const limiteTexto = formatarMoeda(limite);
@@ -153,13 +181,13 @@ export function Projecoes({ d }: { d: Derivado }) {
         arquivo="saldo-projetado"
         dados={dados}
         categoria={{ chave: 'mes', rotulo: m.grafico.mes }}
-        series={SERIE}
+        series={series}
         vazio={{ frase: m.grafico.vazio }}
       >
         <Linhas
           dados={dados}
           categoria="mes"
-          series={SERIE}
+          series={series}
           faixa={{ de: 0, ate: limite, rotulo: m.grafico.faixa, cor: 'warning' }}
           aoClicar={(l) => {
             detalhar(String(l.competencia) as Competencia);
@@ -174,6 +202,12 @@ export function Projecoes({ d }: { d: Derivado }) {
             <span className="size-2.5 rounded-xs bg-warning/16" />
             {m.grafico.faixaLegenda(limiteTexto)}
           </li>
+          {simulacao && (
+            <li className="flex items-center gap-1.5">
+              <span className="w-4 border-t-2 border-dashed border-forecast" />
+              {legenda}
+            </li>
+          )}
         </ul>
       </ChartCard>
 
@@ -190,15 +224,17 @@ export function Projecoes({ d }: { d: Derivado }) {
               <TableHead>{m.tabela.mes}</TableHead>
               <TableHead className="text-right">{m.tabela.saldoInicial}</TableHead>
               {GRUPOS.map((g) => (
-                <TableHead key={g} className="text-right">
+                <TableHead key={g} className={cn('text-right', simulacao && 'whitespace-normal')}>
                   {m.grupos[g]}
                 </TableHead>
               ))}
               <TableHead className="text-right">{m.tabela.saldoFinal}</TableHead>
+              {simulacao && <TableHead className="text-right">{s.coluna}</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {meses.map((x) => {
+            {meses.map((x, i) => {
+              const sim = simulacao?.[i];
               const ativo = x.competencia === escolhido?.competencia;
               return (
                 <TableRow key={x.competencia} data-state={ativo ? 'selected' : undefined}>
@@ -240,6 +276,14 @@ export function Projecoes({ d }: { d: Derivado }) {
                       className={x.saldoFinal < 0 ? 'text-expense' : undefined}
                     />
                   </TableCell>
+                  {sim && (
+                    <TableCell className="text-right font-semibold text-forecast">
+                      <MoneyText
+                        valor={sim.saldoFinal}
+                        className={sim.saldoFinal < 0 ? 'text-expense' : undefined}
+                      />
+                    </TableCell>
+                  )}
                 </TableRow>
               );
             })}
@@ -252,44 +296,60 @@ export function Projecoes({ d }: { d: Derivado }) {
         )}
       </section>
 
-      {escolhido && (
-        <section
-          aria-labelledby="projecoes-detalhe"
-          className="flex flex-col gap-3 rounded-lg border border-surface-container-highest bg-surface-container-lowest px-5 py-4"
-        >
-          <h2 id="projecoes-detalhe" className="text-title-md">
-            {m.detalhamento(formatarMes(escolhido.competencia))}
-          </h2>
-          {escolhido.itens.length === 0 && (
-            <p className="text-body-md text-on-surface-variant">{m.semItens}</p>
-          )}
-          {GRUPOS.filter((g) => escolhido.itens.some((i) => i.grupo === g)).map((g) => (
-            <section key={g} aria-label={m.grupos[g]} className="flex flex-col gap-1">
-              <h3 className="flex justify-between gap-2 text-label-lg">
-                <span>{m.grupos[g]}</span>
-                <MoneyText
-                  valor={escolhido.grupos[g]}
-                  tipo={ENTRADA.includes(g) ? 'receita' : 'despesa'}
-                />
-              </h3>
-              <ul>
-                {escolhido.itens
-                  .filter((i) => i.grupo === g)
-                  .map((i, k) => (
-                    <li
-                      key={`${i.texto}-${String(k)}`}
-                      className="flex items-center gap-3 border-t border-surface-container-high py-1.5 text-body-md first:border-t-0"
-                    >
-                      <span className="w-12 text-on-surface-variant">{ddmm(i.data)}</span>
-                      <span className="flex-1">{i.texto}</span>
-                      <MoneyText valor={i.valor} />
-                    </li>
-                  ))}
-              </ul>
-            </section>
-          ))}
-        </section>
-      )}
+      <div className="grid items-start gap-4 expanded:grid-cols-[3fr_2fr]">
+        {escolhido && (
+          <section
+            aria-labelledby="projecoes-detalhe"
+            className="flex flex-col gap-3 rounded-lg border border-surface-container-highest bg-surface-container-lowest px-5 py-4"
+          >
+            <h2 id="projecoes-detalhe" className="text-title-md">
+              {m.detalhamento(formatarMes(escolhido.competencia))}
+            </h2>
+            {escolhido.itens.length === 0 && (
+              <p className="text-body-md text-on-surface-variant">{m.semItens}</p>
+            )}
+            {GRUPOS.filter((g) => escolhido.itens.some((i) => i.grupo === g)).map((g) => (
+              <section key={g} aria-label={m.grupos[g]} className="flex flex-col gap-1">
+                <h3 className="flex justify-between gap-2 text-label-lg">
+                  <span>{m.grupos[g]}</span>
+                  <MoneyText
+                    valor={escolhido.grupos[g]}
+                    tipo={ENTRADA.includes(g) ? 'receita' : 'despesa'}
+                  />
+                </h3>
+                <ul>
+                  {escolhido.itens
+                    .filter((i) => i.grupo === g)
+                    .map((i, k) => (
+                      <li
+                        key={`${i.texto}-${String(k)}`}
+                        className="flex items-center gap-3 border-t border-surface-container-high py-1.5 text-body-md first:border-t-0"
+                      >
+                        <span className="w-12 text-on-surface-variant">{ddmm(i.data)}</span>
+                        <span className="flex-1">{i.texto}</span>
+                        <MoneyText valor={i.valor} />
+                      </li>
+                    ))}
+                </ul>
+              </section>
+            ))}
+          </section>
+        )}
+        <div className="flex flex-col gap-4">
+          <Simulador
+            d={d}
+            valores={valores}
+            aoMudar={(x) => {
+              setValores((v) => ({ ...v, ...x }));
+            }}
+            aoLimpar={() => {
+              setValores(inicial());
+            }}
+            conclusao={conclusao}
+          />
+          <Quitacao d={d} />
+        </div>
+      </div>
     </div>
   );
 }

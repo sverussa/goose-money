@@ -131,6 +131,51 @@ export const mensagensPainel = {
     },
     detalhamento: (mes: string) => `Detalhamento de ${mes}`,
     semItens: 'Nenhum item pendente neste mês.',
+    simulador: {
+      titulo: 'E se?',
+      subtitulo: 'Simule antes de decidir. Nada é gravado.',
+      tipo: 'Tipo de simulação',
+      compra: 'Compra parcelada',
+      gastoFixo: 'Gasto fixo',
+      valorTotal: 'Valor total',
+      valor: 'Valor',
+      parcelas: 'Parcelas',
+      cartao: 'Cartão',
+      data: 'Data da compra',
+      dia: 'Dia do mês',
+      desde: 'A partir de',
+      pagamento: 'Pago em',
+      emConta: 'Conta (no total)',
+      semCartao: 'Cadastre um cartão para simular uma compra parcelada.',
+      preencha: 'Informe o valor para ver a simulação.',
+      compraSimulada: 'Compra simulada',
+      gastoSimulado: 'Gasto fixo simulado',
+      limpar: 'Limpar simulação',
+      coluna: 'E se?',
+      legendaCompra: (valor: string, n: number) =>
+        n > 1 ? `E se? Compra de ${valor} em ${String(n)}x` : `E se? Compra de ${valor} à vista`,
+      legendaGasto: (valor: string, dia: number) =>
+        `E se? Gasto fixo de ${valor} todo dia ${String(dia)}`,
+      com: { compra: 'Com essa compra', gastoFixo: 'Com esse gasto fixo' },
+      abaixo: (com: string, mes: string, valor: string) =>
+        `${com}, o saldo fica abaixo do limite de alerta em ${mes} (${valor}).`,
+      negativo: (com: string, mes: string, valor: string) =>
+        `${com}, o saldo fica negativo em ${mes} (${valor}).`,
+      jaSem: 'Sem a simulação, esse mês já ficaria abaixo do limite.',
+      semAlerta: (com: string, limite: string) =>
+        `${com}, nenhum mês fica abaixo do limite de alerta (${limite}).`,
+      diferenca: (mes: string, valor: string) =>
+        `Em ${mes}, a diferença no saldo previsto é de ${valor}.`,
+      semDiferenca: (mes: string) => `Em ${mes}, o saldo previsto não muda.`,
+    },
+    quitacao: {
+      titulo: 'Quando cada compromisso termina',
+      vazio: 'Nenhuma dívida nem compra parcelada em aberto.',
+      divida: (credor: string, pagas: number, total: number) =>
+        `${credor} · ${String(pagas)} de ${String(total)} parcelas pagas`,
+      compra: (descricao: string, cartao: string) =>
+        `Última parcela de cartão · ${descricao} · ${cartao}`,
+    },
   },
   graficos: {
     periodo: (de: string, ate: string) => `${de} – ${ate}`,
