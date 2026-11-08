@@ -126,8 +126,9 @@ test('detalhe do financiamento: resumo, títulos do core e 12 parcelas "Paga ant
   const proxima = t.resumo.proximaParcela;
   if (!proxima) throw new Error('sem próxima parcela');
   const daProxima = linhas.find((l) => l.parcela.numero === proxima.numero);
+  if (!daProxima) throw new Error('sem a linha da próxima parcela');
   await expect(linhaDa(page, proxima.numero)).toContainText('A vencer · próxima');
-  await expect(linhaDa(page, proxima.numero)).toContainText(formatarMoeda(daProxima?.saldo ?? 0));
+  await expect(linhaDa(page, proxima.numero)).toContainText(formatarMoeda(daProxima.saldo));
   await expect(linhaDa(page, proxima.numero - 1)).toContainText(
     formatarMoeda(t.resumo.saldoDevedor),
   );
