@@ -55,7 +55,7 @@ interface Linha {
   detalhe: string;
   chip: EstadoDoChip;
   rotuloDoChip?: string;
-  /** Destino da ação direta: o diálogo já existente (Pagar fatura) ou a tela do módulo. */
+  /** Destino da ação direta: o diálogo (Pagar fatura, Registrar pagamento) ou a tela do módulo. */
   destino: string;
 }
 
@@ -106,7 +106,7 @@ function linhaDa(d: Derivado, p: Pendencia): Linha {
         titulo: m.parcela(p.texto, p.numero),
         detalhe: m.detalheParcela(ddmm(p.data)),
         chip: 'vencido',
-        destino: `/dividas/${p.dividaId}`,
+        destino: `/dividas/${p.dividaId}?acao=pagar&parcela=${p.parcelaDividaId}`,
       };
   }
 }

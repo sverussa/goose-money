@@ -102,6 +102,57 @@ export const mensagensDividas = {
     confirmar: 'Excluir dívida',
     voltar: 'Voltar',
   },
+  pagamento: {
+    titulo: 'Registrar pagamento',
+    explicacao: (credor: string) => `Pagamento de uma parcela de ${credor}.`,
+    parcela: 'Parcela',
+    opcao: (n: number, data: string, valor: string, vencida: boolean) =>
+      `${String(n)}ª · ${vencida ? 'venceu' : 'vence'} em ${data} · ${valor}`,
+    conta: 'Conta',
+    padrao: (nome: string) => `${nome} · padrão da dívida`,
+    valor: 'Valor pago',
+    data: 'Data do pagamento',
+    previa: 'Antes de salvar',
+    sai: (valor: string, conta: string, n: number) =>
+      `Sai ${valor} da ${conta} e a parcela ${String(n)} fica paga.`,
+    naoEDespesa: {
+      creditado_em_conta: (juros: string, mes: string) =>
+        `O pagamento não é despesa e não muda o Resultado: só os juros da parcela (${juros}) contam como despesa, em ${mes}.`,
+      pago_a_terceiro: (valor: string, categoria: string, mes: string) =>
+        `O pagamento não é despesa e não muda o Resultado: a parcela inteira (${valor}) já conta como despesa de ${categoria} em ${mes}.`,
+    },
+  },
+  amortizacao: {
+    titulo: 'Amortizar',
+    explicacao: (credor: string) =>
+      `Pagamento extra que reduz o saldo devedor de ${credor} e recalcula as parcelas seguintes.`,
+    valor: 'Valor',
+    data: 'Data',
+    conta: 'Conta',
+    modo: 'Depois de amortizar',
+    modos: { reduzirPrazo: 'Reduzir prazo', reduzirValor: 'Reduzir valor da parcela' },
+    previa: 'Antes de salvar',
+    resumo: 'Antes e depois',
+    restantes: 'Parcelas em aberto',
+    parcela: 'Valor da parcela',
+    saldo: 'Saldo devedor',
+    quitacao: 'Quitação prevista',
+    dePara: (antes: string, depois: string) => `${antes} → ${depois}`,
+    nenhuma: '—',
+    sai: (valor: string, conta: string) => `Sai ${valor} da ${conta}.`,
+    comoConta: {
+      pago_a_terceiro: (categoria: string, data: string) =>
+        `Como o valor foi pago direto a terceiro, a amortização conta como despesa de ${categoria} em ${data}.`,
+      creditado_em_conta: 'A amortização não é despesa: ela só reduz o saldo devedor.',
+    },
+    valorAlto: 'O valor passa do saldo devedor das parcelas que vencem depois desta data.',
+    salvar: 'Amortizar',
+  },
+  erros: {
+    valor: 'Informe o valor.',
+    data: 'Informe uma data válida.',
+    dataFutura: 'A data não pode ser depois de hoje.',
+  },
   cadastro: {
     titulo: 'Nova dívida',
     etapas: 'Etapas do cadastro',

@@ -65,7 +65,7 @@ function Erro({ id, texto }: { id: string; texto: string | undefined }) {
 }
 
 /** Rótulo, campo, dica e erro, ligados por id (como no formulário de cartão). */
-function Campo({
+export function Campo({
   id,
   rotulo,
   erro,
@@ -96,7 +96,7 @@ function Campo({
 }
 
 /** Escolha única em botões, com o check do escolhido (como "Informar" da Nova compra). */
-function Opcoes<T extends string>({
+export function Opcoes<T extends string>({
   rotulo,
   valor,
   opcoes,
@@ -130,7 +130,7 @@ function Opcoes<T extends string>({
   );
 }
 
-function Seletor({
+export function Seletor({
   id,
   valor,
   opcoes,
