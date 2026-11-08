@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Fatos } from '../modelo';
 import { editarCompra, excluirCompra } from './compras';
+import { movimentacoes } from '../motor';
 import { ocorrenciasDoMes } from '../recorrencias';
 import {
   c,
@@ -21,6 +22,7 @@ import {
   confirmarOcorrencia,
   criarRecorrencia,
   editarRecorrencia,
+  excluirRecorrencia,
   ignorarOcorrencia,
   type NovaRecorrencia,
   type NovaVersao,
@@ -230,5 +232,41 @@ describe('confirmarEmLote', () => {
     const [f] = criar({ ...streaming, autoConfirmar: true }, noCartao);
     const depois = verificar(f, confirmarEmLote(f, contexto()));
     expect(depois.compras.map((x) => x.data)).toEqual(['2026-09-01', '2026-10-01', '2026-11-01']);
+  });
+});
+
+describe('excluirRecorrencia', () => {
+  it('leva as versões e as ocorrências; os lançamentos ficam, com origem manual (D68)', () => {
+    const [f0, id] = criar(salario, naConta);
+    const f1 = verificar(f0, confirmarOcorrencia(f0, contexto(), id, c('2026-10')));
+    const f2 = verificar(f1, ignorarOcorrencia(f1, contexto(), id, c('2026-11')));
+    const f = verificar(
+      f2,
+      novaVersaoDaRecorrencia(f2, contexto(), id, c('2026-12'), { ...naConta, valor: r$(7000) }),
+    );
+    const cmd = excluirRecorrencia(f, contexto(), id);
+    expect(cmd.descricao).toBe('Renda fixa excluída');
+    expect(cmd.mudancas.every((m) => m.dados.isDeleted === true)).toBe(true);
+    const depois = verificar(f, cmd);
+    expect([depois.recorrencias, depois.recorrenciaVersoes, depois.ocorrencias]).toEqual([
+      [],
+      [],
+      [],
+    ]);
+    expect(depois.lancamentos).toEqual(f.lancamentos);
+    const outubro = { de: d('2026-10-01'), ate: d('2026-10-31') };
+    expect(movimentacoes(f, HOJE, outubro).map((i) => i.origem)).toEqual(['recorrencia']);
+    expect(movimentacoes(depois, HOJE, outubro).map((i) => i.origem)).toEqual(['manual']);
+    recusa(() => excluirRecorrencia(depois, contexto(), id), 'Recorrência não encontrada');
+  });
+
+  it('gasto no cartão: a compra continua na fatura', () => {
+    const [f0, id] = criar(streaming, noCartao);
+    const f = verificar(f0, confirmarOcorrencia(f0, contexto(), id, c('2026-11'), { data: HOJE }));
+    const cmd = excluirRecorrencia(f, contexto(), id);
+    expect(cmd.descricao).toBe('Gasto fixo excluído');
+    const depois = verificar(f, cmd);
+    expect([depois.compras, depois.parcelas]).toEqual([f.compras, f.parcelas]);
+    expect(depois.ocorrencias).toEqual([]);
   });
 });
