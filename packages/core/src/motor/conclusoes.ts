@@ -1,5 +1,5 @@
 import { type Competencia, ultimoDiaDoMes } from '../datas';
-import { type Centavos, centavos, percentual, somar } from '../dinheiro';
+import { type Centavos, centavos, menos, percentual, somar } from '../dinheiro';
 import type { Id } from '../modelo';
 import {
   type Comprometimento,
@@ -10,6 +10,7 @@ import {
   type receitasEDespesasPorMes,
   variacao,
 } from './indicadores';
+import type { MesProjetado, Projecao } from './projecao';
 
 /**
  * Títulos-conclusão dos gráficos da Visão geral (8.3, T05-17): cada função lê a série que o
@@ -131,5 +132,47 @@ export function conclusaoComprometimento(c: Comprometimento): ConclusaoCompromet
     tipo: c.livre < 0 ? 'acimaDaRenda' : 'comprometida',
     razao: c.razao,
     rendas: c.rendas,
+  };
+}
+
+export type ConclusaoSimulacao =
+  | {
+      /** Primeiro mês da curva simulada abaixo do limite de alerta (`negativo` abaixo de zero). */
+      tipo: 'abaixoDoLimite' | 'negativo';
+      competencia: Competencia;
+      saldoFinal: Centavos;
+      /** A curva principal já ficava abaixo do limite nesse mês, sem o hipotético. */
+      jaSemSimulacao: boolean;
+      ultimo: Competencia;
+      /** Saldo final simulado − principal no último mês do horizonte (≤ 0 para gastos). */
+      diferenca: Centavos;
+    }
+  | { tipo: 'semAlerta'; ultimo: Competencia; diferenca: Centavos };
+
+/**
+ * Simulador "E se?" (6.2, T05-21): o primeiro mês em que o saldo com o hipotético fica abaixo do
+ * limite de alerta ("Com essa compra, o saldo fica abaixo do limite em março") e quanto o último
+ * mês muda. `null` sem simulação.
+ */
+export function conclusaoSimulacao(
+  projecao: Projecao,
+  limiteAlerta: Centavos,
+): ConclusaoSimulacao | null {
+  const { simulacao, meses } = projecao;
+  if (!simulacao) return null;
+  // As duas curvas cobrem os mesmos meses: o índice casa um com o outro.
+  const fim = simulacao.length - 1;
+  const ultimo = simulacao[fim] as MesProjetado;
+  const diferenca = menos(ultimo.saldoFinal, (meses[fim] as MesProjetado).saldoFinal);
+  const base = { ultimo: ultimo.competencia, diferenca };
+  const i = simulacao.findIndex((m) => m.saldoFinal < limiteAlerta);
+  if (i < 0) return { tipo: 'semAlerta', ...base };
+  const abaixo = simulacao[i] as MesProjetado;
+  return {
+    tipo: abaixo.saldoFinal < 0 ? 'negativo' : 'abaixoDoLimite',
+    competencia: abaixo.competencia,
+    saldoFinal: abaixo.saldoFinal,
+    jaSemSimulacao: (meses[i] as MesProjetado).saldoFinal < limiteAlerta,
+    ...base,
   };
 }
