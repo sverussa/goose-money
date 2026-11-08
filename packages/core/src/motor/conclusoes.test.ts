@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { competencia, dataCivil } from '../datas';
+import { competencia, dataCivil, ultimaData } from '../datas';
 import { centavos } from '../dinheiro';
 import { periodoPreset } from '../periodos';
 import { gerarSeed } from '../seed';
@@ -9,8 +9,10 @@ import {
   conclusaoFixosEVariaveis,
   conclusaoGastoAcumulado,
   conclusaoReceitasDespesas,
+  conclusaoSimulacao,
 } from './conclusoes';
 import { derivar } from './derivar';
+import { type MesProjetado, type Projecao, projetarFluxo } from './projecao';
 import {
   comprometimentoDaRenda,
   despesasPorCategoria,
@@ -174,6 +176,53 @@ describe('conclusaoComprometimento', () => {
   });
 });
 
+describe('conclusaoSimulacao', () => {
+  const curva = (finais: number[]): MesProjetado[] =>
+    finais.map(
+      (f, k) => ({ competencia: c(`2027-0${String(k + 1)}`), saldoFinal: r$(f) }) as MesProjetado,
+    );
+  const projecao = (principal: number[], simulada: number[] | null): Projecao => ({
+    meses: curva(principal),
+    alertas: [],
+    simulacao: simulada && curva(simulada),
+  });
+  const limite = r$(500);
+
+  it('sem simulação, null', () => {
+    expect(conclusaoSimulacao(projecao([1000], null), limite)).toBeNull();
+  });
+
+  it('o primeiro mês abaixo do limite com o hipotético e a diferença no último mês', () => {
+    expect(conclusaoSimulacao(projecao([900, 800, 700], [900, 400, -100]), limite)).toEqual({
+      tipo: 'abaixoDoLimite',
+      competencia: c('2027-02'),
+      saldoFinal: r$(400),
+      jaSemSimulacao: false,
+      ultimo: c('2027-03'),
+      diferenca: r$(-800),
+    });
+  });
+
+  it('negativo, e já abaixo sem a simulação', () => {
+    expect(conclusaoSimulacao(projecao([300, 200], [-10, -50]), limite)).toEqual({
+      tipo: 'negativo',
+      competencia: c('2027-01'),
+      saldoFinal: r$(-10),
+      jaSemSimulacao: true,
+      ultimo: c('2027-02'),
+      diferenca: r$(-250),
+    });
+  });
+
+  it('nenhum mês abaixo do limite: só a diferença', () => {
+    expect(conclusaoSimulacao(projecao([2000, 3000], [2000, 2700]), limite)).toEqual({
+      tipo: 'semAlerta',
+      ultimo: c('2027-02'),
+      diferenca: r$(-300),
+    });
+  });
+});
+
 describe('sobre o seed (04/11/2026)', () => {
   it('as conclusões leem as séries do core sem erro', () => {
     const hoje = dataCivil('2026-11-04');
@@ -189,5 +238,28 @@ describe('sobre o seed (04/11/2026)', () => {
     expect(conclusaoComprometimento(comprometimentoDaRenda(d, c('2026-11'))).tipo).not.toBe(
       'semRenda',
     );
+  });
+
+  it('a simulação de uma compra parcelada no seed', () => {
+    const hoje = dataCivil('2026-11-04');
+    const d = derivar(gerarSeed(hoje, '00000000-0000-4000-8000-000000000001'), hoje);
+    const [cartao] = d.fatos.cartoes;
+    if (!cartao) throw new Error('seed sem cartão');
+    const p = projetarFluxo(d, ultimaData(c('2027-04')), [
+      {
+        tipo: 'compra',
+        descricao: 'Notebook',
+        cartaoId: cartao.id,
+        data: hoje,
+        valorTotal: r$(3000),
+        numeroParcelas: 10,
+      },
+    ]);
+    // Cinco parcelas de R$ 300,00 (dez a abr) no horizonte; o seed não chega ao limite.
+    expect(conclusaoSimulacao(p, r$(500))).toEqual({
+      tipo: 'semAlerta',
+      ultimo: c('2027-04'),
+      diferenca: r$(-1500),
+    });
   });
 });
