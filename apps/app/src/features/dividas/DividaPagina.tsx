@@ -41,6 +41,7 @@ import { ItemDoMenu } from '@/features/cartoes/menu';
 import { useDerivado } from '@/queries/fatos';
 import { useComando, useContexto } from '@/queries/useComando';
 
+import { AcoesDaDivida } from './AcoesDaDivida';
 import { CardsDasDividas, TotaisDasDividas } from './Comum';
 import { mensagensDividas } from './mensagens';
 import { NovaDivida } from './NovaDivida';
@@ -57,8 +58,8 @@ const m = mensagensDividas.detalhe;
 const g = mensagensDividas.graficos;
 
 /**
- * Ações do detalhe na URL (`?acao=`): Registrar pagamento e Amortizar abrem os diálogos da
- * T05-24; Excluir, a confirmação desta tela.
+ * Ações do detalhe na URL (`?acao=`): Registrar pagamento (com `?parcela=` vindo da pendência do
+ * Painel) e Amortizar abrem os diálogos da T05-24; Excluir, a confirmação desta tela.
  */
 type AcaoDaDivida = 'pagar' | 'amortizar' | 'excluir';
 function useAcaoDaDivida() {
@@ -75,12 +76,18 @@ function useAcaoDaDivida() {
       (b) => {
         const x = new URLSearchParams(b);
         x.delete('acao');
+        x.delete('parcela');
         return x;
       },
       { replace: true },
     );
   };
-  return { acao: busca.get('acao') as AcaoDaDivida | null, abrir, fechar };
+  return {
+    acao: busca.get('acao') as AcaoDaDivida | null,
+    parcela: busca.get('parcela'),
+    abrir,
+    fechar,
+  };
 }
 
 /** Termo com tooltip explicativo (1.2), pelo mouse ou pelo teclado. */
@@ -328,7 +335,7 @@ function Graficos({
 }
 
 function Detalhe({ t, d }: { t: TabelaDaDivida; d: Derivado }) {
-  const { acao, abrir, fechar } = useAcaoDaDivida();
+  const { acao, parcela, abrir, fechar } = useAcaoDaDivida();
   const [destacada, setDestacada] = useState<{ numero: number; vez: number } | null>(null);
   const linhas = linhasDaTabela(t);
   const emAberto = t.resumo.proximaParcela !== null;
@@ -375,6 +382,9 @@ function Detalhe({ t, d }: { t: TabelaDaDivida; d: Derivado }) {
       />
       <TabelaDeAmortizacao t={t} linhas={linhas} destacada={destacada} />
       {acao === 'excluir' && <ExcluirDivida t={t} d={d} onFechar={fechar} />}
+      {emAberto && (acao === 'pagar' || acao === 'amortizar') && (
+        <AcoesDaDivida acao={acao} escolhida={parcela} t={t} d={d} onFechar={fechar} />
+      )}
     </>
   );
 }
