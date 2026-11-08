@@ -55,7 +55,7 @@ interface Linha {
   detalhe: string;
   chip: EstadoDoChip;
   rotuloDoChip?: string;
-  /** Destino da ação direta: o diálogo (Pagar fatura, Registrar pagamento) ou a tela do módulo. */
+  /** Destino da ação direta: o diálogo (Pagar fatura, Registrar pagamento, Confirmar) ou a tela. */
   destino: string;
 }
 
@@ -80,7 +80,7 @@ function linhaDa(d: Derivado, p: Pendencia): Linha {
         titulo: m.renda(p.texto),
         detalhe: m.detalheRenda(ddmm(p.data)),
         chip: 'atrasado',
-        destino: '/rendas',
+        destino: `/rendas?mes=${p.competencia}&acao=confirmar&recorrencia=${p.recorrenciaId}`,
       };
     case 'gasto': {
       const vencido = p.data < d.hoje;
