@@ -1,14 +1,20 @@
 import AxeBuilder from '@axe-core/playwright';
 import {
+  aplicar,
   competenciaDe,
+  confirmarOcorrencia,
   criarRecorrencia,
   deMascara,
   type Derivado,
+  derivar,
+  excluirRecorrencia,
   indicadoresDaBarra,
   mais,
   menos,
   type MesProjetado,
   pendencias,
+  periodoParaUrl,
+  periodoPreset,
   projetarFluxo,
   resumoRendas,
   somarMeses,
@@ -272,7 +278,7 @@ test('a pendência "Confirmar" do Painel abre o diálogo da renda atrasada', asy
   );
 });
 
-test('nova renda fixa entra na lista; excluir tira da lista e Desfazer volta', async ({ page }) => {
+test('nova renda fixa entra na lista', async ({ page }) => {
   const { u } = await preparar(page);
   await entrar(page, u, '/rendas');
   await page.getByRole('button', { name: m.nova }).click();
@@ -293,16 +299,84 @@ test('nova renda fixa entra na lista; excluir tira da lista e Desfazer volta', a
   );
   const g = await gravadoEmHoje(u);
   expect(rendaDo(g, 'Aulas particulares').data).toBe(`${MES}-25`);
+});
 
-  await page.getByRole('button', { name: m.menu.rotulo('Aulas particulares') }).click();
-  await page.getByRole('menuitem', { name: new RegExp(`^${m.menu.excluir}`) }).click();
-  await expect(page.getByText(m.excluida)).toBeVisible();
-  await expect(linha(page, 'Aulas particulares')).toHaveCount(0);
+test('excluir leva a renda da lista, da projeção e das pendências; o recebimento fica no extrato; Desfazer volta (D68)', async ({
+  page,
+}) => {
+  const nome = 'Aluguel do quarto';
+  const OUTUBRO = somarMeses(MES, -1);
+  const { u, d, ctx } = await preparar(page, (f, c) => {
+    const criada = criarRecorrencia(
+      f,
+      c,
+      {
+        natureza: 'renda',
+        descricao: nome,
+        competenciaInicio: OUTUBRO,
+        competenciaFim: null,
+        autoConfirmar: false,
+      },
+      {
+        valor: deMascara('80000'),
+        dia: 2,
+        formaPagamento: 'conta',
+        contaId: f.contas[0]?.id ?? '',
+        cartaoId: null,
+        categoriaId: f.categorias.find((x) => x.tipo === 'receita')?.id ?? '',
+      },
+    );
+    const id = criada.mudancas[0]?.id ?? '';
+    return [criada, confirmarOcorrencia(aplicar(f, criada.mudancas), c, id, OUTUBRO)];
+  });
+  const id = rendaDo(d, nome).recorrencia.id;
+  const daRenda = (x: Derivado) =>
+    pendencias(x).filter((p) => p.tipo === 'renda' && p.texto === nome);
+  expect(daRenda(d)).toHaveLength(1); // novembro atrasado
+  const antes = rendasProjetadas(d);
+  const esperado = rendasProjetadas(
+    derivar(aplicar(d.fatos, excluirRecorrencia(d.fatos, ctx, id).mudancas), HOJE),
+  );
+  expect(esperado.get(DEZEMBRO)).toBe(
+    menos(antes.get(DEZEMBRO) ?? deMascara('0'), rendaDo(d, nome, DEZEMBRO).valor),
+  );
+  const excluir = async () => {
+    await page.getByRole('button', { name: m.menu.rotulo(nome) }).click();
+    await page.getByRole('menuitem', { name: new RegExp(`^${m.menu.excluir}`) }).click();
+    await expect(page.getByText('Renda fixa excluída')).toBeVisible();
+    await expect(linha(page, nome)).toHaveCount(0);
+  };
+  await entrar(page, u, '/rendas');
+  await excluir();
+  const g = await gravadoEmHoje(u);
+  expect(rendasProjetadas(g)).toEqual(esperado);
+  expect(daRenda(g)).toEqual([]);
+
   await page
     .getByRole('listitem')
-    .filter({ hasText: m.excluida })
+    .filter({ hasText: 'Renda fixa excluída' })
     .getByRole('button', { name: 'Desfazer' })
     .click();
   await expect(page.getByText('Desfeito')).toBeVisible();
-  await expect(linha(page, 'Aulas particulares')).toHaveCount(1);
+  await expect(linha(page, nome)).toHaveCount(1);
+  const desfeito = await gravadoEmHoje(u);
+  expect(rendasProjetadas(desfeito)).toEqual(antes);
+  expect(daRenda(desfeito)).toHaveLength(1);
+
+  // Excluída de novo: o recebimento de outubro continua no extrato, agora com origem manual
+  // (a lista é virtualizada, D9: a busca deixa só ele).
+  await excluir();
+  const recebido = rendaDo(d, nome, OUTUBRO).valor;
+  await page.goto(
+    `/#/lancamentos?${periodoParaUrl(periodoPreset('mes-passado', HOJE))}&origem=manual&q=${encodeURIComponent(nome)}`,
+  );
+  await expect(
+    page.getByRole('list', { name: 'Lançamentos' }).getByRole('listitem').filter({ hasText: nome }),
+  ).toContainText(`+${formatarMoeda(recebido)}`);
+  await page.goto('/#/');
+  const pm = mensagensPainel.pendencias;
+  await expect(page.getByRole('heading', { name: pm.titulo(pendencias(g).length) })).toBeVisible();
+  await expect(page.getByRole('link', { name: pm.acao('Confirmar', pm.renda(nome)) })).toHaveCount(
+    0,
+  );
 });
