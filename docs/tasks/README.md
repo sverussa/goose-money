@@ -157,7 +157,7 @@ Uma tela ou diálogo por tarefa, na ordem do handoff.
 | ✅ [T05-22 · Dívidas: lista e detalhe](05-telas/T05-22-dividas-lista-detalhe.md) | Dívidas | T04-08, T01-12 | — |
 | ✅ [T05-23 · Cadastro de dívida em 5 etapas](05-telas/T05-23-divida-cadastro-stepper.md) | Dívidas | T05-22, T01-11, T01-12 | — |
 | ✅ [T05-24 · Registrar pagamento e amortizar dívida](05-telas/T05-24-divida-pagamento-amortizar.md) | Dívidas | T05-22 | — |
-| [T05-25 · Rendas fixas](05-telas/T05-25-rendas-fixas.md) | Recorrências | T04-08, T01-13, T03-06 | — |
+| ✅ [T05-25 · Rendas fixas](05-telas/T05-25-rendas-fixas.md) | Recorrências | T04-08, T01-13, T03-06 | — |
 | [T05-26 · Gastos fixos](05-telas/T05-26-gastos-fixos.md) | Recorrências | T05-25 | — |
 | [T05-27 · Configurações › Categorias](05-telas/T05-27-configuracoes-categorias.md) | Configurações | T04-07, T02-08 | tomada |
 | [T05-28 · Configurações › Aparência, Preferências e Acesso](05-telas/T05-28-configuracoes-aparencia-preferencias-acesso.md) | Configurações | T05-27, T04-02, T03-01 | — |
