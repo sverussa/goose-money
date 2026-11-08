@@ -5,6 +5,7 @@ import { useDerivado } from '@/queries/fatos';
 
 import { BotaoNovaDivida, CardsDasDividas, TotaisDasDividas } from './Comum';
 import { mensagensDividas as m } from './mensagens';
+import { NovaDivida } from './NovaDivida';
 
 /** `#/dividas` (6.6): totais e os cards das dívidas (T05-22). */
 export function DividasPagina() {
@@ -14,6 +15,7 @@ export function DividasPagina() {
   return (
     <div className="flex flex-col gap-4">
       <TotaisDasDividas d={d} />
+      <NovaDivida d={d} />
       {d.dividas.size === 0 ? (
         <EmptyState Icone={Landmark} frase={m.vazio} acao={<BotaoNovaDivida />} />
       ) : (

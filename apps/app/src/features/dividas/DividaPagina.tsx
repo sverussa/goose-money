@@ -6,11 +6,10 @@ import {
   type TabelaDaDivida,
 } from '@goose-money/core';
 import { EllipsisVertical, Info, SearchX } from 'lucide-react';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 
 import {
-  formatarData,
   formatarMesCurto,
   formatarMoeda,
   formatarMoedaCurta,
@@ -23,7 +22,6 @@ import { EmptyState, EstadoDaCarga } from '@/components/EstadosDaTela';
 import type { Linha, Serie } from '@/components/graficos/dados';
 import { BarrasEmpilhadas, Linhas } from '@/components/graficos/Graficos';
 import { MoneyText } from '@/components/MoneyText';
-import { StatusChip } from '@/components/StatusChip';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -38,24 +36,16 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ItemDoMenu } from '@/features/cartoes/menu';
-import { cn } from '@/lib/utils';
 import { useDerivado } from '@/queries/fatos';
 import { useComando, useContexto } from '@/queries/useComando';
 
 import { CardsDasDividas, TotaisDasDividas } from './Comum';
 import { mensagensDividas } from './mensagens';
+import { NovaDivida } from './NovaDivida';
+import { TabelaDeAmortizacao } from './TabelaDeAmortizacao';
 import {
-  chipDaParcela,
   type LinhaDaAmortizacao,
   linhasDaTabela,
   permissaoDe,
@@ -65,7 +55,6 @@ import {
 
 const m = mensagensDividas.detalhe;
 const g = mensagensDividas.graficos;
-const tb = mensagensDividas.tabela;
 
 /**
  * Ações do detalhe na URL (`?acao=`): Registrar pagamento e Amortizar abrem os diálogos da
@@ -338,89 +327,6 @@ function Graficos({
   );
 }
 
-function TabelaDeAmortizacao({
-  t,
-  linhas,
-  destacada,
-}: {
-  t: TabelaDaDivida;
-  linhas: readonly LinhaDaAmortizacao[];
-  destacada: { numero: number; vez: number } | null;
-}) {
-  const refs = useRef(new Map<number, HTMLTableRowElement>());
-  // A cada clique no gráfico (mesmo na mesma parcela), rola até a linha e leva o foco a ela.
-  useEffect(() => {
-    if (!destacada) return;
-    const linha = refs.current.get(destacada.numero);
-    const suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    linha?.scrollIntoView({ block: 'center', behavior: suave ? 'smooth' : 'auto' });
-    linha?.focus({ preventScroll: true });
-  }, [destacada]);
-  const proxima = t.resumo.proximaParcela?.numero;
-  return (
-    <Card className="gap-0 overflow-hidden p-0">
-      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
-        <h2 id="tabela-amortizacao" className="text-title-md">
-          {tb.titulo}
-        </h2>
-        <span className="text-body-md text-on-surface-variant">{tb.nota(t.parcelas.length)}</span>
-      </div>
-      <Table aria-labelledby="tabela-amortizacao">
-        <TableHeader>
-          <TableRow className="bg-surface-container-low">
-            <TableHead className="pl-5">{tb.numero}</TableHead>
-            <TableHead>{tb.vencimento}</TableHead>
-            <TableHead className="text-right">{tb.parcela}</TableHead>
-            <TableHead className="text-right">{tb.juros}</TableHead>
-            <TableHead className="text-right">{tb.amortizacao}</TableHead>
-            <TableHead className="text-right">{tb.saldo}</TableHead>
-            <TableHead className="pr-5">{tb.status}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {linhas.map(({ parcela: p, saldo }) => {
-            const chip = chipDaParcela(p.status, p.numero === proxima);
-            const marcada = destacada?.numero === p.numero;
-            return (
-              <TableRow
-                key={p.id}
-                ref={(no) => {
-                  if (no) refs.current.set(p.numero, no);
-                  else refs.current.delete(p.numero);
-                }}
-                tabIndex={-1}
-                aria-current={marcada ? 'true' : undefined}
-                className={cn(
-                  'scroll-mt-40 focus-visible:outline-none',
-                  marcada && 'bg-secondary-container hover:bg-secondary-container',
-                )}
-              >
-                <TableCell className="pl-5 font-medium">{p.numero}</TableCell>
-                <TableCell>{formatarData(p.vencimento)}</TableCell>
-                <TableCell className="text-right">
-                  <MoneyText valor={p.valor} />
-                </TableCell>
-                <TableCell className="text-right">
-                  <MoneyText valor={p.juros} />
-                </TableCell>
-                <TableCell className="text-right">
-                  <MoneyText valor={p.amortizacao} />
-                </TableCell>
-                <TableCell className="text-right font-medium">
-                  <MoneyText valor={saldo} />
-                </TableCell>
-                <TableCell className="pr-5">
-                  <StatusChip estado={chip.estado} rotulo={chip.rotulo} />
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </Card>
-  );
-}
-
 function Detalhe({ t, d }: { t: TabelaDaDivida; d: Derivado }) {
   const { acao, abrir, fechar } = useAcaoDaDivida();
   const [destacada, setDestacada] = useState<{ numero: number; vez: number } | null>(null);
@@ -483,6 +389,7 @@ export function DividaPagina() {
   return (
     <div className="flex flex-col gap-4">
       <TotaisDasDividas d={d} />
+      <NovaDivida d={d} />
       {t ? (
         <>
           <CardsDasDividas d={d} atual={t.divida.id} />
