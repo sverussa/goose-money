@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { competencia, dataCivil, ultimaData } from '../datas';
-import { centavos } from '../dinheiro';
+import { competencia, competenciaDe, dataCivil, ultimaData } from '../datas';
+import { centavos, D, percentual } from '../dinheiro';
+import { tabelaParcelaInformada, tabelaPrice, tabelaSac } from '../dividas';
 import { periodoPreset } from '../periodos';
 import { gerarSeed } from '../seed';
 import {
@@ -8,7 +9,9 @@ import {
   conclusaoDespesasPorCategoria,
   conclusaoFixosEVariaveis,
   conclusaoGastoAcumulado,
+  conclusaoJurosAmortizacao,
   conclusaoReceitasDespesas,
+  conclusaoSaldoDevedor,
   conclusaoSimulacao,
 } from './conclusoes';
 import { derivar } from './derivar';
@@ -31,6 +34,10 @@ const texto = (o: unknown): unknown =>
       : Object.fromEntries(Object.entries(o).map(([k, v]) => [k, texto(v)]))
     : o;
 const r$ = (reais: number) => centavos(Math.round(reais * 100));
+const somarJuros = (ls: readonly { juros: number }[]) =>
+  centavos(ls.reduce((a, l) => a + l.juros, 0));
+const somarValor = (ls: readonly { valor: number }[]) =>
+  centavos(ls.reduce((a, l) => a + l.valor, 0));
 const mes = (m: string, receitas: number, despesas: number) => ({
   competencia: c(m),
   receitas: r$(receitas),
@@ -223,6 +230,57 @@ describe('conclusaoSimulacao', () => {
   });
 });
 
+describe('conclusaoSaldoDevedor', () => {
+  it('em aberto: saldo, mês da última parcela e parcelas restantes; quitada', () => {
+    const resumo = { saldoDevedor: r$(31098.91), pagas: 14, total: 48 };
+    expect(conclusaoSaldoDevedor({ ...resumo, quitacaoPrevista: dataCivil('2029-08-15') })).toEqual(
+      {
+        tipo: 'emAberto',
+        saldoDevedor: r$(31098.91),
+        quitacao: c('2029-08'),
+        restantes: 34,
+      },
+    );
+    expect(
+      conclusaoSaldoDevedor({ saldoDevedor: r$(0), pagas: 48, total: 48, quitacaoPrevista: null }),
+    ).toEqual({ tipo: 'quitada', total: 48 });
+  });
+});
+
+describe('conclusaoJurosAmortizacao', () => {
+  const primeira = dataCivil('2026-01-10');
+  it('Price e parcela informada: menos juros e mais amortização', () => {
+    const price = tabelaPrice(r$(40000), new D('0.0149'), 48, primeira);
+    expect(texto(conclusaoJurosAmortizacao(price))).toMatchObject({ tipo: 'amortizacaoCresce' });
+    const informada = tabelaParcelaInformada(r$(4800), r$(450), 12, primeira).linhas;
+    expect(conclusaoJurosAmortizacao(informada).tipo).toBe('amortizacaoCresce');
+  });
+  it('SAC: amortização igual até a penúltima; juros e a fatia deles nas parcelas', () => {
+    const sac = tabelaSac(r$(1000), new D('0.01'), 3, primeira);
+    const juros = somarJuros(sac);
+    expect(texto(conclusaoJurosAmortizacao(sac))).toEqual({
+      tipo: 'amortizacaoConstante',
+      juros,
+      fatiaDosJuros: { tipo: 'valor', valor: texto(percentual(juros, somarValor(sac))) },
+    });
+  });
+  it('taxa zero e sem parcelas: sem juros; uma parcela: outra', () => {
+    expect(conclusaoJurosAmortizacao(tabelaPrice(r$(1200), new D(0), 12, primeira))).toEqual({
+      tipo: 'semJuros',
+    });
+    expect(conclusaoJurosAmortizacao([])).toEqual({ tipo: 'semJuros' });
+    expect(conclusaoJurosAmortizacao(tabelaPrice(r$(100), new D('0.01'), 1, primeira)).tipo).toBe(
+      'outra',
+    );
+    // Juros caem e a amortização cai: tabela refeita com "reduzir valor".
+    const refeita = [
+      { valor: r$(110), juros: r$(10), amortizacao: r$(100) },
+      { valor: r$(55), juros: r$(5), amortizacao: r$(50) },
+    ];
+    expect(conclusaoJurosAmortizacao(refeita).tipo).toBe('outra');
+  });
+});
+
 describe('sobre o seed (04/11/2026)', () => {
   it('as conclusões leem as séries do core sem erro', () => {
     const hoje = dataCivil('2026-11-04');
@@ -238,6 +296,18 @@ describe('sobre o seed (04/11/2026)', () => {
     expect(conclusaoComprometimento(comprometimentoDaRenda(d, c('2026-11'))).tipo).not.toBe(
       'semRenda',
     );
+    // Financiamento Price: 12 parcelas pagas antes do cadastro e as seguintes até hoje.
+    const financiamento = [...d.dividas.values()].find(
+      (t) => t.divida.sistemaAmortizacao === 'price',
+    );
+    if (!financiamento) throw new Error('seed sem financiamento');
+    expect(conclusaoSaldoDevedor(financiamento.resumo)).toEqual({
+      tipo: 'emAberto',
+      saldoDevedor: financiamento.resumo.saldoDevedor,
+      quitacao: competenciaDe(financiamento.parcelas.at(-1)?.vencimento ?? hoje),
+      restantes: financiamento.parcelas.filter((p) => p.status === 'a_vencer').length,
+    });
+    expect(conclusaoJurosAmortizacao(financiamento.parcelas).tipo).toBe('amortizacaoCresce');
   });
 
   it('a simulação de uma compra parcelada no seed', () => {
