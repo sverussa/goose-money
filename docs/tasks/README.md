@@ -153,7 +153,7 @@ Uma tela ou diálogo por tarefa, na ordem do handoff.
 | ✅ [T05-18 · Painel › Saldos](05-telas/T05-18-painel-saldos.md) | Painel | T05-16, T04-08 | tomada |
 | ✅ [T05-19 · Painel › Cartões](05-telas/T05-19-painel-cartoes.md) | Painel | T05-16, T01-10 | — |
 | ✅ [T05-20 · Painel › Projeções](05-telas/T05-20-painel-projecoes.md) | Painel | T05-16, T01-16 | tomada |
-| [T05-21 · Projeções: simulador "E se?" e previsão de quitação](05-telas/T05-21-projecoes-simulador-quitacao.md) | Painel | T05-20 | — |
+| ✅ [T05-21 · Projeções: simulador "E se?" e previsão de quitação](05-telas/T05-21-projecoes-simulador-quitacao.md) | Painel | T05-20 | — |
 | [T05-22 · Dívidas: lista e detalhe](05-telas/T05-22-dividas-lista-detalhe.md) | Dívidas | T04-08, T01-12 | — |
 | [T05-23 · Cadastro de dívida em 5 etapas](05-telas/T05-23-divida-cadastro-stepper.md) | Dívidas | T05-22, T01-11, T01-12 | — |
 | [T05-24 · Registrar pagamento e amortizar dívida](05-telas/T05-24-divida-pagamento-amortizar.md) | Dívidas | T05-22 | — |
