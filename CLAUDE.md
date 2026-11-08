@@ -11,7 +11,7 @@ Stage 0 (codebase) is done: pnpm monorepo, `packages/core`, `apps/app` (Vite + R
 - `docs/DECISOES-REVISAO.md`: decisions taken while reviewing the spec.
 - `docs/DESIGN-HANDOFF.md`: maps each designed screen to a route, spec sections and components; lists what is not designed yet and the suggested build order. **Read it before implementing any screen.**
 - `docs/MODELO-DADOS.md`: the data model (entities, fields, enums, relations, unique keys). It is the contract between `packages/core` types and the Flyway migrations; read it before writing either.
-- `docs/tasks/`: the implementation plan, one task per file, grouped by stage (`docs/tasks/README.md` is the index). Work one task per branch; for parallel agents, follow `docs/tasks/tasks-agents-estrategies.md`.
+- `docs/tasks/`: the implementation plan, one task per file, grouped by stage (`docs/tasks/README.md` is the index). Work one task per branch; for parallel agents, follow `docs/tasks/tasks-agents-estrategies.md`. To write the prompt that runs a batch of tasks in another session, use the `prompts-de-execucao` skill (`.claude/skills/prompts-de-execucao/`); the lessons behind it are in `docs/Prompts-SubAgents-Strategies-Skill.md`.
 - `design/telas/*.dc.html`: the 18 designed screens and components (visual reference only, see below).
 - `design/theme-tokens.ts`: colors, typography, shapes and layout values used in the designs.
 

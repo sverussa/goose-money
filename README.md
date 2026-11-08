@@ -106,12 +106,14 @@ GooseMoney/
 │   ├── DECISOES-PENDENTES-ETAPA4.md # escolhas da etapa 4 à espera de aprovação
 │   ├── MODELO-DADOS.md      # entidades, campos e relações (contrato core ↔ banco)
 │   ├── StackShowCase.md     # stack de referência (Desktop UI Showcase), base da D20
+│   ├── Prompts-SubAgents-Strategies-Skill.md # aprendizados para escrever prompts de execução das tarefas
 │   └── tasks/               # tarefas de implementação, uma por arquivo, por etapa
 ├── design/
 │   ├── telas/               # 18 telas e componentes desenhados (.dc.html)
 │   ├── canvas.json          # disposição das telas no canvas de design
 │   └── theme-tokens.ts      # cores, tipografia e formas (Material 3)
 ├── .github/workflows/       # CI: formatação, lint, tipos e testes em todo PR
+├── .claude/skills/          # skill prompts-de-execucao: gera o prompt de uma leva de tarefas
 ├── Makefile                 # comandos do projeto (make help)
 ├── docker-compose.yml       # serviço Flyway
 ├── .env.example             # variáveis locais (Supabase, Flyway, PORTA_APP)
