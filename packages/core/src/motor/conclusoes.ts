@@ -1,5 +1,6 @@
-import { type Competencia, ultimoDiaDoMes } from '../datas';
+import { type Competencia, competenciaDe, ultimoDiaDoMes } from '../datas';
 import { type Centavos, centavos, menos, percentual, somar } from '../dinheiro';
+import type { LinhaTabela, resumoDaDivida } from '../dividas';
 import type { Id } from '../modelo';
 import {
   type Comprometimento,
@@ -173,6 +174,66 @@ export function conclusaoSimulacao(
     competencia: abaixo.competencia,
     saldoFinal: abaixo.saldoFinal,
     jaSemSimulacao: (meses[i] as MesProjetado).saldoFinal < limiteAlerta,
+    ...base,
+  };
+}
+
+export type ConclusaoSaldoDevedor =
+  | { tipo: 'quitada'; total: number }
+  /** "Faltam R$ 31,1 mil, zerando em ago/2029": o saldo devedor e o mês da última parcela. */
+  | { tipo: 'emAberto'; saldoDevedor: Centavos; quitacao: Competencia; restantes: number };
+
+/** Gráfico Saldo devedor do detalhe da dívida (6.6, 8.1, T05-22), sobre o `resumoDaDivida`. */
+export function conclusaoSaldoDevedor(
+  resumo: Pick<
+    ReturnType<typeof resumoDaDivida>,
+    'saldoDevedor' | 'quitacaoPrevista' | 'pagas' | 'total'
+  >,
+): ConclusaoSaldoDevedor {
+  const { saldoDevedor, quitacaoPrevista, pagas, total } = resumo;
+  if (quitacaoPrevista === null) return { tipo: 'quitada', total };
+  return {
+    tipo: 'emAberto',
+    saldoDevedor,
+    quitacao: competenciaDe(quitacaoPrevista),
+    restantes: total - pagas,
+  };
+}
+
+export type ConclusaoJurosAmortizacao =
+  | { tipo: 'semJuros' }
+  | {
+      /**
+       * Os juros caem da 1ª à última parcela e a amortização sobe (Price, parcela informada) ou
+       * fica igual até a penúltima (SAC); `outra` para os demais formatos (uma parcela, tabela
+       * refeita por amortização extraordinária).
+       */
+      tipo: 'amortizacaoCresce' | 'amortizacaoConstante' | 'outra';
+      juros: Centavos;
+      /** Juros ÷ soma das parcelas. */
+      fatiaDosJuros: Razao;
+    };
+
+/**
+ * Gráfico Juros × amortização (6.6, 8.1, T05-22): como a parcela se divide ao longo da dívida
+ * ("A cada parcela, menos juros e mais amortização"). `parcelas` em ordem de número.
+ */
+export function conclusaoJurosAmortizacao(
+  parcelas: readonly Pick<LinhaTabela, 'valor' | 'juros' | 'amortizacao'>[],
+): ConclusaoJurosAmortizacao {
+  const juros = somar(parcelas.map((p) => p.juros));
+  const [primeira] = parcelas;
+  const ultima = parcelas.at(-1);
+  if (!primeira || !ultima || juros === 0) return { tipo: 'semJuros' };
+  const base = { juros, fatiaDosJuros: razao(juros, somar(parcelas.map((p) => p.valor))) };
+  if (ultima.juros >= primeira.juros) return { tipo: 'outra', ...base };
+  // A última parcela amortiza o saldo restante (3.7): fica fora da comparação do SAC.
+  const constante =
+    parcelas.length > 2 &&
+    parcelas.slice(0, -1).every((p) => p.amortizacao === primeira.amortizacao);
+  if (constante) return { tipo: 'amortizacaoConstante', ...base };
+  return {
+    tipo: ultima.amortizacao > primeira.amortizacao ? 'amortizacaoCresce' : 'outra',
     ...base,
   };
 }
