@@ -61,6 +61,7 @@ export {
   confirmarOcorrencia,
   criarRecorrencia,
   editarRecorrencia,
+  excluirRecorrencia,
   ignorarOcorrencia,
   type NovaRecorrencia,
   type NovaVersao,

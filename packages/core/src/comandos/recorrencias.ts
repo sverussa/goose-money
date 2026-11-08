@@ -22,6 +22,8 @@ import {
   comando,
   contaAtiva,
   type Contexto,
+  excluir,
+  excluirTodos,
   exigir,
   inserir,
   type Mudanca,
@@ -78,6 +80,17 @@ export function editarRecorrencia(
   const atual = achar(fatos.recorrencias, id, 'Recorrência não encontrada');
   const r = validar(recorrenciaSchema, { ...atual, ...alteracoes });
   return comando(fatos, 'Recorrência alterada', alterarCampos('recorrencias', atual, r));
+}
+
+/** Leva as versões e as ocorrências; os lançamentos e as compras ficam, com origem manual (D68). */
+export function excluirRecorrencia(fatos: Fatos, _ctx: Contexto, id: Id): Comando {
+  const r = achar(fatos.recorrencias, id, 'Recorrência não encontrada');
+  const daRecorrencia = (x: { recorrenciaId: Id }) => x.recorrenciaId === id;
+  return comando(fatos, r.natureza === 'renda' ? 'Renda fixa excluída' : 'Gasto fixo excluído', [
+    ...excluirTodos('ocorrencias', fatos.ocorrencias.filter(daRecorrencia)),
+    ...excluirTodos('recorrenciaVersoes', fatos.recorrenciaVersoes.filter(daRecorrencia)),
+    excluir('recorrencias', id),
+  ]);
 }
 
 /** "Aplicar a partir de" (3.8): nunca altera ocorrências gravadas; mesma competência regrava a versão. */

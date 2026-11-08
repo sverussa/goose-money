@@ -2,7 +2,7 @@ import {
   type Competencia,
   competenciaDe,
   type Derivado,
-  editarRecorrencia,
+  excluirRecorrencia,
   ignorarOcorrencia,
   type OcorrenciaDoMes,
   resumoRendas,
@@ -122,12 +122,7 @@ function MenuDaRenda({ d, o, editar }: { d: Derivado; o: OcorrenciaDoMes; editar
           rotulo={m.menu.excluir}
           detalhe={m.menu.detalheExcluir}
           aoEscolher={() => {
-            // Sem comando de exclusão no core: a renda deixa de ser ativa (fora da lista e da
-            // projeção); os lançamentos dos meses recebidos continuam. Desfazer volta.
-            rodar((ctx) => ({
-              ...editarRecorrencia(d.fatos, ctx, recorrenciaId, { ativa: false }),
-              descricao: m.excluida,
-            }));
+            rodar((ctx) => excluirRecorrencia(d.fatos, ctx, recorrenciaId));
           }}
         />
       </DropdownMenuContent>

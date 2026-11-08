@@ -25,7 +25,6 @@ export const mensagensRendas = {
     excluir: 'Excluir',
     detalheExcluir: 'Sai da lista e da projeção; os recebimentos já lançados continuam',
   },
-  excluida: 'Renda fixa excluída',
   confirmar: {
     titulo: 'Confirmar recebimento',
     explicacao: (nome: string, mes: string) => `${nome} de ${mes}`,
