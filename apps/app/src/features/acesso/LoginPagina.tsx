@@ -46,7 +46,8 @@ export function LoginPagina() {
     setEnviando(true);
     const falha = await entrar(texto('email'), texto('senha'), dados.has('manter'));
     setEnviando(false);
-    setErro(falha);
+    // O texto de e-mail não confirmado vem de `src/data`; o do cadastro (T05-30) fica aqui.
+    setErro(falha === s.emailNaoConfirmado ? m.emailNaoConfirmado : falha);
   }
 
   function abrirEsqueci(e: MouseEvent) {
@@ -127,6 +128,10 @@ export function LoginPagina() {
 
         <Button type="submit" className="h-12" disabled={enviando || carregando}>
           {enviando ? s.entrando : s.entrar}
+        </Button>
+
+        <Button asChild variant="outlined" className="h-12">
+          <Link to="/criar-conta">{m.criarConta}</Link>
         </Button>
 
         <Link

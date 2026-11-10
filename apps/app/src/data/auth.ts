@@ -1,5 +1,7 @@
 import { isAuthApiError, isAuthRetryableFetchError, type Session } from '@supabase/supabase-js';
 
+import { urlDeRetorno } from '@/plataforma/ambiente';
+
 import { CHAVE_MANTER_CONECTADO } from './armazenamento';
 import { mensagemDoErroAoEntrar } from './errosAuth';
 import { supabase } from './supabase';
@@ -65,6 +67,34 @@ export async function inicializarUsuario(): Promise<void> {
 export async function pedirRedefinicao(email: string, redirectTo: string): Promise<void> {
   const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
   if (error) throw error;
+}
+
+const NEUTROS_NO_CADASTRO = new Set([
+  'user_already_exists',
+  'email_exists',
+  'over_email_send_rate_limit',
+]);
+
+/**
+ * Cadastro aberto (D28, T05-30): o link de confirmação volta para `#/confirmar` (ou
+ * `goosemoney://confirmar`) com `?code=`, como o da redefinição. Com a confirmação ligada, o Auth
+ * não abre sessão. Devolve `sem_conexao`, o código do erro do Auth (`weak_password`…) ou `null`,
+ * que também vale para e-mail já cadastrado. A senha não sai daqui.
+ */
+export async function cadastrar(email: string, senha: string): Promise<string | null> {
+  try {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password: senha,
+      options: { emailRedirectTo: urlDeRetorno('confirmar') },
+    });
+    // E-mail já cadastrado ou cadastro recente ainda sem confirmação: o mesmo `null` do e-mail
+    // novo, para a tela não revelar se a conta existe (6.1).
+    if (!error || (error.code && NEUTROS_NO_CADASTRO.has(error.code))) return null;
+    return isAuthRetryableFetchError(error) ? 'sem_conexao' : (error.code ?? 'erro');
+  } catch {
+    return 'sem_conexao';
+  }
 }
 
 /** Link do e-mail aberto pelo deep link do Tauri (T03-08): troca o `code` pela sessão. */

@@ -1,4 +1,4 @@
-/** Textos do login, de "Esqueci a senha" e de "Nova senha" (D10). */
+/** Textos do login, de "Criar conta", de "Esqueci a senha" e de "Nova senha" (D10). */
 
 /** Mínimo do Supabase Auth (`minimum_password_length`, D28). */
 export const SENHA_MINIMA = 8;
@@ -9,6 +9,29 @@ export const mensagensAcesso = {
     mostrarSenha: 'Mostrar senha',
     ocultarSenha: 'Ocultar senha',
     manterConectado: 'Manter conectado neste dispositivo',
+    criarConta: 'Criar conta',
+    // T05-30: o texto de `mensagens.sessao.emailNaoConfirmado` no login.
+    emailNaoConfirmado: 'Confirme seu e-mail para entrar',
+  },
+  criar: {
+    titulo: 'Criar conta',
+    explicacao:
+      'Informe seu e-mail e uma senha. Você vai receber um link para confirmar o cadastro.',
+    confirmar: 'Confirmar senha',
+    criar: 'Criar conta',
+    salvando: 'Salvando…',
+    emailInvalido: 'Informe um e-mail válido',
+    // Neutra: não revela se a conta já existe (6.1, D28).
+    enviado: 'Se o e-mail puder ser cadastrado, você vai receber um link de confirmação',
+    semConexao: 'Sem conexão para criar a conta',
+    erro: 'Não foi possível criar a conta. Tente de novo.',
+    jaTenhoConta: 'Já tenho conta',
+  },
+  confirmar: {
+    titulo: 'Confirmar e-mail',
+    verificando: 'Verificando o link…',
+    invalido: 'Link inválido ou expirado',
+    voltar: 'Voltar ao login',
   },
   esqueciSenha: 'Esqueci a senha',
   voltarAoLogin: 'Voltar para o login',
