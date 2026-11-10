@@ -1,4 +1,4 @@
-import type { CategoriaSistema } from '@goose-money/core';
+import type { CategoriaSistema, Entidade } from '@goose-money/core';
 
 const plural = (n: number, um: string, varios: string) => `${String(n)} ${n === 1 ? um : varios}`;
 
@@ -96,6 +96,94 @@ export const mensagensConfiguracoes = {
       atualIncorreta: 'Senha atual incorreta',
       alterada: 'Senha alterada',
     },
+  },
+  dados: {
+    titulo: 'Dados',
+    exportar: 'Exportar backup',
+    exportado: (nome: string) => `Backup salvo: ${nome}`,
+    importar: 'Importar backup',
+    exemplo: 'Carregar dados de exemplo',
+    exemploBloqueado: 'Disponível só sem dados. Use Apagar tudo antes',
+    exemploCarregado: 'Dados de exemplo carregados',
+    apagarTexto:
+      'Apagar tudo remove contas, cartões, lançamentos e todos os outros dados da sua conta. Você vai precisar digitar APAGAR.',
+    apagar: 'Apagar tudo',
+    apagando: 'Apagando…',
+    apagarDialogo: {
+      titulo: 'Apagar tudo?',
+      descricao:
+        'Contas, cartões, lançamentos, dívidas, rendas, gastos fixos e categorias criadas saem do Goose Money, em todos os aparelhos. Ficam só as categorias de sistema e as preferências. Exporte um backup antes se quiser guardar uma cópia.',
+      campo: 'Digite APAGAR para confirmar',
+      palavra: 'APAGAR',
+      voltar: 'Voltar',
+      confirmar: 'Apagar tudo',
+      apagado: 'Todos os dados foram apagados',
+      erro: 'Não foi possível apagar. Nada mudou. Tente de novo.',
+    },
+    importacao: {
+      titulo: 'Importar backup',
+      descricao:
+        'Escolha o modo e o arquivo. Nada é gravado antes do relatório e do botão Importar.',
+      modo: 'Modo',
+      modos: { substituir: 'Substituir', mesclar: 'Mesclar' },
+      explicacao: {
+        substituir:
+          'Troca tudo o que existe hoje pelo conteúdo do arquivo. Antes, o Goose Money baixa um backup do estado atual.',
+        mesclar:
+          'Junta o arquivo com o que já existe. No mesmo registro, fica a versão mais recente; em conflito, fica a que já existe.',
+      },
+      escolher: 'Escolher arquivo',
+      trocar: 'Escolher outro arquivo',
+      jsonInvalido: (nome: string) => `${nome} não é um arquivo JSON. Nada foi gravado.`,
+      relatorio: (nome: string) => `Relatório antes de importar · ${nome}`,
+      resumo: {
+        registros: (n: number) => plural(n, 'registro', 'registros'),
+        novos: (n: number) => plural(n, 'novo', 'novos'),
+        atualizados: (n: number) => plural(n, 'atualizado', 'atualizados'),
+        mantidos: (n: number) => `${String(n)} sem mudança`,
+        excluidos: (n: number) => plural(n, 'excluído', 'excluídos'),
+        conflitos: (n: number) =>
+          `${plural(n, 'conflito mantido', 'conflitos mantidos')} (mesma chave única)`,
+        erros: (n: number) => plural(n, 'erro', 'erros'),
+      },
+      integridadeOk: 'Integridade: todas as referências encontradas.',
+      integridadeErro: (n: number) =>
+        `Integridade: ${plural(n, 'referência quebrada', 'referências quebradas')}.`,
+      invariantesOk: 'Invariantes: ok.',
+      invariantesErro: (n: number) => `Invariantes: ${plural(n, 'problema', 'problemas')}.`,
+      estruturaErro: (n: number) =>
+        `Estrutura: ${plural(n, 'erro', 'erros')}. O arquivo não é um backup válido.`,
+      porEntidade: 'Por tipo de registro',
+      conflitosTitulo: 'Conflitos mantidos',
+      conflito: (id: string, existente: string) => `${id} descartado; fica ${existente}`,
+      errosTitulo: 'Erros',
+      arquivo: 'Arquivo',
+      semMudanca: 'O arquivo não traz nada novo: não há o que importar.',
+      invalido: 'Corrija o arquivo: com erros, nada é gravado.',
+      cancelar: 'Cancelar',
+      importar: 'Importar',
+      backupCancelado: 'Sem o backup do estado atual, a importação não foi feita.',
+      falhou: 'A importação não foi feita. Nada foi gravado.',
+      importados: (n: number) =>
+        n === 1 ? '1 registro importado' : `${String(n)} registros importados`,
+    },
+    /** Nomes das entidades no relatório (MODELO-DADOS). */
+    entidades: {
+      categorias: 'Categorias',
+      contas: 'Contas',
+      cartoes: 'Cartões',
+      cartaoCiclos: 'Ciclos de cartão',
+      lancamentos: 'Lançamentos',
+      compras: 'Compras',
+      parcelas: 'Parcelas de compras',
+      itensFatura: 'Itens de fatura',
+      dividas: 'Dívidas',
+      parcelasDivida: 'Parcelas de dívidas',
+      recorrencias: 'Recorrências',
+      recorrenciaVersoes: 'Versões de recorrência',
+      ocorrencias: 'Ocorrências',
+      preferencias: 'Preferências',
+    } satisfies Record<Entidade, string>,
   },
 };
 

@@ -46,7 +46,7 @@ import { HORIZONTES, linhasDaConfirmacao } from './preferencias';
 const m = mensagensConfiguracoes;
 const TEMAS: Tema[] = ['claro', 'escuro', 'sistema'];
 
-function Secao({
+export function Secao({
   id,
   titulo,
   salvando = false,
