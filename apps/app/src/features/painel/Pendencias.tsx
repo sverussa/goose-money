@@ -96,7 +96,7 @@ function linhaDa(d: Derivado, p: Pendencia): Linha {
             : p.data === somarDias(d.hoje, 1)
               ? m.venceAmanha
               : undefined,
-        destino: '/gastos-fixos',
+        destino: `/gastos-fixos?mes=${p.competencia}&acao=confirmar&recorrencia=${p.recorrenciaId}`,
       };
     }
     case 'parcela_divida':
