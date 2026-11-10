@@ -24,7 +24,7 @@ Database rules (D22–D24, `docs/PROMPT.md` 9.4 and 12):
 - Every schema change is a Flyway migration run in Docker (`make db-migrate`). Never use `supabase/migrations`, the Studio or `supabase db diff` to change the schema. Never edit an applied migration; add a new one. `flyway clean` stays disabled.
 - Every business table has `id`, `created_at`, `updated_at` (trigger `set_updated_at`), `created_by` (default `auth.uid()`, also the RLS owner) and `is_deleted`. `snake_case` in the database, `camelCase` in the domain; mapping only in `src/data`.
 - Deletion is always logical (`is_deleted = true`). `delete` is revoked for `authenticated` and `anon`. Reads in `carregarTudo` and RPC functions filter `not is_deleted`; uniqueness uses partial indexes `where not is_deleted`.
-- Local Supabase runs in Docker through the Supabase CLI (`make db-start`).
+- Local Supabase runs in Docker through the Supabase CLI (`make db-start`) or, without the CLI, through `supabase/docker/docker-compose.yml` (`make db-compose-start`, D80). Both use the same ports and keys; run only one at a time.
 
 ## Commands
 
@@ -37,6 +37,7 @@ Run `make` to list every target. Each target only calls `pnpm`, `docker compose`
 | `make dev-desktop`                                    | Tauri app in development (always port 1420)                                                                                                           |
 | `make build` / `make build-desktop`                   | Web build / Tauri bundle (`.app`, `.dmg`)                                                                                                             |
 | `make db-start` / `db-stop` / `db-status`             | Local Supabase in Docker; `db-status` shows the anon key                                                                                              |
+| `make db-compose-start` / `-stop` / `-status`         | Same local Supabase with docker compose, no CLI (stop the CLI first); `-stop` keeps the data volume                                                   |
 | `make db-migrate` / `db-info` / `db-validate`         | Flyway migrate, info and validate on the local database                                                                                               |
 | `make db-reset`                                       | Recreate the local database and migrate (asks to type `RESET`)                                                                                        |
 | `make db-migrate-prod`                                | Migrate production with `.env.producao` (asks to type `PRODUCAO`)                                                                                     |

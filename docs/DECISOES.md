@@ -199,6 +199,16 @@ Escolhas feitas ao escrever `docs/MODELO-DADOS.md`, aprovadas pelo Saulo na opç
 | D78 | **Antecipar parcelas de cartão renumera as parcelas** pela competência depois de mover as k últimas para a fatura aberta; a compra termina mais cedo e o invariante 3 de 3.6 continua valendo. A gravação remove e reinsere as parcelas, por causa da chave única `(compra_id, numero)`. Respondida pelo Saulo em 05/11/2026 (T01-08). | Mantém as quatro invariantes de 3.6 sem exceção | 3.6 |
 | D79 | **Lançamento efetivado não pode ter data depois de hoje**; algo futuro é "Previsto". A regra fica no formulário e no `gravar(ops)`, fora do core, que segue a fórmula de 3.4. Respondida pelo Saulo em 05/11/2026 (T01-06). | Sem isso, o fechamento do mês corrente fica diferente do saldo de hoje | 3.1, 3.4, 7.3 |
 
+### D80 · Supabase local também por docker compose (10/11/2026)
+
+Pedido do Saulo. `supabase/docker/docker-compose.yml` sobe Postgres, Auth (GoTrue), PostgREST, Kong, postgres-meta, Studio e Mailpit sem a Supabase CLI (`make db-compose-start`, `db-compose-stop`, `db-compose-status`). A CLI continua sendo o modo padrão e nada nela mudou.
+
+- **Mesmas imagens, portas, chaves e Auth da CLI 2.122.0**, copiadas dos contêineres que ela sobe (todas publicadas há mais de 7 dias, D5). Assim `.env`, `supabase/tests/.env`, Flyway e testes valem para os dois modos.
+- **Só JWT HS256**, com o segredo e as chaves anon e service_role padrão da CLI (`supabase/docker/local.env`). A CLI também assina as sessões com uma chave ES256 gerada na máquina; ela fica fora do repositório, e o app não depende dela.
+- **Fora do compose:** Storage, Realtime, Edge Functions, pooler, analytics e as chaves `sb_publishable_`/`sb_secret_` (o app não usa). `make db-types` e `make db-reset` seguem só na CLI.
+- **Banco separado:** o volume `goose-money-supabase_db` não é o da CLI. Os dois modos usam as mesmas portas; suba um de cada vez.
+- O `email_sent` do Auth fica em 360000, como a CLI faz quando usa o Mailpit; com o 2 do `config.toml`, os e2e de e-mail falhariam.
+
 ## Em aberto
 
 - **Provedor da VPS e domínio do app web** (D53).

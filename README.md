@@ -80,6 +80,8 @@ make dev          # app web em http://localhost:1420
 
 Para o app desktop: `make dev-desktop`. `make` sem argumentos lista todos os comandos; antes de abrir um PR, rode `make check`.
 
+Sem a Supabase CLI, o mesmo Supabase sobe por docker compose (`supabase/docker/`): troque `make db-start` por `make db-compose-start` e `make db-status` por `make db-compose-status`; o resto (`.env`, `make db-migrate`, `make test`, `make test-e2e`) não muda. `make db-compose-stop` para tudo e mantém os dados. Use um modo de cada vez; cada um tem o seu banco. Com o compose, `make db-types` e `make db-reset` não funcionam, porque usam a CLI.
+
 O Supabase local usa as portas 54321 (API), 54322 (Postgres), 54323 (Studio) e 54324 (Mailpit, onde chegam os e-mails de confirmação). Se alguma estiver ocupada, `make db-start` falha; libere a porta antes de subir.
 
 ## 📁 Estrutura do repositório
@@ -96,6 +98,7 @@ GooseMoney/
 │   └── core/                # domínio e Motor, TypeScript puro (sem React, rede ou DOM)
 ├── supabase/
 │   ├── config.toml          # Supabase local (portas, Auth, Mailpit)
+│   ├── docker/              # o mesmo Supabase por docker compose, sem a CLI (make db-compose-start)
 │   ├── flyway/sql/          # migrações Flyway (V###__, R__) e checklist de tabela nova
 │   └── tests/               # testes de banco (Vitest no Supabase local; .env com a service_role) e limpar.ts (make db-limpar-testes)
 ├── docs/

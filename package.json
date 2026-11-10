@@ -22,7 +22,10 @@
     "test:e2e": "pnpm --filter @goose-money/app test:e2e",
     "test:e2e-completo": "E2E_COMPLETO=1 pnpm --filter @goose-money/app test:e2e",
     "db:limpar-testes": "node supabase/tests/limpar.ts",
-    "db:types": "supabase gen types typescript --local > apps/app/src/data/database.types.ts"
+    "db:types": "supabase gen types typescript --local > apps/app/src/data/database.types.ts",
+    "db:compose-start": "docker compose -f supabase/docker/docker-compose.yml --env-file supabase/docker/local.env up -d --wait",
+    "db:compose-stop": "docker compose -f supabase/docker/docker-compose.yml --env-file supabase/docker/local.env down",
+    "db:compose-status": "docker compose -f supabase/docker/docker-compose.yml --env-file supabase/docker/local.env ps && grep _KEY= supabase/docker/local.env"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

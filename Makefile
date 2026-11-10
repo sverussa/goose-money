@@ -10,7 +10,7 @@ DOCKER_OK = @docker info >/dev/null 2>&1 || { echo "O Docker não está rodando.
 
 .DEFAULT_GOAL := help
 
-.PHONY: help setup dev dev-desktop db-start db-stop db-status db-migrate db-info db-validate \
+.PHONY: help setup dev dev-desktop db-start db-stop db-status db-compose-start db-compose-stop db-compose-status db-migrate db-info db-validate \
 	db-reset db-migrate-prod db-types db-limpar-testes deploy-web db-eliminar-usuario test test-e2e \
 	test-e2e-completo lint format \
 	format-check typecheck check build build-desktop
@@ -38,6 +38,16 @@ db-stop: ## Para o Supabase local
 
 db-status: ## Mostra URLs e chaves do Supabase local
 	$(SUPABASE) status
+
+db-compose-start: ## Sobe o Supabase local por docker compose, sem a CLI (mesmas portas e chaves; pare a CLI antes)
+	$(DOCKER_OK)
+	pnpm db:compose-start
+
+db-compose-stop: ## Para o Supabase do docker compose (mantém o volume do banco)
+	pnpm db:compose-stop
+
+db-compose-status: ## Mostra os serviços e as chaves do Supabase do docker compose
+	pnpm db:compose-status
 
 db-migrate: ## Aplica as migrações Flyway no banco local
 	$(DOCKER_OK)
