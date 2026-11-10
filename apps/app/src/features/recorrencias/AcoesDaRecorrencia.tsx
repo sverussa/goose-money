@@ -5,7 +5,9 @@ import {
   confirmarOcorrencia,
   type Derivado,
   ErroDeDominio,
+  faturaDoGastoNoCartao,
   menos,
+  type NaturezaRecorrencia,
   type OcorrenciaDoMes,
   type Recorrencia,
 } from '@goose-money/core';
@@ -30,23 +32,33 @@ import { CampoDeValor } from '@/features/cartoes/CampoDeValor';
 import { dataValida } from '@/features/cartoes/compra';
 import { Campo, Seletor } from '@/features/dividas/NovaDivida';
 import { resolverZod } from '@/features/lancar/formulario';
-import { contasAtivas, lerUltimaConta, opcoesDeCategoria } from '@/features/lancar/padroes';
+import {
+  cartoesAtivos,
+  contasAtivas,
+  lerUltimaConta,
+  lerUltimoCartao,
+  opcoesDeCategoria,
+} from '@/features/lancar/padroes';
 import { useComando, useContexto } from '@/queries/useComando';
 
-import { mensagensRendas } from './mensagens';
 import {
-  comandoDaRenda,
+  mensagensRecorrencias,
+  type TextosDaConfirmacao,
+  type TextosDoFormulario,
+} from './mensagens';
+import {
+  comandoDaRecorrencia,
   dataDaConfirmacao,
-  esquemaDaRenda,
+  esquemaDaRecorrencia,
+  faturaDoFormulario,
   mesPorExtenso,
   opcoesAPartirDe,
   previaDaEdicao,
-  type ValoresDaRenda,
-  valoresIniciaisDaRenda,
-} from './rendas';
+  type ValoresDaRecorrencia,
+  valoresIniciais,
+} from './recorrencias';
 
-const mc = mensagensRendas.confirmar;
-const f = mensagensRendas.formulario;
+const f = mensagensRecorrencias.formulario;
 
 function Dialogo({
   titulo,
@@ -112,14 +124,19 @@ function Nota({ rotulo, children }: { rotulo: string; children: ReactNode }) {
   );
 }
 
-/** "Confirmar recebimento" (3.8, 6.7): valor (o previsto) e data (a prevista, até hoje) editáveis. */
-export function ConfirmarRecebimento({
+/**
+ * "Confirmar recebimento", "Pagar" ou "Confirmar no cartão" (3.8, 6.7, 6.8): valor (o previsto) e
+ * data (a prevista, até hoje) editáveis. No cartão, vira compra à vista na fatura do ciclo.
+ */
+export function ConfirmarOcorrencia({
   d,
   o,
+  textos: mc,
   onFechar,
 }: {
   d: Derivado;
   o: OcorrenciaDoMes;
+  textos: TextosDaConfirmacao;
   onFechar: () => void;
 }) {
   const { executar, salvando } = useComando();
@@ -129,7 +146,13 @@ export function ConfirmarRecebimento({
   const [erro, setErro] = useState<string | null>(null);
   const dia = dataValida(data);
   const erroData = !dia ? mc.dataInvalida : dia > d.hoje ? mc.dataFutura : undefined;
-  const conta = o.contaId ? d.porId.contas.get(o.contaId) : undefined;
+  const onde = o.contaId
+    ? d.porId.contas.get(o.contaId)?.nome
+    : o.cartaoId
+      ? d.porId.cartoes.get(o.cartaoId)?.nome
+      : undefined;
+  const fatura =
+    dia && o.cartaoId ? faturaDoGastoNoCartao(d.fatos, { cartaoId: o.cartaoId, data: dia }) : null;
   const diferenca = menos(valor, o.valor);
 
   async function salvar() {
@@ -194,9 +217,9 @@ export function ConfirmarRecebimento({
             )}
           </Campo>
         </div>
-        {conta && valor > 0 && (
+        {onde && valor > 0 && (
           <Nota rotulo={mc.previa}>
-            <p>{mc.entra(formatarMoeda(valor), conta.nome)}</p>
+            <p>{mc.entra(formatarMoeda(valor), onde, fatura ? mesPorExtenso(fatura) : '')}</p>
             {diferenca !== 0 && (
               <p className="text-label-md font-normal text-on-surface-variant">
                 {mc.diferenca(formatarMoeda(Math.abs(diferenca) as Centavos), diferenca > 0)}
@@ -228,16 +251,16 @@ function Historico({
 }: {
   d: Derivado;
   r: Recorrencia;
-  valores: ValoresDaRenda;
+  valores: ValoresDaRecorrencia;
   aPartirDe: Competencia;
 }) {
   const contexto = useContexto();
   // A prévia monta o mesmo comando que vai ser gravado; recusado ou inválido, mostra o atual.
-  const ok = esquemaDaRenda.safeParse(valores).success;
+  const ok = esquemaDaRecorrencia.safeParse(valores).success;
   let comando: Comando | null = null;
   if (ok)
     try {
-      comando = comandoDaRenda(d.fatos, contexto(), valores, r);
+      comando = comandoDaRecorrencia(d.fatos, contexto(), r.natureza, valores, r);
     } catch (e) {
       if (!(e instanceof ErroDeDominio)) throw e;
     }
@@ -255,8 +278,8 @@ function Historico({
             )}
         </p>
       </Nota>
-      <section aria-labelledby="renda-historico" className="flex flex-col gap-1">
-        <h3 id="renda-historico" className="pb-1 text-label-lg">
+      <section aria-labelledby={`${r.natureza}-historico`} className="flex flex-col gap-1">
+        <h3 id={`${r.natureza}-historico`} className="pb-1 text-label-lg">
           {f.historico}
         </h3>
         <ul className="flex flex-col">
@@ -283,35 +306,50 @@ function Historico({
 }
 
 /**
- * Nova renda fixa ou editar (3.8, 6.7). Editar pede "Aplicar a partir de" (padrão: a primeira
- * competência não confirmada) e mostra o histórico de versões com a que vai ser gravada.
+ * Nova ou editar renda ou gasto fixo (3.8, 6.7, 6.8). Editar pede "Aplicar a partir de" (padrão:
+ * a primeira competência não confirmada) e mostra o histórico de versões com a que vai ser
+ * gravada. Gasto escolhe a forma de pagamento; no cartão, diz em qual fatura o mês cai.
  */
-export function FormularioRenda({
+export function FormularioRecorrencia({
   d,
+  natureza,
   r,
+  textos: t,
   onFechar,
 }: {
   d: Derivado;
+  natureza: NaturezaRecorrencia;
   r?: Recorrencia;
+  textos: TextosDoFormulario;
   onFechar: () => void;
 }) {
   const { executar, salvando } = useComando();
   const contexto = useContexto();
-  const form = useForm<ValoresDaRenda>({
-    resolver: resolverZod(esquemaDaRenda),
-    defaultValues: valoresIniciaisDaRenda(d.fatos, d.hoje, lerUltimaConta(), r),
+  const form = useForm<ValoresDaRecorrencia>({
+    resolver: resolverZod(esquemaDaRecorrencia),
+    defaultValues: valoresIniciais(
+      d.fatos,
+      d.hoje,
+      { conta: lerUltimaConta(), cartao: lerUltimoCartao() },
+      r,
+    ),
   });
   const { control, register, handleSubmit, setError, formState } = form;
   const erros = formState.errors;
-  const valores = useWatch({ control }) as ValoresDaRenda;
+  const valores = useWatch({ control }) as ValoresDaRecorrencia;
+  const id = (campo: string) => `${natureza}-${campo}`;
   const contas = contasAtivas(d.fatos);
-  const categorias = opcoesDeCategoria(d.fatos, 'receita');
+  const cartoes = cartoesAtivos(d.fatos);
+  const categorias = opcoesDeCategoria(d.fatos, natureza === 'renda' ? 'receita' : 'despesa');
   const opcoes = r ? opcoesAPartirDe(d.fatos, r) : [];
+  const gasto = natureza === 'gasto';
+  const noCartao = gasto && valores.formaPagamento === 'cartao';
+  const fatura = noCartao ? faturaDoFormulario(d.fatos, valores) : null;
 
-  async function salvar(v: ValoresDaRenda) {
+  async function salvar(v: ValoresDaRecorrencia) {
     let comando;
     try {
-      comando = comandoDaRenda(d.fatos, contexto(), v, r);
+      comando = comandoDaRecorrencia(d.fatos, contexto(), natureza, v, r);
     } catch (e) {
       if (!(e instanceof ErroDeDominio)) throw e;
       setError('root', { message: e.message });
@@ -321,19 +359,19 @@ export function FormularioRenda({
   }
 
   const seletor = (
-    nome: 'contaId' | 'categoriaId' | 'aPartirDe',
-    id: string,
+    nome: 'formaPagamento' | 'contaId' | 'cartaoId' | 'categoriaId' | 'aPartirDe',
+    campo: string,
     rotulo: string,
     lista: { id: string; nome: string }[],
   ) => (
-    <Campo id={id} rotulo={rotulo} erro={erros[nome]?.message}>
+    <Campo id={id(campo)} rotulo={rotulo} erro={erros[nome]?.message}>
       {(aria) => (
         <Controller
           name={nome}
           control={control}
           render={({ field }) => (
             <Seletor
-              id={id}
+              id={id(campo)}
               valor={field.value}
               aoMudar={field.onChange}
               aria={aria}
@@ -347,8 +385,8 @@ export function FormularioRenda({
 
   return (
     <Dialogo
-      titulo={r ? f.tituloEditar(r.descricao) : f.tituloNova}
-      explicacao={f.explicacao}
+      titulo={r ? t.tituloEditar(r.descricao) : t.tituloNova}
+      explicacao={t.explicacao}
       onFechar={onFechar}
     >
       <form
@@ -362,14 +400,14 @@ export function FormularioRenda({
         {r &&
           seletor(
             'aPartirDe',
-            'renda-a-partir-de',
-            f.aPartirDe,
-            opcoes.map((c, i) => ({ id: c, nome: f.opcao(mesPorExtenso(c), i === 0) })),
+            'a-partir-de',
+            t.aPartirDe,
+            opcoes.map((c, i) => ({ id: c, nome: t.opcao(mesPorExtenso(c), i === 0) })),
           )}
-        <Campo id="renda-descricao" rotulo={f.descricao} erro={erros.descricao?.message}>
+        <Campo id={id('descricao')} rotulo={t.descricao} erro={erros.descricao?.message}>
           {(aria) => (
             <Input
-              id="renda-descricao"
+              id={id('descricao')}
               autoComplete="off"
               className="h-12"
               {...aria}
@@ -378,14 +416,14 @@ export function FormularioRenda({
           )}
         </Campo>
         <div className="grid gap-4 medium:grid-cols-2">
-          <Campo id="renda-valor" rotulo={f.valor} erro={erros.valor?.message}>
+          <Campo id={id('valor')} rotulo={t.valor} erro={erros.valor?.message}>
             {(aria) => (
               <Controller
                 name="valor"
                 control={control}
                 render={({ field }) => (
                   <CampoDeValor
-                    id="renda-valor"
+                    id={id('valor')}
                     valor={field.value}
                     aoMudar={field.onChange}
                     {...aria}
@@ -394,10 +432,10 @@ export function FormularioRenda({
               />
             )}
           </Campo>
-          <Campo id="renda-dia" rotulo={f.dia} erro={erros.dia?.message}>
+          <Campo id={id('dia')} rotulo={t.dia} erro={erros.dia?.message}>
             {(aria) => (
               <Input
-                id="renda-dia"
+                id={id('dia')}
                 type="number"
                 inputMode="numeric"
                 min={1}
@@ -409,25 +447,52 @@ export function FormularioRenda({
             )}
           </Campo>
         </div>
+        {gasto && (
+          <div className="grid gap-4 medium:grid-cols-2">
+            {seletor('formaPagamento', 'forma', t.forma, [
+              { id: 'conta', nome: t.formas.conta },
+              { id: 'cartao', nome: t.formas.cartao },
+            ])}
+            {noCartao
+              ? seletor(
+                  'cartaoId',
+                  'cartao',
+                  t.cartao,
+                  cartoes.map((c) => ({ id: c.id, nome: c.nome })),
+                )
+              : seletor(
+                  'contaId',
+                  'conta',
+                  t.conta,
+                  contas.map((c) => ({ id: c.id, nome: c.nome })),
+                )}
+          </div>
+        )}
+        {fatura && (
+          <Nota rotulo={t.notaFatura}>
+            <p>{t.fatura(mesPorExtenso(fatura.mes), mesPorExtenso(fatura.fatura))}</p>
+          </Nota>
+        )}
         <div className="grid gap-4 medium:grid-cols-2">
-          {seletor(
-            'contaId',
-            'renda-conta',
-            f.conta,
-            contas.map((c) => ({ id: c.id, nome: c.nome })),
-          )}
-          {seletor('categoriaId', 'renda-categoria', f.categoria, categorias)}
+          {!gasto &&
+            seletor(
+              'contaId',
+              'conta',
+              t.conta,
+              contas.map((c) => ({ id: c.id, nome: c.nome })),
+            )}
+          {seletor('categoriaId', 'categoria', t.categoria, categorias)}
         </div>
         <div className="grid gap-4 medium:grid-cols-2">
           <Campo
-            id="renda-inicio"
-            rotulo={f.inicio}
+            id={id('inicio')}
+            rotulo={t.inicio}
             erro={erros.inicio?.message}
-            dica={r ? f.dicaInicio : undefined}
+            dica={r ? t.dicaInicio : undefined}
           >
             {(aria) => (
               <Input
-                id="renda-inicio"
+                id={id('inicio')}
                 type="month"
                 className="h-12"
                 disabled={r !== undefined}
@@ -436,9 +501,9 @@ export function FormularioRenda({
               />
             )}
           </Campo>
-          <Campo id="renda-fim" rotulo={f.fim} erro={erros.fim?.message}>
+          <Campo id={id('fim')} rotulo={t.fim} erro={erros.fim?.message}>
             {(aria) => (
-              <Input id="renda-fim" type="month" className="h-12" {...aria} {...register('fim')} />
+              <Input id={id('fim')} type="month" className="h-12" {...aria} {...register('fim')} />
             )}
           </Campo>
         </div>
@@ -448,21 +513,21 @@ export function FormularioRenda({
           render={({ field }) => (
             <div className="flex items-center justify-between gap-4">
               <span className="flex flex-col gap-0.5">
-                <label htmlFor="renda-automatica" className="text-body-lg">
-                  {f.automatica}
+                <label htmlFor={id('automatica')} className="text-body-lg">
+                  {t.automatica}
                 </label>
                 <span
-                  id="renda-automatica-dica"
+                  id={id('automatica-dica')}
                   className="text-label-md font-normal text-on-surface-variant"
                 >
-                  {f.dicaAutomatica}
+                  {t.dicaAutomatica}
                 </span>
               </span>
               <Switch
-                id="renda-automatica"
+                id={id('automatica')}
                 checked={field.value}
                 onCheckedChange={field.onChange}
-                aria-describedby="renda-automatica-dica"
+                aria-describedby={id('automatica-dica')}
               />
             </div>
           )}
@@ -475,7 +540,7 @@ export function FormularioRenda({
             {erros.root.message}
           </p>
         )}
-        <Rodape salvando={salvando} rotulo={r ? f.salvarNova : f.criar} onFechar={onFechar} />
+        <Rodape salvando={salvando} rotulo={r ? t.salvarNova : t.criar} onFechar={onFechar} />
       </form>
     </Dialogo>
   );

@@ -2,14 +2,10 @@ import {
   type Competencia,
   competenciaDe,
   type Derivado,
-  excluirRecorrencia,
-  ignorarOcorrencia,
   type OcorrenciaDoMes,
   resumoRendas,
 } from '@goose-money/core';
-import { ArrowUp, EllipsisVertical, Plus } from 'lucide-react';
-import { useRef } from 'react';
-import { useSearchParams } from 'react-router';
+import { ArrowUp, Plus } from 'lucide-react';
 
 import { formatarData, formatarMes, formatarPercentual } from '@/app/formatacao';
 import { ChartCard } from '@/components/ChartCard';
@@ -22,112 +18,24 @@ import { MonthSelector } from '@/components/MonthSelector';
 import { useMesDaUrl } from '@/components/periodo';
 import { StatusChip } from '@/components/StatusChip';
 import { Button } from '@/components/ui/button';
+import { type AbrirAcao, useAcaoDaRecorrencia } from '@/features/recorrencias/acao';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { ItemDoMenu } from '@/features/cartoes/menu';
-import { useRodar } from '@/features/cartoes/rodar';
-import { permissaoDe } from '@/features/dividas/tabela';
+  ConfirmarOcorrencia,
+  FormularioRecorrencia,
+} from '@/features/recorrencias/AcoesDaRecorrencia';
+import { MenuDaRecorrencia } from '@/features/recorrencias/MenuDaRecorrencia';
 import { useDerivado } from '@/queries/fatos';
-import { useContexto } from '@/queries/useComando';
 
-import { ConfirmarRecebimento, FormularioRenda } from './AcoesDaRenda';
 import { mensagensRendas as m } from './mensagens';
 import { CHIP_DA_RENDA, composicaoDaRenda, mesPorExtenso, rendasDoMes } from './rendas';
 
 const ddmm = (o: OcorrenciaDoMes) => formatarData(o.data).slice(0, 5);
-
-/**
- * Ações da tela na URL (`?acao=`): Nova renda fixa, Editar e Confirmar recebimento, com
- * `?recorrencia=`. A pendência "Confirmar" do Painel chega com `?mes=&acao=confirmar&recorrencia=`.
- */
-type AcaoDaRenda = 'nova' | 'editar' | 'confirmar';
-function useAcaoDaRenda() {
-  const [busca, setBusca] = useSearchParams();
-  const abrir = (acao: AcaoDaRenda, recorrenciaId?: string) => {
-    setBusca((b) => {
-      const x = new URLSearchParams(b);
-      x.set('acao', acao);
-      if (recorrenciaId) x.set('recorrencia', recorrenciaId);
-      else x.delete('recorrencia');
-      return x;
-    });
-  };
-  const fechar = () => {
-    setBusca(
-      (b) => {
-        const x = new URLSearchParams(b);
-        x.delete('acao');
-        x.delete('recorrencia');
-        return x;
-      },
-      { replace: true },
-    );
-  };
-  return {
-    acao: busca.get('acao') as AcaoDaRenda | null,
-    recorrenciaId: busca.get('recorrencia'),
-    abrir,
-    fechar,
-  };
-}
 
 function rotuloDoChip(o: OcorrenciaDoMes): string {
   const data = ddmm(o);
   if (o.status === 'confirmada') return m.chip.confirmada(data);
   if (o.status === 'ignorada') return m.chip.ignorada;
   return o.status === 'prevista' ? m.chip.prevista(data) : m.chip.atrasada(data);
-}
-
-function MenuDaRenda({ d, o, editar }: { d: Derivado; o: OcorrenciaDoMes; editar: () => void }) {
-  const rodar = useRodar();
-  const contexto = useContexto();
-  // O diálogo só abre depois que o menu fecha e devolve o foco ao botão (como em Cartões).
-  const editarAoFechar = useRef(false);
-  const { recorrenciaId, competencia, recorrencia } = o;
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="icon" aria-label={m.menu.rotulo(recorrencia.descricao)}>
-          <EllipsisVertical aria-hidden />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        onCloseAutoFocus={() => {
-          if (!editarAoFechar.current) return;
-          editarAoFechar.current = false;
-          editar();
-        }}
-      >
-        <ItemDoMenu
-          rotulo={m.menu.ignorar}
-          detalhe={m.menu.detalheIgnorar}
-          permissao={permissaoDe(() =>
-            ignorarOcorrencia(d.fatos, contexto(), recorrenciaId, competencia),
-          )}
-          aoEscolher={() => {
-            rodar((ctx) => ignorarOcorrencia(d.fatos, ctx, recorrenciaId, competencia));
-          }}
-        />
-        <ItemDoMenu
-          rotulo={m.menu.editar}
-          aoEscolher={() => {
-            editarAoFechar.current = true;
-          }}
-        />
-        <ItemDoMenu
-          rotulo={m.menu.excluir}
-          detalhe={m.menu.detalheExcluir}
-          aoEscolher={() => {
-            rodar((ctx) => excluirRecorrencia(d.fatos, ctx, recorrenciaId));
-          }}
-        />
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
 }
 
 function Lista({
@@ -139,7 +47,7 @@ function Lista({
   d: Derivado;
   mes: Competencia;
   rendas: OcorrenciaDoMes[];
-  abrir: ReturnType<typeof useAcaoDaRenda>['abrir'];
+  abrir: AbrirAcao;
 }) {
   const primeiraPendente = rendas.find((o) => o.ocorrencia === null);
   return (
@@ -185,9 +93,10 @@ function Lista({
                       {m.confirmar.titulo}
                     </Button>
                   )}
-                  <MenuDaRenda
+                  <MenuDaRecorrencia
                     d={d}
                     o={o}
+                    textos={m.menu}
                     editar={() => {
                       abrir('editar', o.recorrenciaId);
                     }}
@@ -203,13 +112,7 @@ function Lista({
 }
 
 /** Composição da renda (8.1): rosca do mês corrente; o clique abre a recorrência (Editar). */
-function Composicao({
-  d,
-  abrir,
-}: {
-  d: Derivado;
-  abrir: ReturnType<typeof useAcaoDaRenda>['abrir'];
-}) {
+function Composicao({ d, abrir }: { d: Derivado; abrir: AbrirAcao }) {
   const mes = competenciaDe(d.hoje);
   const { fatias, total, conclusao } = composicaoDaRenda(d.fatos, mes, d.hoje);
   const titulo =
@@ -275,7 +178,7 @@ function Composicao({
 
 function Rendas({ d }: { d: Derivado }) {
   const [mes] = useMesDaUrl();
-  const { acao, recorrenciaId, abrir, fechar } = useAcaoDaRenda();
+  const { acao, recorrenciaId, abrir, fechar } = useAcaoDaRecorrencia();
   const rendas = rendasDoMes(d.fatos, mes, d.hoje);
   const resumo = resumoRendas(d.fatos, mes, d.hoje);
   const temRendas = d.fatos.recorrencias.some((r) => r.ativa && r.natureza === 'renda');
@@ -323,12 +226,21 @@ function Rendas({ d }: { d: Derivado }) {
       ) : (
         <EmptyState Icone={ArrowUp} frase={m.vazio} acao={botaoNova} />
       )}
-      {acao === 'nova' && <FormularioRenda d={d} onFechar={fechar} />}
+      {acao === 'nova' && (
+        <FormularioRecorrencia d={d} natureza="renda" textos={m.formulario} onFechar={fechar} />
+      )}
       {acao === 'editar' && recorrencia && (
-        <FormularioRenda key={recorrencia.id} d={d} r={recorrencia} onFechar={fechar} />
+        <FormularioRecorrencia
+          key={recorrencia.id}
+          d={d}
+          natureza="renda"
+          r={recorrencia}
+          textos={m.formulario}
+          onFechar={fechar}
+        />
       )}
       {acao === 'confirmar' && aConfirmar && (
-        <ConfirmarRecebimento d={d} o={aConfirmar} onFechar={fechar} />
+        <ConfirmarOcorrencia d={d} o={aConfirmar} textos={m.confirmar} onFechar={fechar} />
       )}
     </>
   );
