@@ -160,7 +160,7 @@ Uma tela ou diálogo por tarefa, na ordem do handoff.
 | ✅ [T05-25 · Rendas fixas](05-telas/T05-25-rendas-fixas.md) | Recorrências | T04-08, T01-13, T03-06 | — |
 | ✅ [T05-26 · Gastos fixos](05-telas/T05-26-gastos-fixos.md) | Recorrências | T05-25 | — |
 | ✅ [T05-27 · Configurações › Categorias](05-telas/T05-27-configuracoes-categorias.md) | Configurações | T04-07, T02-08 | tomada |
-| [T05-28 · Configurações › Aparência, Preferências e Acesso](05-telas/T05-28-configuracoes-aparencia-preferencias-acesso.md) | Configurações | T05-27, T04-02, T03-01 | — |
+| ✅ [T05-28 · Configurações › Aparência, Preferências e Acesso](05-telas/T05-28-configuracoes-aparencia-preferencias-acesso.md) | Configurações | T05-27, T04-02, T03-01 | — |
 | [T05-29 · Configurações › Dados: backup, exemplo e apagar tudo](05-telas/T05-29-configuracoes-dados.md) | Configurações | T05-28, T02-10, T01-19, T01-20, T03-07 | tomada |
 | [T05-30 · Criar conta](05-telas/T05-30-criar-conta.md) | Acesso | T05-01, T03-08, T02-08 | — |
 
