@@ -62,6 +62,41 @@ export const mensagensConfiguracoes = {
         ? '1 item movido para A classificar'
         : `${String(n)} itens movidos para A classificar`,
   },
+  salvando: 'Salvando…',
+  aparencia: {
+    titulo: 'Aparência',
+    tema: 'Tema',
+    temas: { claro: 'Claro', escuro: 'Escuro', sistema: 'Seguir o sistema' },
+    ocultar: 'Ocultar valores ao abrir',
+    ocultarDica: 'Útil para abrir o app em público',
+  },
+  preferencias: {
+    titulo: 'Preferências',
+    limite: 'Alerta do Previsto abaixo de',
+    limiteDica: 'O Previsto até o fim do mês fica em alerta abaixo deste valor.',
+    horizonte: 'Horizonte padrão da projeção',
+    meses: (n: number) => `${String(n)} meses`,
+    automatica: 'Confirmação automática',
+    automaticaDica: 'Lança sozinho, na data prevista, cada recorrência ligada.',
+    semRecorrencias: 'Nenhuma renda ou gasto fixo cadastrado.',
+    linha: (descricao: string, dia: number) => `${descricao} · dia ${String(dia)}`,
+  },
+  acesso: {
+    titulo: 'Acesso',
+    email: 'E-mail',
+    alterarSenha: 'Alterar senha',
+    sair: 'Sair',
+    dialogo: {
+      descricao: 'Para trocar, informe a senha atual e a nova duas vezes.',
+      atual: 'Senha atual',
+      nova: 'Nova senha',
+      confirmar: 'Confirmar nova senha',
+      cancelar: 'Cancelar',
+      salvar: 'Alterar senha',
+      atualIncorreta: 'Senha atual incorreta',
+      alterada: 'Senha alterada',
+    },
+  },
 };
 
 /** Nomes acessíveis dos ícones de categoria (lucide). */

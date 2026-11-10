@@ -1,6 +1,7 @@
 import { EstadoDaCarga } from '@/components/EstadosDaTela';
 import { useDerivado } from '@/queries/fatos';
 
+import { Acesso, Aparencia, Preferencias } from './SecaoAjustes';
 import { Categorias } from './SecaoCategorias';
 
 /**
@@ -13,7 +14,11 @@ export function ConfiguracoesPagina() {
   return (
     <div className="grid max-w-7xl items-start gap-4 expanded:grid-cols-2">
       <Categorias d={derivado.dados} />
-      <div className="flex flex-col gap-4" />
+      <div className="flex min-w-0 flex-col gap-4">
+        <Aparencia d={derivado.dados} />
+        <Preferencias d={derivado.dados} />
+        <Acesso />
+      </div>
     </div>
   );
 }
