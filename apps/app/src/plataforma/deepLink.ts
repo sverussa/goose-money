@@ -1,7 +1,7 @@
 import { estaNoTauri } from './ambiente';
 
 /** Rotas que um link de e-mail do Auth pode abrir. */
-export const ROTAS_DE_RETORNO: ReadonlySet<string> = new Set(['redefinir-senha']);
+export const ROTAS_DE_RETORNO: ReadonlySet<string> = new Set(['redefinir-senha', 'confirmar']);
 
 /** Um link `goosemoney://<rota>?code=…` (ou com erro do Auth) lido para o app (T03-08). */
 export interface LinkDeRetorno {

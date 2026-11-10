@@ -1,6 +1,8 @@
 import { type ComponentType, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 
+import { ConfirmarCadastro } from '@/features/acesso/ConfirmarCadastro';
+import { CriarConta } from '@/features/acesso/CriarConta';
 import { EsqueciSenha } from '@/features/acesso/EsqueciSenha';
 import { RedefinirSenha } from '@/features/acesso/RedefinirSenha';
 
@@ -49,6 +51,8 @@ export function RotasDoApp() {
       <Route path="/login" element={<LoginProvisorio />} />
       <Route path="/esqueci-senha" element={<EsqueciSenha />} />
       <Route path="/redefinir-senha" element={<RedefinirSenha />} />
+      <Route path="/criar-conta" element={<CriarConta />} />
+      <Route path="/confirmar" element={<ConfirmarCadastro />} />
       {import.meta.env.DEV && <Route path="/dev/tema" element={<TemaDev />} />}
       {import.meta.env.DEV && <Route path="/dev/componentes" element={<ComponentesDev />} />}
       <Route element={<RotaProtegida />}>
