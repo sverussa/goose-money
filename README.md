@@ -107,7 +107,7 @@ GooseMoney/
 │   ├── MODELO-DADOS.md      # entidades, campos e relações (contrato core ↔ banco)
 │   ├── StackShowCase.md     # stack de referência (Desktop UI Showcase), base da D20
 │   ├── Prompts-SubAgents-Strategies-Skill.md # aprendizados para escrever prompts de execução das tarefas
-│   └── tasks/               # tarefas de implementação, uma por arquivo, por etapa
+│   └── tasks/               # tarefas de implementação, uma por arquivo, por etapa; prompt/ com o prompt de execução de cada etapa
 ├── design/
 │   ├── telas/               # 18 telas e componentes desenhados (.dc.html)
 │   ├── canvas.json          # disposição das telas no canvas de design

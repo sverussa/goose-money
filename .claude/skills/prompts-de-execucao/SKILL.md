@@ -7,6 +7,8 @@ description: Gera o prompt para executar uma leva de tarefas de docs/tasks/ do G
 
 Gera o prompt que outra sessão vai colar para executar tarefas de `docs/tasks/`. O porquê de cada regra está em `docs/Prompts-SubAgents-Strategies-Skill.md`; os modelos estão em `modelos.md`, nesta pasta.
 
+Os prompts de cada etapa ficam registrados em `docs/tasks/prompt/<etapa>-prompt-exec.md`, com as regras da etapa e as levas. Se a leva pedida já está registrada e o estado confere, o prompt pode só apontar para ela. Se não estiver, ou se o estado mudou, gere o prompt e atualize o arquivo da etapa, no mesmo formato.
+
 O resultado é texto em pt-BR para o Saulo colar. **Não execute as tarefas** nem altere o repositório, a não ser que ele peça.
 
 ## 1. Levantar o estado (barato, numa ou duas chamadas)

@@ -6,6 +6,7 @@ Plano para implementar o Goose Money, quebrado em 101 tarefas pequenas, uma por 
 
 - **Uma tarefa por branch**, com o nome sugerido no cabeçalho da tarefa, e um Pull Request por tarefa (CLAUDE.md).
 - Para trabalhar com vários agentes em paralelo, siga [tasks-agents-estrategies.md](tasks-agents-estrategies.md): trilhas, fases, ambiente compartilhado e regras de merge.
+- Para executar uma etapa, use o prompt dela em [prompt/](prompt/) (`00-prompt-exec.md` a `06-prompt-exec.md`). Cada arquivo traz as regras da etapa, as levas de tarefas e os prompts de coordenador (com subagentes) e de sessão única.
 - Só comece uma tarefa quando as dependências estiverem concluídas. Dentro de uma etapa, tarefas sem dependência entre si podem andar em paralelo.
 - Caminhos em paralelo: T01-01 (modelo de dados) desde o primeiro dia; depois da base, a etapa 1 (domínio), T04-01 a T04-04 (tema e componentes base) e a etapa 2 (banco), que só espera o modelo de dados aprovado. As telas esperam a etapa 3.
 - **Tarefas com decisões** terminam com a seção "Decisão tomada", que resume a escolha e aponta o registro em `docs/DECISOES.md`. Dúvida nova numa tarefa vai na descrição do PR, como seção "Decisões" com as opções A, B e C (a recomendada marcada); o coordenador registra a resposta em `docs/DECISOES.md` (D56).
