@@ -3,6 +3,7 @@ import { useDerivado } from '@/queries/fatos';
 
 import { Acesso, Aparencia, Preferencias } from './SecaoAjustes';
 import { Categorias } from './SecaoCategorias';
+import { Dados } from './SecaoDados';
 
 /**
  * `#/configuracoes` (6.9, Configuracoes.dc.html): Categorias à esquerda; Aparência, Preferências,
@@ -18,6 +19,7 @@ export function ConfiguracoesPagina() {
         <Aparencia d={derivado.dados} />
         <Preferencias d={derivado.dados} />
         <Acesso />
+        <Dados d={derivado.dados} />
       </div>
     </div>
   );
