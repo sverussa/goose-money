@@ -1,4 +1,4 @@
-import type { Session } from '@supabase/supabase-js';
+import { isAuthApiError, isAuthRetryableFetchError, type Session } from '@supabase/supabase-js';
 
 import { CHAVE_MANTER_CONECTADO } from './armazenamento';
 import { mensagemDoErroAoEntrar } from './errosAuth';
@@ -71,6 +71,29 @@ export async function pedirRedefinicao(email: string, redirectTo: string): Promi
 export async function trocarCodigo(codigo: string): Promise<boolean> {
   const { error } = await supabase.auth.exchangeCodeForSession(codigo);
   return !error;
+}
+
+/**
+ * Troca a senha em Configurações (T05-28): entra de novo com a senha atual para conferi-la (isso
+ * também deixa a sessão recente, como pede `secure_password_change`) e só então grava a nova.
+ * Devolve o código do erro: `senha_atual_incorreta`, `same_password`, `weak_password`,
+ * `sem_conexao`…, ou `null` se trocou. Nenhuma senha sai daqui (nem em log nem no erro).
+ */
+export async function alterarSenha(atual: string, nova: string): Promise<string | null> {
+  try {
+    const { data } = await supabase.auth.getSession();
+    const email = data.session?.user.email;
+    if (!email) return 'sem_sessao';
+    const conferida = await supabase.auth.signInWithPassword({ email, password: atual });
+    if (conferida.error) {
+      if (isAuthApiError(conferida.error) && conferida.error.code === 'invalid_credentials')
+        return 'senha_atual_incorreta';
+      return isAuthRetryableFetchError(conferida.error) ? 'sem_conexao' : 'erro';
+    }
+    return await redefinirSenha(nova);
+  } catch {
+    return 'sem_conexao';
+  }
 }
 
 /** Grava a senha nova. Devolve o código do erro do Auth (`same_password`, `weak_password`…). */
