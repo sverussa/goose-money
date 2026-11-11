@@ -78,7 +78,7 @@ make db-migrate   # aplica as migrações Flyway
 make dev          # app web em http://localhost:1420
 ```
 
-Para o app desktop: `make dev-desktop`. `make` sem argumentos lista todos os comandos; antes de abrir um PR, rode `make check`.
+Para o app desktop: `make dev-desktop`. Para rodar o app web em Docker, sem Node na máquina: `make app-docker-start` (build de produção servido pelo Caddy na porta `PORTA_APP`; pare o `make dev` antes, ou use `make app-docker-start PORTA_APP=1421`) e `make app-docker-stop`. As variáveis `VITE_` do `.env` entram no build: depois de mudar o `.env`, rode `make app-docker-start` de novo. `make` sem argumentos lista todos os comandos; antes de abrir um PR, rode `make check`.
 
 Sem a Supabase CLI, o mesmo Supabase sobe por docker compose (`supabase/docker/`): troque `make db-start` por `make db-compose-start` e `make db-status` por `make db-compose-status`; o resto (`.env`, `make db-migrate`, `make test`, `make test-e2e`) não muda. `make db-compose-stop` para tudo e mantém os dados. Use um modo de cada vez; cada um tem o seu banco. Com o compose, `make db-types` e `make db-reset` não funcionam, porque usam a CLI.
 
@@ -93,6 +93,8 @@ GooseMoney/
 │       ├── src/             # app/ (tema, casca, env, sessão, rotas), data/ (Supabase), queries/ (TanStack Query),
 │       │                    # plataforma/ (Tauri: arquivos, deep link), features/ (telas), components/ (shadcn em ui/)
 │       ├── src-tauri/       # app desktop (Tauri 2: CSP e permissões)
+│       ├── Dockerfile       # app web em Docker: build do Vite e Caddy (make app-docker-start)
+│       ├── Caddyfile        # Caddy servindo o build na porta 80 do contêiner
 │       └── tests/           # e2e/ (Playwright + axe-core) e db/ (src/data contra o Supabase local)
 ├── packages/
 │   └── core/                # domínio e Motor, TypeScript puro (sem React, rede ou DOM)
@@ -118,7 +120,8 @@ GooseMoney/
 ├── .github/workflows/       # CI: formatação, lint, tipos e testes em todo PR
 ├── .claude/skills/          # skill prompts-de-execucao: gera o prompt de uma leva de tarefas
 ├── Makefile                 # comandos do projeto (make help)
-├── docker-compose.yml       # serviço Flyway
+├── docker-compose.yml       # serviços Flyway e app (app web em Docker)
+├── .dockerignore            # deixa node_modules, builds e .env fora do build da imagem
 ├── .env.example             # variáveis locais (Supabase, Flyway, PORTA_APP)
 ├── package.json             # raiz do monorepo e scripts (pnpm 12, Node 26)
 ├── pnpm-workspace.yaml      # workspaces e regra dos 7 dias (minimumReleaseAge)

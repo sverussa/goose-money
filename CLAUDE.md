@@ -35,6 +35,7 @@ Run `make` to list every target. Each target only calls `pnpm`, `docker compose`
 | `make setup`                                          | `pnpm install` and create `.env` from `.env.example`                                                                                                  |
 | `make dev`                                            | Web app with Vite on `PORTA_APP` (default 1420; each worktree uses its own, 1421 to 1424)                                                             |
 | `make dev-desktop`                                    | Tauri app in development (always port 1420)                                                                                                           |
+| `make app-docker-start` / `app-docker-stop`           | Web app built and served by Caddy in Docker on `PORTA_APP` (D81); `VITE_` values from `.env` go into the build                                        |
 | `make build` / `make build-desktop`                   | Web build / Tauri bundle (`.app`, `.dmg`)                                                                                                             |
 | `make db-start` / `db-stop` / `db-status`             | Local Supabase in Docker; `db-status` shows the anon key                                                                                              |
 | `make db-compose-start` / `-stop` / `-status`         | Same local Supabase with docker compose, no CLI (stop the CLI first); `-stop` keeps the data volume                                                   |
