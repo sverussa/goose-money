@@ -12,6 +12,28 @@ O **Goose Money** é um aplicativo de controle financeiro pessoal. O objetivo é
 
 A ideia é que registrar uma despesa leve segundos e que, com o tempo, o app mostre uma visão clara da vida financeira: quanto entra, quanto sai, onde dá para economizar e quanto falta para alcançar cada meta.
 
+## 📸 Telas
+
+Capturas com os dados de exemplo (Configurações › Dados), com hoje = 04/11/2026.
+
+![Painel: pendências, indicadores e gráficos](docs/imagens/painel.png)
+
+| Painel no tema escuro                                    | Lançar (tecla `N`)                                       |
+| -------------------------------------------------------- | -------------------------------------------------------- |
+| ![Painel no tema escuro](docs/imagens/painel-escuro.png) | ![Novo lançamento](docs/imagens/lancar.png)              |
+| **Saldos**                                               | **Projeções**                                            |
+| ![Painel › Saldos](docs/imagens/painel-saldos.png)       | ![Painel › Projeções](docs/imagens/painel-projecoes.png) |
+| **Cartões no painel**                                    | **Fatura do cartão**                                     |
+| ![Painel › Cartões](docs/imagens/painel-cartoes.png)     | ![Fatura do cartão](docs/imagens/fatura.png)             |
+| **Lançamentos**                                          | **Contas**                                               |
+| ![Lançamentos](docs/imagens/lancamentos.png)             | ![Contas](docs/imagens/contas.png)                       |
+| **Cartões**                                              | **Dívidas**                                              |
+| ![Cartões](docs/imagens/cartoes.png)                     | ![Dívidas](docs/imagens/divida.png)                      |
+| **Rendas fixas**                                         | **Gastos fixos**                                         |
+| ![Rendas fixas](docs/imagens/rendas.png)                 | ![Gastos fixos](docs/imagens/gastos-fixos.png)           |
+| **Login**                                                |                                                          |
+| ![Login](docs/imagens/login.png)                         |                                                          |
+
 ## 🎯 Objetivos
 
 - Tornar o registro de receitas e despesas rápido e sem atrito
@@ -108,6 +130,7 @@ GooseMoney/
 │   ├── DESIGN-HANDOFF.md    # mapa telas → rotas → componentes
 │   ├── DECISOES-PENDENTES-ETAPA4.md # escolhas da etapa 4 à espera de aprovação
 │   ├── MODELO-DADOS.md      # entidades, campos e relações (contrato core ↔ banco)
+│   ├── imagens/             # capturas de tela usadas neste README
 │   ├── StackShowCase.md     # stack de referência (Desktop UI Showcase), base da D20
 │   ├── Prompts-SubAgents-Strategies-Skill.md # aprendizados para escrever prompts de execução das tarefas
 │   └── tasks/               # tarefas de implementação, uma por arquivo, por etapa; prompt/ com o prompt de execução de cada etapa
