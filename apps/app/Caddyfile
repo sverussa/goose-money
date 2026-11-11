@@ -1,0 +1,5 @@
+# App web local em Docker (make app-docker-start). Sem HTTPS: o Auth só aceita http://localhost:1420 a 1424.
+:80 {
+	root * /srv
+	file_server
+}

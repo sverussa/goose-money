@@ -14,3 +14,14 @@ services:
       FLYWAY_CONNECT_RETRIES: "10"
     extra_hosts:
       - "host.docker.internal:host-gateway"  # acesso ao Postgres do Supabase local também no Linux
+
+  # App web em Docker (make app-docker-start). As variáveis VITE_ do .env entram no build.
+  app:
+    build:
+      context: .
+      dockerfile: apps/app/Dockerfile
+      args:
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+    ports:
+      - "${PORTA_APP:-1420}:80"  # o Auth só aceita redirecionar para localhost:1420 a 1424

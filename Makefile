@@ -10,7 +10,7 @@ DOCKER_OK = @docker info >/dev/null 2>&1 || { echo "O Docker não está rodando.
 
 .DEFAULT_GOAL := help
 
-.PHONY: help setup dev dev-desktop db-start db-stop db-status db-compose-start db-compose-stop db-compose-status db-migrate db-info db-validate \
+.PHONY: help setup dev dev-desktop app-docker-start app-docker-stop db-start db-stop db-status db-compose-start db-compose-stop db-compose-status db-migrate db-info db-validate \
 	db-reset db-migrate-prod db-types db-limpar-testes deploy-web db-eliminar-usuario test test-e2e \
 	test-e2e-completo lint format \
 	format-check typecheck check build build-desktop
@@ -28,6 +28,15 @@ dev: ## App web no navegador (Vite, porta PORTA_APP, padrão 1420)
 
 dev-desktop: ## App Tauri em desenvolvimento (sempre na porta 1420, a do devUrl)
 	PORTA_APP=1420 pnpm dev:desktop
+
+app-docker-start: ## App web em Docker (build do Vite + Caddy) na porta PORTA_APP; precisa do Supabase local
+	$(DOCKER_OK)
+	@test -n "$(VITE_SUPABASE_ANON_KEY)" || { echo "Preencha VITE_SUPABASE_ANON_KEY no .env (make db-status ou make db-compose-status)."; exit 1; }
+	docker compose up -d --build --wait app
+	@echo "App em http://localhost:$(or $(PORTA_APP),1420)"
+
+app-docker-stop: ## Para o app web em Docker
+	docker compose down app
 
 db-start: ## Sobe o Supabase local
 	$(DOCKER_OK)

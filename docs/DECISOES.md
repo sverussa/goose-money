@@ -209,6 +209,15 @@ Pedido do Saulo. `supabase/docker/docker-compose.yml` sobe Postgres, Auth (GoTru
 - **Banco separado:** o volume `goose-money-supabase_db` não é o da CLI. Os dois modos usam as mesmas portas; suba um de cada vez.
 - O `email_sent` do Auth fica em 360000, como a CLI faz quando usa o Mailpit; com o 2 do `config.toml`, os e2e de e-mail falhariam.
 
+### D81 · App web em Docker (11/11/2026)
+
+Pedido do Saulo. `make app-docker-start` sobe o serviço `app` do `docker-compose.yml` da raiz: `apps/app/Dockerfile` faz o build com Node 26.13.0 e pnpm 12.16.1 e serve o `dist` com Caddy 2.11.7 (as duas imagens publicadas há mais de 7 dias, D5). `make app-docker-stop` para o contêiner. `make dev` continua sendo o modo do dia a dia.
+
+- **Caddy, como na D53**, para a imagem local já ficar perto da de produção. Sem HTTPS nem cabeçalhos de segurança aqui; isso fica para o deploy (T06-05).
+- **`VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` entram como `ARG` no build**, lidas do `.env`. O Vite grava os valores no JavaScript, então quem muda o `.env` refaz a imagem (o alvo sempre usa `--build`). O `.env` não entra na imagem (`.dockerignore`).
+- **Porta `PORTA_APP` (padrão 1420)**, porque o Auth só redireciona para `localhost:1420` a `1424`. O endereço do Supabase é o que o navegador usa (`127.0.0.1:54321`), não o do contêiner.
+- **Sem fallback para `index.html` no Caddy:** o app usa rotas com `#`.
+
 ## Em aberto
 
 - **Provedor da VPS e domínio do app web** (D53).
