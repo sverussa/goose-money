@@ -130,6 +130,7 @@ GooseMoney/
 ├── .nvmrc
 ├── CLAUDE.md
 ├── README.md
+├── README-TEST.md       # como subir, criar conta e testar o sistema
 └── .gitignore
 ```
 
